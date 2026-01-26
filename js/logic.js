@@ -1,79 +1,86 @@
-// This is the code behind the logic for The Legend of Zelda: Oracle of Ages (built in JavaScript).
-// It defines the map layout and the requirements to access certain locations.
+/**
+ * This is the code behind the logic for The Legend of Zelda: Oracle of Ages (built in JavaScript).
+ * It defines the map layout and the requirements to access certain locations.
+ */
 class AgesGameLogic {
+
+    /**
+     * Creates a map layout and anything else relating to logic.
+     */
     constructor() {
+
+        // Show progression items by default.
+        this.showItemsWithClassification = "progression"
+
         // The Map Layout for Oracle of Ages
         this.mapLayout = {
             "default/overworld_present": [ // Overworld Present Locations
-                {
-                    x: 320,
-                    y: 210,
-                    location: "Lynna City: Comedian Trade",
-                    metReachableRequirements: () => {
-                        return this.canCutGrass() && this.hasItem("Cheesy Mustache")
-                    }
-                },
-                {
-                    x: 360,
-                    y: 200,
-                    location: "Lynna City: Mayor Plen's House",
-                    metReachableRequirements: () => {
-                        return this.canCutGrass() && this.itemCount("Progressive Hook") > 1
-                    }
-                },
-                {
-                    x: 462,
-                    y: 125,
-                    location: "Forest of Time: Impa's Gift",
-                    metReachableRequirements: () => {
-                        return true;
-                    }
-                },
-                {
-                    x: 462,
-                    y: 125,
-                    location: "Forest of Time: Nayru's House",
-                    metReachableRequirements: () => {
-                        return (this.isRandomizer() || this.hasItem("Spirit's Grave: Essence"));
-                    }
-                },
+                { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
+                { x: 360, y: 200, array: this.findLocationInfoByRegionName("mayor plen's house") },
+                { x: 462, y: 125, array: this.findLocationInfoByRegionName("starting item") },
+                { x: 495, y: 120, array: this.findLocationInfoByRegionName("nayru's house") },
+            ],
+            "ingame/overworld_present": [ // Overworld Present Ingame Locations
+                { x: 163, y: 115, array: this.findLocationInfoByRegionName("mayor plen's house") },
+                { x: 147, y: 115, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
+                { x: 179, y: 115, array: this.findLocationInfoByRegionName("vasu's gift") },
+                { x: 179, y: 99, array: this.findLocationInfoWithStartName("Maku Path") },
+                { x: 195, y: 99, array: this.findLocationInfoByRegionName("lynna city chest") },
+                { x: 195, y: 83, array: this.findLocationInfoByRegionName("starting item") },
+                { x: 211, y: 83, array: this.findLocationInfoByRegionName("nayru's house") },
+            ],
+            "ingame/overworld_past": [ // Overworld Past Ingame Locations
+                { x: 179, y: 99, array: this.findLocationInfoWithStartName("Maku Path") },
             ],
             "default/d0_past": [ // Maku Path Locations
-                {
-                    x: 66,
-                    y: 50,
-                    location: "Maku Path: Heart Piece",
-                    metReachableRequirements: () => {
-                        return this.canAccessPastMakuPath() && (this.hasItem("Small Key (Maku Path)") || this.canAccessMakuTree())
-                    }
-                },
-                {
-                    x: 66,
-                    y: 50,
-                    location: "Maku Path: Key Chest",
-                    metReachableRequirements: () => {
-                        return this.canAccessPastMakuPath()
-                    }
-                },
-                {
-                    x: 66,
-                    y: 50,
-                    location: "Maku Path: Basement",
-                    metReachableRequirements: () => {
-                        return this.canAccessPastMakuPath() && (this.hasItem("Small Key (Maku Path)") || this.canAccessMakuTree())
-                    }
-                },
+                { x: 66, y: 50, array: this.findLocationInfoByRegionName("maku path heartpiece") },
+                { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 key chest") },
+                { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 basement") },
             ],
             "default/d1": [ // Spirit's Grave Locations
-                { x: 100, y: 200, color: "red" },
-                { x: 150, y: 250, color: "blue" },  
-                { x: 300, y: 400, color: "yellow" }
+                { x: 100, y: 200, array: this.findLocationInfoByRegionName("d1 one-button chest") },
+                { x: 150, y: 250, array: this.findLocationInfoByRegionName("d1 two-button chest") },  
+                { x: 300, y: 400, array: this.findLocationInfoByRegionName("d1 wide room") }
             ]
         }
     };
 
     /**
-     * Checks to see if a player is playing in randomizer mode. For now, this is a placeholder that always returns true.
+     * Finds info of a location using a given region name
+     * @param {string} region - The region name from the locations variable.
+     * @returns {object} - The array full of any info that was found during the locations variable loop.
+     */
+    findLocationInfoByRegionName(region) {
+        const array = []
+        for (const i in locations) {
+            if (region == locations[i].region_id) {
+                locations[i].checkLocation = i;
+                locations[i].providedRegion = region;
+                array.unshift(locations[i]);
+            }
+        }
+        return array;
+    }
+
+    /**
+     * Finds info of a location using a starting location name.
+     * @param {string} locationStartName - The name of a location to start with.
+     * @returns {object} - The array full of any info that was found during the locations variable loop.
+     */
+    findLocationInfoWithStartName(locationStartName) {
+        const array = []
+        for (const i in locations) {
+            if (i.startsWith(locationStartName)) {
+                locations[i].checkLocation = i;
+                locations[i].providedStartName = locationStartName;
+                array.unshift(locations[i]);
+            }
+        }
+        return array;
+    }
+
+    /**
+     * Checks if a player is playing in randomizer mode. For now, this is a placeholder that always returns true.
      * @returns {boolean} True if the player is playing in randomizer mode, false otherwise.
      */
     isRandomizer() {
@@ -379,7 +386,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player can trigger a switch
+     * Checks if a player can trigger a switch
      * @returns {boolean} True if a player can trigger a switch. If not, then it's false.
      */
     canTriggerSwitch() {
@@ -399,7 +406,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player can trigger a switch from far away.
+     * Checks if a player can trigger a switch from far away.
      * @returns {boolean} True if a player can trigger a switch from far away. If not, then it's false.
      */
     canTriggerFarSwitch() {
@@ -414,7 +421,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player has a certain amount of bombs.
+     * Checks if a player has a certain amount of bombs.
      * @param {number} amount - The amount of bombs to check for.
      * @returns {boolean} True if the player has enough bombs. If not, then it's false.
      */
@@ -423,7 +430,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player has a flute for one of the 3 animal companions.
+     * Checks if a player has a flute for one of the 3 animal companions.
      * @returns {boolean} True if a player does have a flute. If not, then it's false.
      */
     hasFlute() {
@@ -435,7 +442,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player can summon ricky.
+     * Checks if a player can summon ricky.
      * @returns {boolean} True if a player can summon ricky. If not, then it's false.
      */
     canSummonRicky() {
@@ -443,7 +450,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player can summon Moosh.
+     * Checks if a player can summon Moosh.
      * @returns {boolean} True if a player can summon moosh. If not, then it's false.
      */
     canSummonMoosh() {
@@ -451,7 +458,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player can summon dimitri.
+     * Checks if a player can summon dimitri.
      * @returns {boolean} True if a player can summon dimitri. If not, then it's false.
      */
     canSummonDimitri() {
@@ -459,7 +466,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player can open a time portal.
+     * Checks if a player can open a time portal.
      * @returns {boolean} True if a player can open a portal. If not, then it's false.
      */
     canOpenPortal() {
@@ -467,7 +474,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player can go to the present (not the past)
+     * Checks if a player can go to the present (not the past)
      * @returns {boolean} True if a player can go to the present from the past. If not, then it's false.
      */
     canGoBackToPresent() {
@@ -475,7 +482,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player can go to the present (and the past)
+     * Checks if a player can go to the present (and the past)
      * @returns {boolean} True if a player can go to the present from the past and etc. If not, then it's false.
      */
     canSwitchPastAndPresent() {
@@ -483,7 +490,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player can jump one pixel wide.
+     * Checks if a player can jump one pixel wide.
      * @param {boolean} canSummonCompanion - Whatever or not an animal companion can be summoned.
      * @param {boolean} liquid - Whatever or not a player is jumping over liquid.
      * @returns {boolean} A player can jump one pixel wide. If not, then it's false.
@@ -499,7 +506,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks to see if a player can jump two pixels wide.
+     * Checks if a player can jump two pixels wide.
      * @param {boolean} liquid - Whatever or not a player is jumping over liquid.
      * @param {boolean} canSummonCompanion - Whatever or not an animal companion can be summoned.
      * @returns {boolean} True if a player can jump two pixels wide. If not, then it's false.
@@ -511,30 +518,30 @@ class AgesGameLogic {
         ].some(Boolean);
         return (this.hasFeather() &&
                 (this.hasMediumLogic() || this.canUsePegasusSeeds())) ||
-            (canSummonCompanion && this.canSummonMoosh(state, player));
+            (canSummonCompanion && this.canSummonMoosh());
     }
 
     /**
-     * Checks to see if a player can jump three pixels wide.
+     * Checks if a player can jump three pixels wide.
      * @param {boolean} liquid - Whatever or not a player is jumping over liquid.
      * @param {boolean} canSummonCompanion - Whatever or not an animal companion can be summoned.
      * @returns {boolean} True if a player can jump three pixels wide. If not, then it's false.
      */
     canJump3Wide(liquid = false, canSummonCompanion = true) {
         if (liquid) return [
-            ooaOptionHardLogic(state, player),
-            hasFeather(state, player),
-            canUsePegasusSeeds(state, player),
-            hasBombs(state, player),
+            this.hasHardLogic(),
+            hasFeather(),
+            canUsePegasusSeeds(),
+            hasBombs(),
         ].every(Boolean);
-        return (ooaOptionMediumLogic(state, player) &&
-                hasFeather(state, player) &&
-                canUsePegasusSeeds(state, player)) ||
-            (canSummonCompanion && canSummonMoosh(state, player));
+        return (this.isUsingMediumLogic() &&
+                hasFeather() &&
+                canUsePegasusSeeds()) ||
+            (canSummonCompanion && canSummonMoosh());
     }
 
     /**
-     * Checks to see if a player can jump 4 pixels wide.
+     * Checks if a player can jump 4 pixels wide.
      * @param {string} canSummonCompanion - Whatever or not an animal companion can be summoned.
      * @returns {boolean} True if a player can jump over 4 pixels wide. If not, then it's false.
      */
@@ -544,63 +551,74 @@ class AgesGameLogic {
 
     // Seed-related predicates ###########################################
 
-    canUseSeeds(state, player) {
-        return hasSeedshooter(state, player) || hasSatchel(state, player);
+    canUseSeeds() {
+        return this.hasSeedShooter() || this.hasSatchel();
     }
 
-    hasSeedKindCount(state, player, count) {
+    hasSeedKindCount(count) {
         let seedCount = 0;
-        seedCount += hasEmberSeeds(state, player) ? 1 : 0;
-        seedCount += hasMysterySeeds(state, player) ? 1 : 0;
-        seedCount += hasScentSeeds(state, player) ? 1 : 0;
-        seedCount += hasPegasusSeeds(state, player) ? 1 : 0;
-        seedCount += hasGaleSeeds(state, player) ? 1 : 0;
+        seedCount += this.hasEmberSeeds() ? 1 : 0;
+        seedCount += this.hasMysterySeeds() ? 1 : 0;
+        seedCount += this.hasScentSeeds() ? 1 : 0;
+        seedCount += this.hasPegasusSeeds() ? 1 : 0;
+        seedCount += this.hasGaleSeeds() ? 1 : 0;
         return seedCount >= count;
     }
 
-    canUseEmberSeeds(state, player, acceptMysterySeeds) {
-        return canUseSeeds(state, player) &&
-            (hasEmberSeeds(state, player) ||
+    canUseEmberSeeds(acceptMysterySeeds = true) {
+        return this.canUseSeeds() &&
+            (this.hasEmberSeeds() ||
                 (acceptMysterySeeds &&
-                    ooaOptionMediumLogic(state, player) &&
-                    hasMysterySeeds(state, player)));
+                    this.isUsingMediumLogic() &&
+                    this.hasMysterySeeds()));
     }
 
-    canUseScentSeedsOffensively(state, player) {
-        return (hasSeedshooter(state, player) ||
-                (ooaOptionHardLogic(state, player) && hasSatchel(state, player))) &&
-            hasScentSeeds(state, player);
+    canUseScentSeedsOffensively() {
+        return (this.hasSeedShooter() ||
+                (this.hasHardLogic() && this.hasSatchel())) &&
+            this.hasScentSeeds();
     }
 
-    canUseScentSeedsForSmell(state, player) {
-        return hasSatchel(state, player) && hasScentSeeds(state, player);
+    canUseScentSeedsForSmell() {
+        return this.hasSatchel() && this.hasScentSeeds();
     }
 
-    canUsePegasusSeeds(state, player) {
-        return hasSatchel(state, player) && hasPegasusSeeds(state, player);
+    canUsePegasusSeeds() {
+        return this.hasSatchel() && this.hasPegasusSeeds();
     }
 
-    canUsePegasusSeedsForStun(state, player) {
-        return hasSeedshooter(state, player) && hasPegasusSeeds(state, player);
+    canUsePegasusSeedsForStun() {
+        return this.hasSeedShooter() && this.hasPegasusSeeds();
     }
 
-    canWarpUsingGaleSeeds(state, player) {
-        return hasSatchel(state, player) && hasGaleSeeds(state, player);
+    canWarpUsingGaleSeeds() {
+        return this.hasSatchel() && this.hasGaleSeeds();
     }
 
-    canUseGaleSeedsOffensively(state, player, ranged = false) {
+    canUseGaleSeedsOffensively(ranged = false) {
         // If we don't have gale seeds or aren't at least in medium logic, don't even try
-        if (!hasGaleSeeds(state, player) || !ooaOptionMediumLogic(state, player)) {
+        if (!this.hasGaleSeeds() || !this.this.isUsingMediumLogic()) {
             return false;
         }
 
-        return hasSeedshooter(state, player) ||
+        return this.hasSeedShooter() ||
             (!ranged &&
-                hasSatchel(state, player) &&
-                (ooaOptionHardLogic(state, player) || hasFeather(state, player)));
+                this.hasSatchel() &&
+                (this.hasHardLogic() || hasFeather()));
     }
 
-    canUseMysterySeeds(state, player) {
-        return canUseSeeds(state, player) && hasMysterySeeds(state, player);
+    canUseMysterySeeds() {
+        return this.canUseSeeds() && this.hasMysterySeeds();
     }
+
+    /**
+     * Checks if a player has a specified item
+     * @param {string} itemName - The name of the item.
+     * @param {number} count - The amount of item a user has.
+     * @returns {boolean} True if a user has that item. If not, then it's false.
+     */
+    hasItem(itemName, count = 1) {
+        return items[itemName].count >= count;
+    }
+
 }

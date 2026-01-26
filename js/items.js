@@ -5,543 +5,797 @@ const items = {
     //    'id': 0x00,
     //    'subid': 0x00
     //    },
+
+    // Normal Progrssion Items
     "Progressive Shield": {
         'classification': "progression",
-        'id': 0x01
+        'id': 0x01,
+        'imageName': 'shield',
+        'limit': 2
     },
     "Bombs (10)": {
         'classification': "progression",
-        'id': 0x03
+        'id': 0x03,
+        'imageName': 'bomb',
+        'limit': 9,
+        'defaultCount': 0
     },
     "Progressive Sword": {
         'classification': "progression",
-        'id': 0x05
+        'id': 0x05,
+        'imageName': 'sword',
+        'limit': 2
     },
     "Boomerang": {
         'classification': "progression",
-        'id': 0x06
+        'id': 0x06,
+        'imageName': 'boomerang',
+        'limit': 1
     },
     "Progressive Harp": {
         'classification': "progression",
         'id': 0x25,
-        'subid': 0x00                                                                                                           
+        'subid': 0x00,
+        'imageName': 'harp',
+        'limit': 2,
+        'defaultCount': 0                                                                                                           
     },
     "Progressive Hook": {
         'classification': "progression",
-        'id': 0x0a
+        'id': 0x0a,
+        'imageName': 'switchhook',
+        'limit': 2
     },
     "Cane of Somaria": {
         'classification': "progression",
-        'id': 0x04
+        'id': 0x04,
+        'imageName': 'somaria'
     },
     "Biggoron's Sword": {
         'classification': "progression",
-        'id': 0x0c
+        'id': 0x0c,
+        'imageName': 'goron sword'
     },
     "Bombchus (10)": {
         'classification': "progression",
-        'id': 0x0d
+        'id': 0x0d,
+        'imageName': 'Bombchu',
+        'limit': 9,
+        'dontChangeImage': true
     },
     "Ricky's Flute": {
-        'classification': "progression",
+        'classification': "animal_companion_flute",
+        'imageName': "Ricky's Flute",
         'id': 0x0e,
-        'subid': 0x00
+        'subid': 0x00,
+        'unclickable': true
     },
     "Dimitri's Flute": {
-        'classification': "progression",
+        'classification': "animal_companion_flute",
+        'imageName': "Dimitri's Flute",
         'id': 0x0e,
-        'subid': 0x01
+        'subid': 0x01,
+        'unclickable': true
     },
     "Moosh's Flute": {
-        'classification': "progression",
+        'classification': "animal_companion_flute",
+        'imageName': "Moosh's Flute",
         'id': 0x0e,
-        'subid': 0x02
+        'subid': 0x02,
+        'unclickable': true
+    },
+    "Strange Flute": {
+        'classification': "progression",
+        'limit': 3,
+        'onChange': ($this) => {
+            const flutes = ['flute', "Moosh's Flute (Icon)", "Ricky's Flute (Icon)", "Dimitri's Flute (Icon)"];
+            $this.imageName = flutes[($this.count >= 1 ? $this.count - 1 : 0) || 0]
+            for (const flute of flutes) {
+                if (flute.endsWith("(Icon)")) {
+                    items[flute.slice(0, -7)].count = flute == $this.imageName ? 1 : 0
+                }
+            }
+        },
+        'dontChangeImage': true
     },
     "Seed Shooter": {
         'classification': "progression",
-        'id': 0x0f
+        'imageName': 'shooter',
+        'id': 0x0f,
     },
     "Shovel": {
         'classification': "progression",
-        'id': 0x15
+        'id': 0x15,
+        'imageName': 'shovel'
     },
     "Progressive Bracelet": {
         'classification': "progression",
-        'id': 0x16
+        'id': 0x16,
+        'imageName': 'bracelet',
+        'limit': 1
     },
     "Feather": {
         'classification': "progression",
-        'id': 0x17
+        'id': 0x17,
+        'imageName': 'feather',
+        'limit': 1
     },
     "Seed Satchel": {
         'classification': "progression",
-        'id': 0x19
+        'id': 0x19,
+        'imageName': 'satchel',
+        'limit': 2,
+        'defaultCount': 0
     },
     "Ember Seeds": {
         'classification': "progression",
-        'id': 0x20
+        'id': 0x20,
+        'scaleViaHeight': 20,
+        'position': {
+            top: '28px',
+            left: '0px'
+        },
+        'imageName': 'seedember'
     },
     "Scent Seeds": {
         'classification': "progression",
-        'id': 0x21
+        'id': 0x21,
+        'scaleViaHeight': 20,
+        'position': {
+            top: '28px',
+            left: '40px'
+        },
+        'imageName': 'seedscent'
     },
     "Pegasus Seeds": {
         'classification': "progression",
-        'id': 0x22
+        'id': 0x22,
+        'scaleViaHeight': 20,
+        'position': {
+            top: '28px',
+            left: '80px'
+        },
+        'imageName': 'seedpegasus'
     },
     "Gale Seeds": {
-        'classification': "useful",
-        'id': 0x23
+        'classification': "progression",
+        'id': 0x23,
+        'scaleViaHeight': 20,
+        'position': {
+            top: '28px',
+            left: '120px'
+        },
+        'imageName': 'seedgale'
     },
     "Mystery Seeds": {
         'classification': "progression",
-        'id': 0x24
+        'id': 0x24,
+        'scaleViaHeight': 20,
+        'position': {
+            top: '28px',
+            left: '160px'
+        },
+        'imageName': 'seedmystery'
     },
+    /*"Rupees": {
+        'classification': "progression",
+        'imageName': 'Rupee (Giant Red)',
+        'unlimited': true,
+        'onChange': () => {
+
+        }
+    },*/
     "Rupees (1)": {
         'classification': "filler",
+        'imageName': 'Rupee (Green)',
+        'unlimited': true,
         'id': 0x28,
         'subid': 0x00
     },
     "Rupees (5)": {
         'classification': "filler",
+        'imageName': 'Rupee (Blue)',
+        'unlimited': true,
         'id': 0x28,
         'subid': 0x01
     },
     "Rupees (10)": {
         'classification': "filler",
+        'imageName': 'Rupee (Small Red)',
+        'unlimited': true,
         'id': 0x28,
         'subid': 0x02
     },
     "Rupees (20)": {
-        'classification': "progression",
+        'classification': "progression_skip_balancing",
+        'imageName': 'Rupee (Red)',
+        'unlimited': true,
         'id': 0x28,
         'subid': 0x03
     },
     "Rupees (30)": {
-        'classification': "progression",
+        'classification': "progression_skip_balancing",
+        'imageName': 'Rupee (Dungeon 1)',
+        'unlimited': true,
         'id': 0x28,
         'subid': 0x04
     },
     "Rupees (50)": {
-        'classification': "progression",
+        'classification': "progression_skip_balancing",
+        'imageName': 'Rupee (Dungeon 2)',
+        'unlimited': true,
         'id': 0x28,
         'subid': 0x05
     },
     "Rupees (100)": {
-        'classification': "progression",
+        'classification': "progression_skip_balancing",
+        'imageName': 'Rupee (Giant Blue)',
+        'unlimited': true,
         'id': 0x28,
         'subid': 0x06
     },
     "Rupees (200)": {
-        'classification': "progression",
+        'classification': "progression_skip_balancing",
+        'imageName': 'Rupee (Giant Red)',
+        'unlimited': true,
         'id': 0x28,
         'subid': 0x08
     },
     "Heart Container": {
         'classification': "useful",
+        'imageName': 'Heart Container',
         'id': 0x2a
     },
     "Piece of Heart": {
         'classification': "useful",
+        'imageName': 'Heart Piece',
+        'limit': 2,
+        'dontChangeImage': true,
+        'displayCount': true,
         'id': 0x2b,
         'subid': 0x01
     },
     "Progressive Flippers": {
         'classification': "progression",
-        'id': 0x2e
+        'id': 0x2e,
+        'imageName': 'flippers',
+        'limit': 1
     },
     "Potion": {
         'classification': "useful",
+        'imageName': 'potion',
+        'unlimited': true,
         'id': 0x2f
     },
     "King Zora's Potion": {
         'classification': "progression",
+        'invisible': true,
         'id': 0x37
     },
 
+    // Small Keys
     "Small Key (Maku Path)": {
-        'classification': "progression",
+        'classification': "d0",
         'id': 0x30,
-        'subid': 0x00
+        'subid': 0x00,
+        'imageName': 'smallkey',
+        'displayCount': true
     },
     "Small Key (Spirit's Grave)": {
-        'classification': "progression",
+        'classification': "d1",
         'id': 0x30,
-        'subid': 0x01
+        'subid': 0x01,
+        'imageName': 'smallkey',
+        'displayCount': true
     },
     "Small Key (Wing Dungeon)": {
-        'classification': "progression",
+        'classification': "d2",
         'id': 0x30,
-        'subid': 0x02
+        'subid': 0x02,
+        'imageName': 'smallkey',
+        'displayCount': true
     },
     "Small Key (Moonlit Grotto)": {
-        'classification': "progression",
+        'classification': "d3",
         'id': 0x30,
-        'subid': 0x03
+        'subid': 0x03,
+        'imageName': 'smallkey',
+        'displayCount': true
     },
     "Small Key (Skull Dungeon)": {
-        'classification': "progression",
+        'classification': "d4",
         'id': 0x30,
-        'subid': 0x04
+        'subid': 0x04,
+        'imageName': 'smallkey',
+        'displayCount': true
     },
     "Small Key (Crown Dungeon)": {
-        'classification': "progression",
+        'classification': "d5",
         'id': 0x30,
-        'subid': 0x05
+        'subid': 0x05,
+        'imageName': 'smallkey',
+        'displayCount': true
     },
     "Small Key (Mermaid's Cave Past)": {
-        'classification': "progression",
+        'classification': "d6",
+        'invisible': true,
         'id': 0x30,
         'subid': 0x0C
     },
     "Small Key (Mermaid's Cave Present)": {
-        'classification': "progression",
+        'classification': "d6",
+        'invisible': true,
         'id': 0x30,
         'subid': 0x06
     },
-    "Small Key (Jabu-Jabu's Belly)": {
-        'classification': "progression",
+    "Small Key (Mermaid's Cave)": {
+        'classification': "d6",
         'id': 0x30,
-        'subid': 0x07
+        'subid': 0x06,
+        'imageName': 'smallkey',
+        'displayCount': true
+    },
+    "Small Key (Jabu-Jabu's Belly)": {
+        'classification': "d7",
+        'id': 0x30,
+        'subid': 0x07,
+        'imageName': 'smallkey',
+        'displayCount': true
     },
     "Small Key (Ancient Tomb)": {
-        'classification': "progression",
+        'classification': "d8",
         'id': 0x30,
-        'subid': 0x08
+        'subid': 0x08,
+        'imageName': 'smallkey',
+        'displayCount': true
     },
+
+    // Master Keys
     "Master Key (Maku Path)": {
-        'classification': "progression",
+        'classification': "d0",
         'id': 0x30,
-        'subid': 0x00
+        'subid': 0x00,
+        'imageName': 'master_key'
     },
     "Master Key (Spirit's Grave)": {
-        'classification': "progression",
+        'classification': "d1",
         'id': 0x30,
-        'subid': 0x01
+        'subid': 0x01,
+        'imageName': 'master_key'
     },
     "Master Key (Wing Dungeon)": {
-        'classification': "progression",
+        'classification': "d2",
         'id': 0x30,
-        'subid': 0x02
+        'subid': 0x02,
+        'imageName': 'master_key'
     },
     "Master Key (Moonlit Grotto)": {
-        'classification': "progression",
+        'classification': "d3",
         'id': 0x30,
-        'subid': 0x03
+        'subid': 0x03,
+        'imageName': 'master_key'
     },
     "Master Key (Skull Dungeon)": {
-        'classification': "progression",
+        'classification': "d4",
         'id': 0x30,
-        'subid': 0x04
+        'subid': 0x04,
+        'imageName': 'master_key'
     },
     "Master Key (Crown Dungeon)": {
-        'classification': "progression",
+        'classification': "d5",
         'id': 0x30,
-        'subid': 0x05
+        'subid': 0x05,
+        'imageName': 'master_key'
     },
     "Master Key (Mermaid's Cave Past)": {
-        'classification': "progression",
+        'classification': "d6",
+        'invisible': true,
         'id': 0x30,
         'subid': 0x0C
     },
     "Master Key (Mermaid's Cave Present)": {
-        'classification': "progression",
+        'classification': "d6",
+        'invisible': true,
         'id': 0x30,
         'subid': 0x06
+    },
+    "Master Key (Mermaid's Cave)": {
+        'classification': "d6",
+        'imageName': 'master_key'
     },
     "Master Key (Jabu-Jabu's Belly)": {
-        'classification': "progression",
+        'classification': "d7",
         'id': 0x30,
-        'subid': 0x07
+        'subid': 0x07,
+        'imageName': 'master_key'
     },
     "Master Key (Ancient Tomb)": {
-        'classification': "progression",
+        'classification': "d8",
         'id': 0x30,
-        'subid': 0x08
+        'subid': 0x08,
+        'imageName': 'master_key'
     },
+
+    // Boss Keys
     "Boss Key (Spirit's Grave)": {
-        'classification': "progression",
+        'classification': "d1",
         'id': 0x31,
-        'subid': 0x01
+        'subid': 0x01,
+        'imageName': 'bosskey'
     },
     "Boss Key (Wing Dungeon)": {
-        'classification': "progression",
+        'classification': "d2",
         'id': 0x31,
-        'subid': 0x02
+        'subid': 0x02,
+        'imageName': 'bosskey'
     },
     "Boss Key (Moonlit Grotto)": {
-        'classification': "progression",
+        'classification': "d3",
         'id': 0x31,
-        'subid': 0x03
+        'subid': 0x03,
+        'imageName': 'bosskey'
     },
     "Boss Key (Skull Dungeon)": {
-        'classification': "progression",
+        'classification': "d4",
         'id': 0x31,
-        'subid': 0x04
+        'subid': 0x04,
+        'imageName': 'bosskey'
     },
     "Boss Key (Crown Dungeon)": {
-        'classification': "progression",
+        'classification': "d5",
         'id': 0x31,
-        'subid': 0x05
+        'subid': 0x05,
+        'imageName': 'bosskey'
     },
     "Boss Key (Mermaid's Cave)": {
-        'classification': "progression",
+        'classification': "d6",
         'id': 0x31,
-        'subid': 0x06
+        'subid': 0x06,
+        'imageName': 'bosskey'
     },
     "Boss Key (Jabu-Jabu's Belly)": {
-        'classification': "progression",
+        'classification': "d7",
         'id': 0x31,
-        'subid': 0x07
+        'subid': 0x07,
+        'imageName': 'bosskey'
     },
     "Boss Key (Ancient Tomb)": {
-        'classification': "progression",
+        'classification': "d8",
         'id': 0x31,
-        'subid': 0x08
+        'subid': 0x08,
+        'imageName': 'bosskey'
     },
+
+    // Compasses
     "Compass (Spirit's Grave)": {
-        'classification': "useful",
+        'classification': "d1",
         'id': 0x32,
-        'subid': 0x01
+        'subid': 0x01,
+        'imageName': 'Compass'
     },
     "Compass (Wing Dungeon)": {
-        'classification': "useful",
+        'classification': "d2",
         'id': 0x32,
-        'subid': 0x02
+        'subid': 0x02,
+        'imageName': 'Compass'
     },
     "Compass (Moonlit Grotto)": {
-        'classification': "useful",
+        'classification': "d3",
         'id': 0x32,
-        'subid': 0x03
+        'subid': 0x03,
+        'imageName': 'Compass'
     },
     "Compass (Skull Dungeon)": {
-        'classification': "useful",
+        'classification': "d4",
         'id': 0x32,
-        'subid': 0x04
+        'subid': 0x04,
+        'imageName': 'Compass'
     },
     "Compass (Crown Dungeon)": {
-        'classification': "useful",
+        'classification': "d5",
         'id': 0x32,
-        'subid': 0x05
+        'subid': 0x05,
+        'imageName': 'Compass'
     },
     "Compass (Mermaid's Cave Past)": {
-        'classification': "useful",
+        'classification': "d6",
+        'invisible': true,
         'id': 0x32,
         'subid': 0x0C
     },
+    "Compass (Mermaid's Cave)": {
+        'classification': "d6",
+        'imageName': 'Compass'
+    },
     "Compass (Mermaid's Cave Present)": {
-        'classification': "useful",
+        'classification': "d6",
+        'invisible': true,
         'id': 0x32,
         'subid': 0x06
     },
     "Compass (Jabu-Jabu's Belly)": {
-        'classification': "useful",
+        'classification': "d7",
         'id': 0x32,
-        'subid': 0x07
+        'subid': 0x07,
+        'imageName': 'Compass'
     },
     "Compass (Ancient Tomb)": {
-        'classification': "useful",
+        'classification': "d8",
         'id': 0x32,
-        'subid': 0x08
-    },
-    "Dungeon Map (Spirit's Grave)": {
-        'classification': "useful",
-        'id': 0x33,
-        'subid': 0x01
-    },
-    "Dungeon Map (Wing Dungeon)": {
-        'classification': "useful",
-        'id': 0x33,
-        'subid': 0x02
-    },
-    "Dungeon Map (Moonlit Grotto)": {
-        'classification': "useful",
-        'id': 0x33,
-        'subid': 0x03
-    },
-    "Dungeon Map (Skull Dungeon)": {
-        'classification': "useful",
-        'id': 0x33,
-        'subid': 0x04
-    },
-    "Dungeon Map (Crown Dungeon)": {
-        'classification': "useful",
-        'id': 0x33,
-        'subid': 0x05
-    },
-    "Dungeon Map (Mermaid's Cave Past)": {
-        'classification': "useful",
-        'id': 0x33,
-        'subid': 0x0C
-    },
-    "Dungeon Map (Mermaid's Cave Present)": {
-        'classification': "useful",
-        'id': 0x33,
-        'subid': 0x06
-    },
-    "Dungeon Map (Jabu-Jabu's Belly)": {
-        'classification': "useful",
-        'id': 0x33,
-        'subid': 0x07
-    },
-    "Dungeon Map (Ancient Tomb)": {
-        'classification': "useful",
-        'id': 0x33,
-        'subid': 0x08
+        'subid': 0x08,
+        'imageName': 'Compass'
     },
 
+    // Dungeon Maps
+    "Dungeon Map (Spirit's Grave)": {
+        'classification': "d1",
+        'id': 0x33,
+        'subid': 0x01,
+        'imageName': 'Dungeon Map'
+    },
+    "Dungeon Map (Wing Dungeon)": {
+        'classification': "d2",
+        'id': 0x33,
+        'subid': 0x02,
+        'imageName': 'Dungeon Map'
+    },
+    "Dungeon Map (Moonlit Grotto)": {
+        'classification': "d3",
+        'id': 0x33,
+        'subid': 0x03,
+        'imageName': 'Dungeon Map'
+    },
+    "Dungeon Map (Skull Dungeon)": {
+        'classification': "d4",
+        'id': 0x33,
+        'subid': 0x04,
+        'imageName': 'Dungeon Map'
+    },
+    "Dungeon Map (Crown Dungeon)": {
+        'classification': "d5",
+        'id': 0x33,
+        'subid': 0x05,
+        'imageName': 'Dungeon Map'
+    },
+    "Dungeon Map (Mermaid's Cave Past)": {
+        'classification': "d6",
+        'id': 0x33,
+        'subid': 0x0C,
+        'invisible': true,
+        'imageName': 'Dungeon Map'
+    },
+    "Dungeon Map (Mermaid's Cave Present)": {
+        'classification': "d6",
+        'id': 0x33,
+        'subid': 0x06,
+        'invisible': true,
+        'imageName': 'Dungeon Map'
+    },
+    "Dungeon Map (Mermaid's Cave)": {
+        'classification': "d6",
+        'imageName': 'Dungeon Map'
+    },
+    "Dungeon Map (Jabu-Jabu's Belly)": {
+        'classification': "d7",
+        'id': 0x33,
+        'subid': 0x07,
+        'imageName': 'Dungeon Map'
+    },
+    "Dungeon Map (Ancient Tomb)": {
+        'classification': "d8",
+        'id': 0x33,
+        'subid': 0x08,
+        'imageName': 'Dungeon Map'
+    },
+
+    // Seeds
     "Gasha Seed": {
         'classification': "filler",
+        'imageName': 'Gasha Seed',
+        'dontChangeImage': true,
+        'limit': 13,
+        'displayCount': true,
         'id': 0x34,
         'subid': 0x01
     },
-    
-      "Maku Seed": {
-            'classification': "progression",
-          'id': 0x36
-      },
-
-    "Poe Clock": {
+    "Maku Seed": {
         'classification': "progression",
+        'imageName': 'makuseed',
+        'id': 0x36
+    },
+
+    // Trade Sequence Items
+    "Poe Clock": {
+        'classification': "trade",
+        'imageName': 'Poe Clock',
         'id': 0x3d
     },
     "Stationery": {
-        'classification': "progression",
+        'classification': "trade",
+        'imageName': 'Stationery',
         'id': 0x3e
     },
     "Stink Bag": {
-        'classification': "progression",
+        'classification': "trade",
+        'imageName': 'Stink Bag',
         'id': 0x3f
     },
     "Tasty Meat": {
-        'classification': "progression",
+        'classification': "trade",
+        'imageName': 'Tasty Meat',
         'id': 0x47
     },
     "Doggie Mask": {
-        'classification': "progression",
+        'classification': "trade",
+        'imageName': 'Doggie Mask',
         'id': 0x56
     },
     "Dumbbell": {
-        'classification': "progression",
+        'classification': "trade",
+        'imageName': 'Dumbbell',
         'id': 0x57
     },
     "Cheesy Mustache": {
-        'classification': "progression",
+        'classification': "trade",
+        'imageName': 'Cheesy Mustache',
+        'improveImageVisibility': true,
         'id': 0x5f
     },
     "Funny Joke": {
-        'classification': "progression",
+        'classification': "trade",
+        'imageName': 'Funny Joke',
         'id': 0x3c
     },
     "Touching Book": {
-        'classification': "progression",
+        'classification': "trade",
+        'imageName': 'Touching Book',
         'id': 0x35
     },
     "Magic Oar": {
-        'classification': "progression",
+        'classification': "trade",
+        'imageName': 'Magic Oar',
         'id': 0x38
     },
     "Sea Ukulele": {
-        'classification': "progression",
+        'classification': "trade",
+        'imageName': 'Sea Ukelele',
         'id': 0x39
     },
     "Broken Sword": {
-         'classification': "progression",
-         'id': 0x3a
+        'classification': "trade",
+        'imageName': "Broken Sword",
+        'id': 0x3a
     },
 
+    // Items you get after completeing some puzzles, trades, or gives you access to dungeons
     "Bomb Flower": {
         'classification': "progression",
+        'imageName': 'bombflower',
         'id': 0x49
     },
     "Book of Seals": {
         'classification': "progression",
+        'imageName': 'book',
         'id': 0x55
     },
     "Brother Emblem": {
         'classification': "progression",
+        'imageName': 'emblem',
         'id': 0x5b
     },
     "Cheval Rope": {
         'classification': "progression",
+        'imageName': 'cheval',
         'id': 0x52
     },
     "Crown Key": {
         'classification': "progression",
+        'imageName': 'keycrown',
         'id': 0x43
     },
     "Fairy Powder": {
         'classification': "progression",
+        'invisible': true,
         'id': 0x51
+    },
+    "Fairy Powder & King Zora's Potion": {
+        'classification': "progression",
+        'imageName': 'powderpotion',
+        'limit': 2,
+        'noDisable': true,
+        'defaultCount': 0
     },
     "Goron Vase": {
         'classification': "progression",
+        'imageName': 'vase',
         'id': 0x5c
     },
     "Goronade": {
         'classification': "progression",
+        'imageName': 'goronade',
         'id': 0x5d
     },
     "Graveyard Key": {
         'classification': "progression",
+        'imageName': 'keygraveyard',
         'id': 0x42,
     },
     "Island Chart": {
         'classification': "progression",
+        'imageName': 'chart',
         'id': 0x54
     },
     "Lava Juice": {
         'classification': "progression",
+        'imageName': 'lavajuice',
         'id': 0x5a
     },
     "Letter of Introduction": {
         'classification': "progression",
+        'imageName': 'letter',
         'id': 0x59
     },
     "Library Key": {
         'classification': "progression",
+        'imageName': 'keylibrary',
         'id': 0x46
     },
     "Mermaid Key": {
         'classification': "progression",
+        'imageName': 'keymermaid',
         'id': 0x44
     },
     "Old Mermaid Key": {
         'classification': "progression",
+        'imageName': 'keymermaid_old',
         'id': 0x45
     },
     "Ricky's Gloves": {
         'classification': "progression",
+        'imageName': 'gloves',
         'id': 0x48
     },
     "Rock Brisket": {
         'classification': "progression",
+        'imageName': 'brisket',
         'id': 0x5e
     },
     "Scent Seedling": {
         'classification': "progression",
+        'imageName': 'seedling',
         'id': 0x4d
     },
     "Slate": {
         'classification': "progression",
+        'imageName': 'slate',
+        'limit': 3,
+        'dontChangeImage': true,
+        'displayCount': true,
         'id': 0x4b
     },
     "Tokay Eyeball": {
         'classification': "progression",
+        'imageName': 'eyeball',
         'id': 0x4f
     },
     "Cracked Tuni Nut": {
         'classification': "progression",
+        'invisible': true,
         'id': 0x4c,
         'subid': 0x00
     },
     "Tuni Nut": {
         'classification': "progression",
+        'limit': 2,
+        'imageName': 'tuninut',
+        'noDisable': true,
+        'defaultCount': 0,
         'id': 0x3b,
         'subid': 0x00
     },
     "Zora Scale": {
         'classification': "progression",
+        'imageName': 'scale',
         'id': 0x4e
     },
     //   "Bomb Upgrade": {
@@ -554,11 +808,20 @@ const items = {
     //   "",
     //        'id': 0x62)
 
+    // Rings
     "Friendship Ring": {
         'classification': "filler",
         'id': 0x2d,
         'subid': 0x04,
-        'ring': 'useless'
+        'ring': 'useless',
+        'onChange': () => {
+            var count = 1;
+            for (var i in items) {
+                if (!i.includes("Ring")) continue;
+                items[i].imageName = `Rings/${(count.toString().length == 1 ? '0' : '') + (count++)} - ${i}`;
+                items[i].improveImageVisibility = true;
+            }
+        }
     },
     "Power Ring L-1": {
         'classification': "filler",
@@ -939,43 +1202,52 @@ const items = {
         'ring': 'good'
     },
 
+    // Essences
     "Eternal Spirit": {
-        'classification': "progression",
+        'classification': "d1",
+        'imageName': 'essences/d1',
         'id': 0x40,
         'subid': 0x00
     },
     "Ancient Wood": {
-        'classification': "progression",
+        'classification': "d2",
+        'imageName': 'essences/d2',
         'id': 0x40,
         'subid': 0x01
     },
     "Echoing Howl": {
-        'classification': "progression",
+        'classification': "d3",
+        'imageName': 'essences/d3',
         'id': 0x40,
         'subid': 0x02
     },
     "Burning Flame": {
-        'classification': "progression",
+        'classification': "d4",
+        'imageName': 'essences/d4',
         'id': 0x40,
         'subid': 0x03
     },
     "Sacred Soil": {
-        'classification': "progression",
+        'classification': "d5",
+        'imageName': 'essences/d5',
         'id': 0x40,
         'subid': 0x04
     },
     "Lonely Peak": {
-        'classification': "progression",
+        'classification': "d6",
+        'imageName': 'essences/d6',
         'id': 0x40,
         'subid': 0x05
     },
     "Rolling Sea": {
-        'classification': "progression",
+        'classification': "d7",
+        'imageName': 'essences/d7',
         'id': 0x40,
         'subid': 0x06
     },
     "Falling Star": {
-        'classification': "progression",
+        'classification': "d8",
+        'imageName': 'essences/d8',
         'id': 0x40,
         'subid': 0x07
     },

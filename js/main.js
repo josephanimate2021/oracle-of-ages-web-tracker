@@ -7,12 +7,12 @@ let defaultMapImages = {
 
 function drawItems() {
     const itemsElem = document.getElementById("gameItems");
-    gameLogic.allItemClassifications = [];
+    const allItemClassifications = [];
     itemsElem.innerHTML = '';
     for (const item in items) {
         const info = items[item];
         if (info.invisible) continue;
-        if (!gameLogic.allItemClassifications.find(i => i == info.classification)) gameLogic.allItemClassifications.push(info.classification);
+        if (!allItemClassifications.find(i => i == info.classification)) allItemClassifications.push(info.classification);
         if (info.onChange) info.onChange(info, triggerItem);
         const li = document.createElement("li");
         li.setAttribute("data-classification", info.classification);
@@ -41,8 +41,8 @@ function drawItems() {
         li.appendChild(a);
         itemsElem.appendChild(li);
     }
-    window.addEventListener("DOMContentLoaded", e => {
-        document.getElementById("itemsView").innerHTML = gameLogic.allItemClassifications.map(d => {
+    window.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("itemsView").innerHTML = allItemClassifications.map(d => {
             const word = d.split("_").map(g => {
                 const end = g.substring(1);
                 const beg = g.slice(0, -end.length);
@@ -72,6 +72,7 @@ function triggerItem(itemInfo, times = 1, dontCallItemsDrawFunction = false) {
 function goToMap() {
     gameLogic.popovers = {};
     gameLogic.counts = {};
+    gameLogic.mapLayout[currentMap] ||= [];
     const mapCanvas = document.getElementById("mapCanvas");
     mapCanvas.innerHTML = "";
     const image = document.createElement("img");
@@ -79,6 +80,7 @@ function goToMap() {
     image.alt = `Map: ${currentMap.split("/")[1].replaceAll("_", " ")}`;
     for (const position of gameLogic.mapLayout[currentMap]) {
         const info = position.array[0];
+        if (info?.hidden) continue;
         const marker = document.createElement("button");
         marker.type = "button";
         marker.className = `btn btn-${position.array.filter(i => i.checked).length == position.array.length ? 'secondary' : (() => {
@@ -151,18 +153,25 @@ function checkLocation(e) {
     goToMap();
 }
 
-document.getElementById("overworld-view-select").addEventListener("change", e => {
+function changeOverworldView(view, goToMapAfterwards = true) {
     const array = currentMap.split("/");
-    array[0] = e.target.value;
+    array[0] = view;
     mapSwitchButtonsHandler(button => {
-        if (!button.getAttribute("data-partOfIngameMaps")) button.style.display = e.target.value === "ingame" ? "none" : "inline-block";
+        if (!button.getAttribute("data-partOfIngameMaps")) button.style.display = view === "ingame" ? "none" : "inline-block";
     });
-    currentMap = array.join("/");
-    goToMap();
+    if (goToMapAfterwards) {
+        currentMap = array.join("/");
+        goToMap();
+    } else return array;
+}
+
+document.getElementById("overworld-view-select").addEventListener("change", e => {
+    changeOverworldView(e.target.value);
 });
 
 document.getElementById("stage-view-select").addEventListener("change", e => {
-    const array = currentMap.split("/");
+    let array = currentMap.split("/");
+    if (array[0] == "ingame") array = changeOverworldView("default", false);
     array[1] = defaultMapImages[e.target.value];
     for (const button of document.querySelectorAll(".stageViewOption")) {
         button.style.display = button.getAttribute("data-view") === e.target.value ? "block" : "none";

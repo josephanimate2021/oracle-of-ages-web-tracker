@@ -177,69 +177,116 @@ const items = {
         },
         'imageName': 'seedmystery'
     },
-    /*"Rupees": {
+    "Rupees": {
         'classification': "progression",
         'imageName': 'Rupee (Giant Red)',
         'unlimited': true,
-        'onChange': () => {
-
-        }
-    },*/
+        'unclickable': true,
+        'displayCount': true,
+    },
     "Rupees (1)": {
         'classification': "filler",
         'imageName': 'Rupee (Green)',
         'unlimited': true,
         'id': 0x28,
-        'subid': 0x00
+        'subid': 0x00,
+        'onChange': ($this) => {
+            if ($this.count) {
+                items.Rupees.count ||= 0;
+                items.Rupees.count++
+            }
+        }
     },
     "Rupees (5)": {
         'classification': "filler",
         'imageName': 'Rupee (Blue)',
         'unlimited': true,
         'id': 0x28,
-        'subid': 0x01
+        'subid': 0x01,
+        'onChange': ($this) => {
+            if ($this.count) {
+                items.Rupees.count ||= 0;
+                items.Rupees.count += 5
+            }
+        }
     },
     "Rupees (10)": {
         'classification': "filler",
         'imageName': 'Rupee (Small Red)',
         'unlimited': true,
         'id': 0x28,
-        'subid': 0x02
+        'subid': 0x02,
+        'onChange': ($this) => {
+            if ($this.count) {
+                items.Rupees.count ||= 0;
+                items.Rupees.count += 10
+            }
+        }
     },
     "Rupees (20)": {
         'classification': "progression_skip_balancing",
         'imageName': 'Rupee (Red)',
         'unlimited': true,
         'id': 0x28,
-        'subid': 0x03
+        'subid': 0x03,
+        'onChange': ($this) => {
+            if ($this.count) {
+                items.Rupees.count ||= 0;
+                items.Rupees.count += 20
+            }
+        }
     },
     "Rupees (30)": {
         'classification': "progression_skip_balancing",
         'imageName': 'Rupee (Dungeon 1)',
         'unlimited': true,
         'id': 0x28,
-        'subid': 0x04
+        'subid': 0x04,
+        'onChange': ($this) => {
+            if ($this.count) {
+                items.Rupees.count ||= 0;
+                items.Rupees.count += 30
+            }
+        }
     },
     "Rupees (50)": {
         'classification': "progression_skip_balancing",
         'imageName': 'Rupee (Dungeon 2)',
         'unlimited': true,
         'id': 0x28,
-        'subid': 0x05
+        'subid': 0x05,
+        'onChange': ($this) => {
+            if ($this.count) {
+                items.Rupees.count ||= 0;
+                items.Rupees.count += 50
+            }
+        }
     },
     "Rupees (100)": {
         'classification': "progression_skip_balancing",
         'imageName': 'Rupee (Giant Blue)',
         'unlimited': true,
         'id': 0x28,
-        'subid': 0x06
+        'subid': 0x06,
+        'onChange': ($this) => {
+            if ($this.count) {
+                items.Rupees.count ||= 0;
+                items.Rupees.count += 100
+            }
+        }
     },
     "Rupees (200)": {
         'classification': "progression_skip_balancing",
         'imageName': 'Rupee (Giant Red)',
         'unlimited': true,
         'id': 0x28,
-        'subid': 0x08
+        'subid': 0x08,
+        'onChange': ($this) => {
+            if ($this.count) {
+                items.Rupees.count ||= 0;
+                items.Rupees.count += 200
+            }
+        }
     },
     "Heart Container": {
         'classification': "useful",

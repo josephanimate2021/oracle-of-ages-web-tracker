@@ -24,7 +24,7 @@ class AgesGameLogic {
                 { x: 163, y: 115, array: this.findLocationInfoByRegionName("mayor plen's house") },
                 { x: 147, y: 115, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
                 { x: 179, y: 115, array: this.findLocationInfoByRegionName("vasu's gift") },
-                { x: 179, y: 99, array: this.findLocationInfoWithStartName("Maku Path") },
+                // { x: 179, y: 99, array: this.findLocationInfoWithStartName("Hero's Cave") },
                 { x: 195, y: 99, array: this.findLocationInfoByRegionName("lynna city chest") },
                 { x: 195, y: 83, array: this.findLocationInfoByRegionName("starting item") },
                 { x: 211, y: 83, array: this.findLocationInfoByRegionName("nayru's house") },
@@ -38,11 +38,24 @@ class AgesGameLogic {
                 { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 basement") },
             ],
             "default/d1": [ // Spirit's Grave Locations
-                { x: 100, y: 200, array: this.findLocationInfoByRegionName("d1 one-button chest") },
-                { x: 150, y: 250, array: this.findLocationInfoByRegionName("d1 two-button chest") },  
-                { x: 300, y: 400, array: this.findLocationInfoByRegionName("d1 wide room") }
+                { x: 310.5, y: 210, array: this.findLocationInfoByRegionName("d1 one-button chest") },
+                { x: 405, y: 178, array: this.findLocationInfoByRegionName("d1 two-button chest") },
+                { x: 303, y: 380, array: this.findLocationInfoByRegionName("d1 crystal room") }
             ]
         }
+
+        // All dungeons in Ages.
+        this.dungeons = [
+            "Maku Path",
+            "Spirit's Grave",
+            "Wing Dungeon",
+            "Moonlit Grotto",
+            "Skull Dungeon",
+            "Crown Dungeon",
+            "Mermaid's Cave",
+            "Jabu Jabu's Belly",
+            "Ancient Tomb"
+        ]
     };
 
     /**
@@ -80,7 +93,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks if a player is playing in randomizer mode. For now, this is a placeholder that always returns true.
+     * Checks if the player is playing in randomizer mode. For now, this is a placeholder that always returns true.
      * @returns {boolean} True if the player is playing in randomizer mode, false otherwise.
      */
     isRandomizer() {
@@ -262,8 +275,8 @@ class AgesGameLogic {
      * @returns {boolean} True if the player has small keys, false otherwise.
      */
     hasSmallKeys(dungeonId, amount = 1) {
-        return (this.hasItem(`Small Key (${DUNGEON_NAMES[dungeonId]})`, amount)
-            || this.hasItem(`Master Key (${DUNGEON_NAMES[dungeonId]})`));
+        return (this.hasItem(`Small Key (${this.dungeons[dungeonId]})`, amount)
+            || this.hasItem(`Master Key (${this.dungeons[dungeonId]})`));
     }
 
     /**
@@ -276,13 +289,13 @@ class AgesGameLogic {
         if (dungeonId === 6) {
             return [
                 this.hasItem("Boss Key (Mermaid's Cave)"),
-                this.hasItem(`Master Key (${DUNGEON_NAMES[dungeonId]})`)
+                this.hasItem(`Master Key (${this.dungeons[dungeonId]})`)
             ].some(Boolean);
         }
 
         return [
-            this.hasItem(`Boss Key (${DUNGEON_NAMES[dungeonId]})`),
-            this.hasItem(`Master Key (${DUNGEON_NAMES[dungeonId]})`)
+            this.hasItem(`Boss Key (${this.dungeons[dungeonId]})`),
+            this.hasItem(`Master Key (${this.dungeons[dungeonId]})`)
         ].some(Boolean);
     }
 
@@ -310,9 +323,10 @@ class AgesGameLogic {
      * @returns {boolean} True if the player has essences, false otherwise.
      */
     hasEssences(target) {
-        // The tracker is not in a very good state to put the rest of this code here. I'll do it once I get the tracker to at least work at it's core.
+        const essences = Object.keys(items).filter(i => items[i].imageName.startsWith("essences") && items[i].count > 0);
+        return essences.length >= target;
     }
-    
+
     /**
      * Checks if the player has enough essences for the Maku Seed.
      * @param {object} gameSettings - The current game settings
@@ -336,7 +350,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks if a player has a certain number of rupees for a certain check.
+     * Checks if the player has a certain number of rupees for a certain check.
      * @param {number} amount - The amount of rupees to check for.
      * @returns {boolean} True if the player has more than enough rupees for the check. If not, then it's false.
      */
@@ -345,38 +359,11 @@ class AgesGameLogic {
         // must-have to prevent any stupid lock
         if (!this.canFarmRupees()) return false;
 
-        let rupees = this.itemCount("Rupees (1)");
-        rupees += this.itemCount("Rupees (5)") * 5;
-        rupees += this.itemCount("Rupees (10)") * 10;
-        rupees += this.itemCount("Rupees (20)") * 20;
-        rupees += this.itemCount("Rupees (50)") * 50;
-        rupees += this.itemCount("Rupees (100)") * 100;
-        rupees += this.itemCount("Rupees (200)") * 200;
-
-        // Secret rooms inside D2 and D6 containing loads of rupees, but only in medium logic
-        if (hMediumLogic()) {
-            if (this.hasItem("_reached_d2_rupee_room")) {
-                rupees += 150;
-            }
-            if (this.hasItem("_reached_d6_rupee_room")) {
-                rupees += 90;
-            }
-        }
-
-        // Old men giving and taking rupees
-        // const world = state.multiworld.worlds[player];
-        // for (const [regionName, value] of Object.entries(world.old_man_rupee_values)) {
-        //     const eventName = "rupees from " + regionName;
-        //     if (this.hasItem(eventName)) {
-        //         rupees += value;
-        //     }
-        // }
-
-        return rupees >= amount;
+        return items.Rupees.count >= amount;
     }
 
     /**
-     * Checks if a player can farm rupees.
+     * Checks if the player can farm rupees.
      * @returns {boolean} True if the player can farm rupees. If not, then it's false.
      */
     canFarmRupees() {
@@ -386,8 +373,8 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks if a player can trigger a switch
-     * @returns {boolean} True if a player can trigger a switch. If not, then it's false.
+     * Checks if the player can trigger a switch
+     * @returns {boolean} True if the player can trigger a switch. If not, then it's false.
      */
     canTriggerSwitch() {
         return [
@@ -406,8 +393,8 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks if a player can trigger a switch from far away.
-     * @returns {boolean} True if a player can trigger a switch from far away. If not, then it's false.
+     * Checks if the player can trigger a switch from far away.
+     * @returns {boolean} True if the player can trigger a switch from far away. If not, then it's false.
      */
     canTriggerFarSwitch() {
         return [
@@ -421,7 +408,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks if a player has a certain amount of bombs.
+     * Checks if the player has a certain amount of bombs.
      * @param {number} amount - The amount of bombs to check for.
      * @returns {boolean} True if the player has enough bombs. If not, then it's false.
      */
@@ -430,8 +417,8 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks if a player has a flute for one of the 3 animal companions.
-     * @returns {boolean} True if a player does have a flute. If not, then it's false.
+     * Checks if the player has a flute for one of the 3 animal companions.
+     * @returns {boolean} True if the player does have a flute. If not, then it's false.
      */
     hasFlute() {
         return [
@@ -442,119 +429,115 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks if a player can summon ricky.
-     * @returns {boolean} True if a player can summon ricky. If not, then it's false.
+     * Checks if the player can summon ricky.
+     * @returns {boolean} True if the player can summon ricky. If not, then it's false.
      */
     canSummonRicky() {
         return this.hasItem("Ricky's Flute");
     }
 
     /**
-     * Checks if a player can summon Moosh.
-     * @returns {boolean} True if a player can summon moosh. If not, then it's false.
+     * Checks if the player can summon Moosh.
+     * @returns {boolean} True if the player can summon moosh. If not, then it's false.
      */
     canSummonMoosh() {
         return this.hasItem("Moosh's Flute");
     }
 
     /**
-     * Checks if a player can summon dimitri.
-     * @returns {boolean} True if a player can summon dimitri. If not, then it's false.
+     * Checks if the player can summon dimitri.
+     * @returns {boolean} True if the player can summon dimitri. If not, then it's false.
      */
     canSummonDimitri() {
         return this.hasItem("Dimitri's Flute");
     }
 
     /**
-     * Checks if a player can open a time portal.
-     * @returns {boolean} True if a player can open a portal. If not, then it's false.
+     * Checks if the player can open a time portal.
+     * @returns {boolean} True if the player can open a portal. If not, then it's false.
      */
     canOpenPortal() {
         return this.hasItem("Progressive Harp");
     }
 
     /**
-     * Checks if a player can go to the present (not the past)
-     * @returns {boolean} True if a player can go to the present from the past. If not, then it's false.
+     * Checks if the player can go to the present (not the past)
+     * @returns {boolean} True if the player can go to the present from the past. If not, then it's false.
      */
     canGoBackToPresent() {
         return this.hasItem("Progressive Harp", 2);
     }
 
     /**
-     * Checks if a player can go to the present (and the past)
-     * @returns {boolean} True if a player can go to the present from the past and etc. If not, then it's false.
+     * Checks if the player can go to the present (and the past)
+     * @returns {boolean} True if the player can go to the present from the past and etc. If not, then it's false.
      */
     canSwitchPastAndPresent() {
         return this.hasItem("Progressive Harp", 3);
     }
 
     /**
-     * Checks if a player can jump one pixel wide.
-     * @param {boolean} canSummonCompanion - Whatever or not an animal companion can be summoned.
-     * @param {boolean} liquid - Whatever or not a player is jumping over liquid.
-     * @returns {boolean} A player can jump one pixel wide. If not, then it's false.
+     * Checks if the player can jump one pixel wide.
+     * @param {boolean} liquid - Whatever or not the player is jumping over liquid.
+     * @returns {boolean} the player can jump one pixel wide. If not, then it's false.
      */
-    canJump1Wide(canSummonCompanion = true, liquid = false) {
+    canJump1Wide(liquid = false) {
         if (liquid) return [
             this.hasFeather(),
-            this.hasMediumLogic() && canSummonCompanion && this.canSummonRicky()
+            this.hasMediumLogic() && this.canSummonRicky()
         ].some(Boolean);
-        return this,hasFeather() ||
-            (canSummonCompanion &&
-                (this.canSummonMoosh() || this.canSummonRicky()));
+        return this.hasFeather() || this.canSummonMoosh() || this.canSummonRicky();
     }
 
     /**
-     * Checks if a player can jump two pixels wide.
-     * @param {boolean} liquid - Whatever or not a player is jumping over liquid.
-     * @param {boolean} canSummonCompanion - Whatever or not an animal companion can be summoned.
-     * @returns {boolean} True if a player can jump two pixels wide. If not, then it's false.
+     * Checks if the player can jump two pixels wide.
+     * @param {boolean} liquid - Whatever or not the player is jumping over liquid.
+     * @returns {boolean} True if the player can jump two pixels wide. If not, then it's false.
      */
-    canJump2Wide(liquid = false, canSummonCompanion = true) {
+    canJump2Wide(liquid = false) {
         if (liquid) return [
             this.hasFeather() && this.canUsePegasusSeeds(),
             this.hasHardLogic() && this.hasFeather() && this.hasBombs()
         ].some(Boolean);
-        return (this.hasFeather() &&
-                (this.hasMediumLogic() || this.canUsePegasusSeeds())) ||
-            (canSummonCompanion && this.canSummonMoosh());
+        return (
+            this.hasFeather() && (
+                this.hasMediumLogic() || this.canUsePegasusSeeds()
+            )
+        ) || this.canSummonMoosh();
     }
 
     /**
-     * Checks if a player can jump three pixels wide.
-     * @param {boolean} liquid - Whatever or not a player is jumping over liquid.
-     * @param {boolean} canSummonCompanion - Whatever or not an animal companion can be summoned.
-     * @returns {boolean} True if a player can jump three pixels wide. If not, then it's false.
+     * Checks if the player can jump three pixels wide.
+     * @param {boolean} liquid - Whatever or not the player is jumping over liquid.
+     * @returns {boolean} True if the player can jump three pixels wide. If not, then it's false.
      */
-    canJump3Wide(liquid = false, canSummonCompanion = true) {
+    canJump3Wide(liquid = false) {
         if (liquid) return [
             this.hasHardLogic(),
-            hasFeather(),
-            canUsePegasusSeeds(),
-            hasBombs(),
+            this.hasFeather(),
+            this.canUsePegasusSeeds(),
+            this.hasBombs(),
         ].every(Boolean);
-        return (this.isUsingMediumLogic() &&
-                hasFeather() &&
-                canUsePegasusSeeds()) ||
-            (canSummonCompanion && canSummonMoosh());
+        return (
+            this.isUsingMediumLogic() &&
+            this.hasFeather() &&
+            this.canUsePegasusSeeds()
+        ) || this.canSummonMoosh();
     }
 
     /**
-     * Checks if a player can jump 4 pixels wide.
-     * @param {string} canSummonCompanion - Whatever or not an animal companion can be summoned.
-     * @returns {boolean} True if a player can jump over 4 pixels wide. If not, then it's false.
+     * Checks if the player can use the seeds.
+     * @returns {boolean} True if the player can use the seeds. If not, then it's false.
      */
-    canJump4WidePit(canSummonCompanion) {
-        return canSummonCompanion && this.canSummonMoosh();
-    }
-
-    // Seed-related predicates ###########################################
-
     canUseSeeds() {
         return this.hasSeedShooter() || this.hasSatchel();
     }
 
+    /**
+     * Checks to see if a user has enough seeds for certain checks in the game (The Tingle Upgrade is a great example of this).
+     * @param {number} count - The amount of seeds a user has.
+     * @returns {boolean} True if a user has enough seeds. If not, then it's false.
+     */
     hasSeedKindCount(count) {
         let seedCount = 0;
         seedCount += this.hasEmberSeeds() ? 1 : 0;
@@ -565,7 +548,12 @@ class AgesGameLogic {
         return seedCount >= count;
     }
 
-    canUseEmberSeeds(acceptMysterySeeds = true) {
+    /**
+     * Checks if the player can use ember seeds.
+     * @param {boolean} acceptMysterySeeds - True if logic requires usage of mystery seeds (i'd say that mostly for torches)
+     * @returns {boolean} True if the player can use mystery seeds. If not, then it's false.
+     */
+    canUseEmberSeeds(acceptMysterySeeds = false) {
         return this.canUseSeeds() &&
             (this.hasEmberSeeds() ||
                 (acceptMysterySeeds &&
@@ -573,52 +561,490 @@ class AgesGameLogic {
                     this.hasMysterySeeds()));
     }
 
+    /**
+     * Checks if the player can offensively use scent seeds.
+     * @returns {boolean} True if the player can use scent seeds offensively. If not, then it's false.
+     */
     canUseScentSeedsOffensively() {
         return (this.hasSeedShooter() ||
-                (this.hasHardLogic() && this.hasSatchel())) &&
+            (this.hasHardLogic() && this.hasSatchel())) &&
             this.hasScentSeeds();
     }
 
+    /**
+     * Checks if the player can use scent seeds for smell.
+     * @returns {boolean} True if the player can use scent seeds for smell. If not, then it's false.
+     */
     canUseScentSeedsForSmell() {
         return this.hasSatchel() && this.hasScentSeeds();
     }
 
+    /**
+     * Checks if the player can use pegasus seeds.
+     * @returns {boolean} True if the player can use pegasus seeds. If not, then it's false.
+     */
     canUsePegasusSeeds() {
         return this.hasSatchel() && this.hasPegasusSeeds();
     }
 
+    /**
+     * Checks if the player can use pegasus seeds for stunning enemies.
+     * @returns {boolean} True if the player can use pegasus seeds for stunning enemies. If not, then it's false.
+     */
     canUsePegasusSeedsForStun() {
         return this.hasSeedShooter() && this.hasPegasusSeeds();
     }
 
+    /**
+     * Checks if the player can use gale seeds.
+     * @returns {boolean} True if the player can use gale seeds. If not, then it's false.
+     */
     canWarpUsingGaleSeeds() {
         return this.hasSatchel() && this.hasGaleSeeds();
     }
 
+    /**
+     * Checks if the player can offensively use gale seeds.
+     * @param {boolean} [ranged=false] - Here if logic can't have the player with hard settings use a seed satchel or feather.
+     * @returns {boolean} True if the player can use gale seeds offensively. If not, then it's false.
+     */
     canUseGaleSeedsOffensively(ranged = false) {
         // If we don't have gale seeds or aren't at least in medium logic, don't even try
-        if (!this.hasGaleSeeds() || !this.this.isUsingMediumLogic()) {
+        if (!this.hasGaleSeeds() || !this.isUsingMediumLogic()) {
             return false;
         }
 
         return this.hasSeedShooter() ||
             (!ranged &&
                 this.hasSatchel() &&
-                (this.hasHardLogic() || hasFeather()));
+                (this.hasHardLogic() || this.hasFeather()));
     }
 
+    /**
+     * Checks if the player can use mystery seeds.
+     * @returns {boolean} True if the player can use mystery seeds. If not, then it's false.
+     */
     canUseMysterySeeds() {
         return this.canUseSeeds() && this.hasMysterySeeds();
     }
 
     /**
-     * Checks if a player has a specified item
+     * Checks if the player has a specified item
      * @param {string} itemName - The name of the item.
      * @param {number} count - The amount of item a user has.
      * @returns {boolean} True if a user has that item. If not, then it's false.
      */
     hasItem(itemName, count = 1) {
         return items[itemName].count >= count;
+    }
+
+    /**
+     * Checks if the player can break a bush.
+     * @returns {boolean} True if the player can break a bush. If not, then it's false.
+     */
+    canBreakBush() {
+        return this.canBreakFlowers() || this.hasBracelet() || this.hasSwitchHook();
+    }
+
+    /**
+     * Checks if the player can break tingle's balloon.
+     * @returns {boolean} True if the player can break a bush. If not, then it's false.
+     */
+    canBreakTingleBalloon() {
+        return [
+            this.hasSword(),
+            this.hasBoomerang(),
+            // canPunch(), ?
+        ].some(Boolean) && this.hasFeather();
+    }
+
+    /**
+     * Checks if the player can harvest a regrowing bush.
+     * @returns {boolean} True if the player can harvest a regrowing bush. If not, then it's false.
+     */
+    canHarvestRegrowingBush() {
+        return [
+            this.hasSword(),
+            this.hasBombs()
+        ].some(Boolean);
+    }
+
+    /**
+     * Checks if the player can break pots.
+     * @returns {boolean} True if the player can break pots. If not, then it's false.
+     */
+    canBreakPot() {
+        return [
+            this.hasBracelet(),
+            this.hasNobleSword(),
+            this.hasSwitchHook(),
+            this.hasItem("Biggoron's Sword")
+        ].some(Boolean);
+    }
+
+    /**
+     * Checks if the player can break flowers.
+     * @returns {boolean} True if the player can break flowers. If not, then it's false.
+     */
+    canBreakFlowers() {
+        return [
+            this.hasSword(),
+            this.hasFlute(),
+            (
+                // Consumables need at least medium logic, since they need a good knowledge of the game
+                // not to be frustrating
+                this.hasMediumLogic() &&
+                [
+                    this.hasBombs(2),
+                    this.canUseEmberSeeds(false),
+                    (this.hasSeedShooter() && this.hasGaleSeeds()),
+                ].some(Boolean)
+            ),
+        ].some(Boolean);
+    }
+
+    /**
+     * Checks if the player can break crystals.
+     * @returns {boolean} True if the player can break crystals. If not, then it's false.
+     */
+    canBreakCrystal() {
+        return [
+            this.hasSword(),
+            this.hasBombs(),
+            this.hasBracelet(),
+            (
+                this.hasMediumLogic() &&
+                this.hasItem("Expert's Ring")
+            )
+        ].some(Boolean);
+    }
+
+    /**
+     * Checks if the player can break signs.
+     * @returns {boolean} True if the player can break signs. If not, then it's false.
+     */
+    canBreakSign() {
+        return [
+            this.hasNobleSword(),
+            this.hasItem("Biggoron's Sword"),
+            this.hasBracelet(),
+            this.canUseEmberSeeds(false),
+        ].some(Boolean);
+    }
+
+    /**
+     * Checks if the player can harvest a tree.
+     * @returns {boolean} True if the player can harvest a tree. If not, then it's false.
+     */
+    canHarvestTree() {
+        return (
+            this.canUseSeeds() &&
+            [
+                this.hasSword(),
+                this.canPunch(),
+                (
+                    this.hasMediumLogic() &&
+                    this.canSummonDimitri()
+                )
+            ].some(Boolean)
+        );
+    }
+
+    /**
+     * Checks if the player can push an enemy.
+     * @returns {boolean} True if the player can push an enemy. If not, then it's false.
+     */
+    canPushEnemy() {
+        return [
+            // hasRod(),
+            this.hasShield()
+        ].some(Boolean);
+    }
+
+    /**
+     * Checks if the player can kill a normal enemy.
+     * @param {boolean} canKillWithHook - If true, then the player should be able to kill an enemy with a switch hook.
+     * @param {boolean} pitAvailable - If true, then the player should be able to knock enemies into a pit.
+     * @returns {boolean} True if a user can kill a normal enemy. If not, then it's false.
+     */
+    canKillNormalEnemy(canKillWithHook = false, pitAvailable = false) {
+        // If a pit is available nearby, it can be used to put the enemies inside using
+        // items that are usually non-lethal
+        if (pitAvailable && this.canPushEnemy()) return true;
+
+        return [
+            this.hasSword(),
+            this.canKillNormalUsingSatchel(),
+            this.canKillNormalUsingSeedshooter(),
+            (this.hasMediumLogic() && this.hasBombs(4)),
+            (this.hasMediumLogic() && this.hasCane()),
+            this.canPunch(),
+            (canKillWithHook && this.hasSwitchHook()),
+        ].some(Boolean);
+    }
+
+    /**
+     * Checks if the player can kill a moldorm.
+     * @param {boolean} pitAvailable - If true, then the player should be able to knock enemies into a pit.
+     * @returns {boolean} True if a user can kill a moldorm. If not, then it's false.
+     */
+    canKillMoldorm(pitAvailable = false) {
+        if (pitAvailable && this.canPushEnemy()) {
+            return true;
+        }
+
+        return [
+            this.hasSword(),
+            this.canUseScentSeedsOffensively(),
+            // Not including mystery seed, because even in hard logic this is just pure torture
+            (this.hasMediumLogic() && this.hasBombs(4)),
+            (this.hasMediumLogic() && this.hasCane()),
+            this.canPunch(),
+            this.hasSwitchHook(),
+        ].some(Boolean);
+    }
+
+    /**
+     * Checks if the player can kill a wizzrobes.
+     * @param {boolean} pitAvailable - If true, then the player should be able to knock enemies into a pit.
+     * @returns {boolean} True if a user can kill a wizzrobes. If not, then it's false.
+     */
+    canKillWizzrobes(pitAvailable = false) {
+        if (pitAvailable && this.canPushEnemy()) {
+            return true;
+        }
+
+        return [
+            this.hasSword(),
+            this.canUseScentSeedsOffensively(),
+            // Not including mystery seed, because even in hard logic this is just pure torture
+            (this.hasMediumLogic() && this.hasBombs(4)),
+            (this.hasMediumLogic() && this.hasCane()),
+            this.canPunch(),
+            this.hasSwitchHook(),
+        ].some(Boolean);
+    }
+
+    /**
+     * Checks if the player can kill generic bosses and minibosses
+     * @returns {boolean} - True if the player can kill bosses/minibosses
+     */
+    genericBossAndMinibossKill() {
+        return [
+            this.hasSword(),
+            this.canUseScentSeedsOffensively(),
+            // TODO: Check bombs damage on bosses
+            // (this.hasMediumLogic() && this.hasBombs(4)),
+            this.canPunch(),
+            this.hasSwitchHook()
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can kill underwater enemies
+     * @param {boolean} [canKillWithHook=false] - Whether switch hook can be used
+     * @returns {boolean} - True if the player can kill underwater enemies
+     */
+    canKillUnderwater(canKillWithHook = false) {
+        return [
+            this.hasSword(),
+            this.canKillNormalUsingSeedshooter(),
+            this.canPunch(),
+            canKillWithHook && this.hasSwitchHook()
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can kill normal enemies using satchel
+     * @returns {boolean} - True if the player can kill normal enemies with satchel
+     */
+    canKillNormalUsingSatchel() {
+        // Expect a 50+ seed satchel to ensure we can chain dungeon rooms
+        if (!this.hasSatchel(2)) {
+            return false;
+        }
+
+        return [
+            // Casual logic => only ember
+            this.hasEmberSeeds(),
+            // Medium logic => allow scent or gale+feather
+            this.hasMediumLogic() && [
+                this.hasScentSeeds(),
+                this.hasMysterySeeds(),
+                this.hasGaleSeeds() && this.hasFeather()
+            ].some(condition => condition),
+            // Hard logic => allow gale without feather
+            this.hasHardLogic() && this.hasGaleSeeds()
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can kill normal enemies using seedshooter
+     * @returns {boolean} - True if the player can kill normal enemies with seedshooter
+     */
+    canKillNormalUsingSeedshooter() {
+        // Expect a 50+ seed satchel to ensure we can chain dungeon rooms
+        if (!this.hasSatchel(2)) {
+            return false;
+        }
+
+        return this.hasSeedShooter() && [
+            this.hasEmberSeeds(),
+            this.hasScentSeeds(),
+            this.hasMediumLogic() && [
+                this.hasMysterySeeds(),
+                this.hasGaleSeeds()
+            ].some(condition => condition)
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can kill armored enemies
+     * @returns {boolean} - True if the player can kill armored enemies
+     */
+    canKillArmoredEnemy() {
+        return [
+            this.hasSword(),
+            this.hasSatchel(2) && // Expect 50+ seeds satchel for dungeon chaining
+            this.hasScentSeeds() &&
+            (this.hasSeedShooter() || this.hasMediumLogic()),
+            (this.hasMediumLogic() && this.hasCane()),
+            this.canPunch()
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can kill Pols Voice enemies
+     * @param {boolean} [ranged=false] - Whether ranged attacks are considered
+     * @returns {boolean} - True if the player can kill Pols Voice
+     */
+    canKillPolsVoice(ranged = false) {
+        return [
+            this.canOpenPortal(),
+            this.hasFlute(),
+            this.hasBombs(),
+            this.canUseGaleSeedsOffensively(ranged)
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can kill Armos enemies
+     * @returns {boolean} - True if the player can kill Armos
+     */
+    canKillArmos() {
+        return [
+            this.hasBombs(),
+            this.canUseScentSeedsOffensively()
+            // magic boomerang
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can punch enemies
+     * @returns {boolean} - True if the player can punch
+     */
+    canPunch() {
+        return this.hasMediumLogic() && [
+            this.hasItem("Fist Ring"),
+            this.hasItem("Expert's Ring")
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can trigger levers
+     * @returns {boolean} - True if the player can trigger levers
+     */
+    canTriggerLever() {
+        return [
+            this.canTriggerLeverFromMinecart(),
+            this.hasMediumLogic() && this.hasShovel()
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can trigger levers from minecart
+     * @returns {boolean} - True if the player can trigger levers from minecart
+     */
+    canTriggerLeverFromMinecart() {
+        return [
+            this.hasSword(),
+            this.hasBoomerang(),
+            // TODO: Test that to ensure our understanding is right
+            this.canUseScentSeedsOffensively(),
+            this.canUseMysterySeeds(),
+            this.hasSeedShooter()  // any seed works using slingshot
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can flip spiked beetles
+     * @returns {boolean} - True if the player can flip spiked beetles
+     */
+    canFlipSpikedBeetle() {
+        return [
+            this.hasShield(),
+            this.hasMediumLogic() && this.hasShovel()
+        ].some(condition => condition);
+    }
+
+    /**
+     * Checks if the player can kill spiked beetles
+     * @returns {boolean} - True if the player can kill spiked beetles
+     */
+    can_kill_spiked_beetle() {
+        return (
+            // Regular flip + kill
+            (this.canFlipSpikedBeetle() &&
+                (this.hasSword() ||
+                    this.canKillNormalUsingSatchel() ||
+                    this.canKillNormalUsingSeedshooter())) ||
+            // Instant kill using Gale Seeds
+            this.canUseGaleSeedsOffensively()
+        );
+    }
+
+    /**
+     * Checks if the player can swim.
+     * @returns {boolean} True if a player can swim. If not, then it's false.
+     */
+    ooa_can_swim() {
+        return this.hasFlippers() || this.canSummonDimitri();
+    }
+
+    /**
+     * Checks if the player can swim in deepwater.
+     * @returns {boolean} True if a player can swim in deepwater. If not, then it's false.
+     */
+    ooa_can_swim_deepwater() {
+        return this.hasSirenSuit() || this.canSummonDimitri();
+    }
+
+    /**
+     * Checks if the player can remove rocks blocking caves or other things.
+     * @returns {boolean} True if a player can remove rocks. If not, then it's false.
+     */
+    ooa_can_remove_rockslide() {
+        return this.hasBombs() || this.canSummonRicky();
+    }
+
+    /**
+     * Checks if the player can remove dirt.
+     * @returns {boolean} True if a player can remove dirt. If not, then it's false.
+     */
+    ooa_can_remove_dirt() {
+        return this.hasShovel() || this.hasFlute();
+    }
+
+    /**
+     * Checks if the player can toss a ring.
+     * @returns {boolean} True if a player can toss a ring. If not, then it's false.
+     */
+    ooa_can_toss_ring() {
+        return (
+            this.hasMediumLogic() &&
+            this.hasBracelet() &&
+            this.hasItem('Toss Ring')
+        );
     }
 
 }

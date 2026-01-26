@@ -3,7 +3,7 @@ let defaultMapImages = {
     overworld: "overworld_present",
     dungeons: "d0_present",
     specialAreas: "d9_zeldaRescue"
-}, defaultStageView = "overworld", currentMap = `default/${defaultMapImages[defaultStageView]}`;
+}, defaultStageView = "overworld", currentMap = `default/${defaultMapImages[defaultStageView]}`, connected2archipelago = false;
 
 function drawItems() {
     const itemsElem = document.getElementById("gameItems");
@@ -41,6 +41,11 @@ function drawItems() {
         li.appendChild(a);
         itemsElem.appendChild(li);
     }
+    document.getElementById("goModeItemsNeeded-count").innerHTML = gameLogic.calculateItemsNeededForGameCompletion();
+    const goModeElem = document.getElementById("go-mode");
+    const canBeatGame = parseInt(document.getElementById("goModeItemsNeeded-count").innerHTML) == 0;
+    goModeElem.style.color = canBeatGame ? 'green' : 'red';
+    goModeElem.innerHTML = canBeatGame ? 'Yes' : 'No';
     window.addEventListener("DOMContentLoaded", () => {
         document.getElementById("itemsView").innerHTML = allItemClassifications.map(d => {
             const word = d.split("_").map(g => {
@@ -78,13 +83,18 @@ function goToMap() {
     const image = document.createElement("img");
     image.src = `maps/${currentMap}.png`;
     image.alt = `Map: ${currentMap.split("/")[1].replaceAll("_", " ")}`;
+    const reachableLocations = [];
     for (const position of gameLogic.mapLayout[currentMap]) {
+        if (position.invisible) continue;
         const info = position.array[0];
         if (info?.hidden) continue;
         const marker = document.createElement("button");
         marker.type = "button";
         marker.className = `btn btn-${position.array.filter(i => i.checked).length == position.array.length ? 'secondary' : (() => {
-            return position.array.filter(i => i.reachable()).length == position.array.length ? 'success' : 'danger';
+            return position.array.filter(i => i.reachable()).length == position.array.length ? (() => {
+                position.array.forEach(f => reachableLocations.push(f));
+                return 'success'
+            })() : 'danger';
         })()}`;
         marker.setAttribute("data-bs-toggle", "popover");
         marker.setAttribute("title", info?.providedStartName || info?.providedRegion);
@@ -119,6 +129,10 @@ function goToMap() {
             sanitize: false
         });
     }
+    document.getElementById('reachable-count').innerText = reachableLocations.length;
+    document.getElementById("itemsUserCanGet").innerHTML = reachableLocations.map(d => `<tr><td>${d.checkLocation}</td></tr><tr></tr><tr></tr>${
+        gameLogic.connectedToArchipelago ? '<tr></tr>' : ''
+    }<tr></tr>`).join("")
     mapCanvas.appendChild(image);
     mapSwitchButtonsHandler(button => {
         const appImageMatchesCurrentMap = button.getAttribute("data-mapImage") !== currentMap.split("/")[1]
@@ -163,6 +177,117 @@ function changeOverworldView(view, goToMapAfterwards = true) {
         currentMap = array.join("/");
         goToMap();
     } else return array;
+}
+
+function archipelagoConnector(obj) { // Connects to an Archipelago server
+    $(obj).find("p").text('')
+    if (connected2archipelago) { // disconnects from the archipelago server when the user clicks on the Disconnect From Archipelago button.
+        if ($(obj).find('button[type="submit"]').data("connected")) jQuery(obj).trigger("archipelagoDisconnect");
+        else $(obj).find("p").css("color", "red").text('Please wait for the archipelago server to be fully connected before you disconnect.')
+    } else { // Starts the connection to the Archipelago server.
+        let connectionSuccessful = false;
+        connected2archipelago = true;
+        const originalText = $(obj).find('button[type="submit"]').text();
+        const originalText2 = $("#statusKindof").text();
+        $("#statusKindof").html('<span class="spinner-border spinner-border-sm" aria-hidden="true"></span><span role="status">Connecting To Archipelago...</span>')
+        $(obj).find('button[type="submit"]').attr("disabled", "");
+        $(obj).find('button[type="submit"]').html('<span class="spinner-border spinner-border-sm" aria-hidden="true"></span><span role="status">Connecting To Archipelago...</span>');
+        function handleError(e) { /// handles an error of one occurs during connection.
+            $("#statusKindof").text(originalText2);
+            $(obj).find('button[type="submit"]').attr("disabled", false)
+            $(obj).find('button[type="submit"]').text(originalText);
+            connected2archipelago = false;
+            console.error(e);
+            $(obj).find("p").css("color", "red")
+            $(obj).find("p").html(`Failed to connect to Archipelago's WebSockets.<br>${e.toString()}`);
+        }
+        try {
+            const info = Object.fromEntries(new URLSearchParams($(obj).serialize()));
+            const socket = new WebSocket(`${info.host.startsWith("localhost") || info.host.startsWith("127.0.0.1") ? 'ws' : 'wss'}://${info.host}`);
+            setTimeout(() => { // added this in case archipelago tries to take forever to connect. You are better off having a fast internet connection.
+                if (!connectionSuccessful) {
+                    socket.close();
+                    handleError("Timeout occured. Please try again later.")
+                }
+            }, 35042)
+            let roomInfo;
+            socket.addEventListener("message", async e => {
+                const array = JSON.parse(e.data);
+                for (const info2 of array) {
+                    switch (info2.cmd) {
+                        case "RoomInfo": {
+                            if (info2.password == false || info.password) {
+                                roomInfo = info2;
+                                roomInfo.tags.push("Tracker");
+                                if (info.password) roomInfo.password = info.password;
+                                info2.cmd = "GetDataPackage";
+                            } else {
+                                handleError("Please enter in the password");
+                                $(obj).append(`<label for="password">Password</label><input class="form-control" type="password" id="password" name="password" required/>`);
+                            }
+                            break;
+                        } case "DataPackage": {
+                            const games = info2.data.games;
+                            function uuidGenV4() { // generates a v4 UUID for archipelago
+                                const G = [];
+                                for (let Q = 0; Q < 36; Q++) G.push(Math.floor(Math.random() * 16));
+                                return G[14] = 4, G[19] = G[19] &= -5, G[19] = G[19] |= 8, G[8] = G[13] = G[18] = G[23] = "-", G.map((Q) => Q.toString(16)).join("")
+                            }
+                            for (const game in games) {
+                                if (game == "Archipelago") continue;
+                                Object.assign(info2, {
+                                    cmd: "Connect",
+                                    password: roomInfo.password || '',
+                                    name: info.user,
+                                    game,
+                                    slot_data: true,
+                                    items_handling: 7,
+                                    uuid: uuidGenV4(),
+                                    tags: roomInfo.tags,
+                                    version: roomInfo.version,
+                                });
+                                for (const location in games[game].location_name_to_id) {
+                                    const locationInfo = trackerStuff.layout.searchFor(location);
+                                    if (locationInfo.cat && locationInfo.realLocationName) trackerStuff.layout[locationInfo.cat][locationInfo.realLocationName][location].id = games[game].location_name_to_id[location];
+                                }
+                                for (const item in games[game].item_name_to_id) {
+                                    const itemInfo = trackerStuff.itemLayout.searchFor(item);
+                                    if (itemInfo.cat) trackerStuff.itemLayout[itemInfo.cat][itemInfo.realItemName || item].id = games[game].item_name_to_id[item]
+                                }
+                            }
+                            break;
+                        } case "Connected": {
+                            jQuery(obj).bind("archipelagoDisconnect", () => {
+                                $(obj).find('button[type="submit"]').attr("data-connected", false);
+                                socket.close();
+                                $(obj).find('button[type="submit"]').text(originalText);
+                                $("#statusKindof").html(originalText2);
+                                connected2archipelago = false;
+                                connectionSuccessful = false;
+                                $(obj).find("p").text('Successfully disconnected from the Archipelago Server')
+                            })
+                            connectionSuccessful = true;
+                            $("#statusKindof").text("Connected To Archipelago")
+                            $(obj).find("p").css("color", "lime");
+                            $(obj).find('button[type="submit"]').attr("data-connected", true);
+                            $(obj).find('button[type="submit"]').attr("disabled", false);
+                            $(obj).find('button[type="submit"]').text("Disconnect From Archipelago");
+                            $(obj).find("p").text(`Successfully connected to the Archipelago server!`);
+                            break;
+                        } case "ReceivedItems": {
+                            for (const archipelagoItemInfo of info2.items) {
+                                console.log(archipelagoItemInfo);
+                            }
+                            break;
+                        }
+                    }
+                }
+                if (!connectionSuccessful) socket.send(JSON.stringify(array));
+            })
+        } catch (e) {
+            handleError(e);
+        }
+    }
 }
 
 document.getElementById("overworld-view-select").addEventListener("change", e => {

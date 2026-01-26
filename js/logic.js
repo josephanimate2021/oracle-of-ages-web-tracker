@@ -45,21 +45,28 @@ class AgesGameLogic {
         }
 
         // All dungeons in Ages.
-        this.dungeons = [
-            "Maku Path",
-            "Spirit's Grave",
-            "Wing Dungeon",
-            "Moonlit Grotto",
-            "Skull Dungeon",
-            "Crown Dungeon",
-            "Mermaid's Cave",
-            "Jabu Jabu's Belly",
-            "Ancient Tomb"
-        ]
+        this.dungeonsReachable = {
+            "Maku Path": () => this.canAccessLynnaCity() && (
+                this.can_remove_dirt(false) || this.canBeatVernanFirstStage()
+            ),
+            "Spirit's Grave": () => this.canUseEmberSeeds(false) && this.hasItem("Graveyard Key"),
+            "Wing Dungeon": () => (
+                this.canEnterDekuForest() && this.hasBombs()
+            ) || ( // For Present D2 (Randomizer Usage Only)
+                this.isRandomizer() && this.canEnterFairiesWoods() && this.canGoBackToPresent()
+            ),
+            "Moonlit Grotto": () => false,
+            "Skull Dungeon": () => false,
+            "Crown Dungeon": () => false,
+            "Mermaid's Cave": () => false,
+            "Jabu Jabu's Belly": () => false,
+            "Ancient Tomb": () => false
+        }
+        this.dungeons = Object.keys(this.dungeonsReachable);
 
         // Logic Settings and other stuff.
         this.gameSettings = {
-            logicDifficulty: "basic",
+            logic_difficulty: "basic",
             required_essences_for_maku_seed: 8,
             required_slates: 4,
             randomizerMode: true // true by default since most people usually proitize a tracker for a randomizer. This can still be changed anytime.
@@ -119,6 +126,60 @@ class AgesGameLogic {
             this.hasItem("Progressive Sword"),
             acceptBiggoron && this.hasItem("Biggoron's Sword")
         ].some(Boolean);
+    }
+
+    /**
+     * Checks if the player can beat Veran in Ambi's Palace.
+     * @returns {boolean} True if the player cab beat the first stage of Vernan in Ambi's Palace. if not, then it's false.
+     */
+    canBeatVernanFirstStage() {
+        return this.canAccessAmbisPalace() && this.hasMysterySeeds() && this.canUseSeeds() && this.hasSwitchHook() && (
+            this.hasSword() || this.canPunch()
+        )
+    }
+
+    calculateItemsNeededForGameCompletion() {
+        let neededItems = 0;
+        for (let i = 1; i <= this.gameSettings.required_essences_for_maku_seed; i++) {
+            const essence = Object.keys(items).find(k => items[k].imageName == `essences/d${i}`);
+            if (essence && !this.hasItem(essence)) neededItems++
+        }
+        if (!this.hasSword(this.hasMediumLogic())) neededItems++;
+        if (!this.hasBombs()) neededItems++;
+        if (!this.hasSwitchHook()) neededItems++;
+        if (!this.canUseMysterySeeds()) neededItems++;
+        if (this.gameSettings.isBeatingGannon) {
+            if (!this.hasMediumLogic() && !this.hasNobleSword()) neededItems++;
+            if (!this.hasSeedShooter() || (
+                this.hasHardLogic() && !this.canUseSeeds()
+            )) neededItems++;
+            if (
+                !this.hasMediumLogic() 
+                && !this.canUseEmberSeeds(false)
+            ) neededItems++;
+            if (this.hasHardLogic()) {
+                if (!this.hasEmberSeeds()) neededItems++;
+                if (!this.hasScentSeeds()) neededItems++;
+                if (!this.hasGaleSeeds()) neededItems++
+            }
+        }
+        return neededItems;
+    }
+
+    /**
+     * Checks if the player has access to the present shore.
+     * @returns {boolean} True if the player can access the shore in the present.
+     */
+    hasAccessToPresentShore() {
+        return this.hasItem("Ricky's Gloves") || (
+            this.can_swim_deepwater()
+            || this.hasBracelet()
+            || this.canGoBackToPresent()
+            || (
+                this.canBreakBush()
+                && this.canJump1Wide()
+            )
+        )
     }
 
     /**
@@ -245,8 +306,35 @@ class AgesGameLogic {
         ].some(Boolean);
     }
 
+    /**
+     * Checks to see if a player has access to Lynna City.
+     * @returns {boolean} True if a player has access to Lynna City. If not, then it's false.
+     */
     canAccessLynnaCity() {
         return this.canBreakBush() || this.canOpenPortal()
+    }
+
+    /**
+     * Checks to see if a player can use Rafton's Raft.
+     * @returns {boolean} True if a player can use Rafton's Raft. If not, then it's false.
+     */
+    hasAccessToRaftonsRaft() {
+        return this.canAccessLynnaCity() && this.hasItem("Cheval Rope") && this.hasItem("Island Chart");
+    }
+    
+    /**
+     * Checks to see if a player has access to Ambi's Palace.
+     * @returns {boolean} True if a player has access to Ambi's Palace. If not, then it's false.
+     */
+    canAccessAmbisPalace() {
+        return this.canAccessLynnaCity() && ((
+            (
+                this.hasHardLogic()
+                && this.canUseScentSeedsForSmell()
+                && this.canUsePegasusSeeds()
+            )
+            || this.hasSirenSuit() || this.canSwitchPastAndPresent()
+        ));
     }
 
     /**
@@ -317,7 +405,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the option is set to medium logic, false otherwise.
      */
     hasMediumLogic() {
-        return this.gameSettings.logicDifficulty === "medium" || this.gameSettings.logicDifficulty === "hard";
+        return this.gameSettings.logic_difficulty === "medium" || this.gameSettings.logic_difficulty === "hard";
     }
 
     /**
@@ -325,7 +413,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the option is set to hard logic, false otherwise.
      */
     hasHardLogic() {
-        return this.gameSettings.logicDifficulty === "hard";
+        return this.gameSettings.logic_difficulty === "hard";
     }
 
     /**
@@ -334,8 +422,12 @@ class AgesGameLogic {
      * @returns {boolean} True if the player has essences, false otherwise.
      */
     hasEssences(target) {
-        const essences = Object.keys(items).filter(i => items[i].imageName.startsWith("essences") && items[i].count > 0);
-        return essences.length >= target;
+        let essences = 0;
+        for (let i = 1; i <= target; i++) {
+            const essence = Object.keys(items).find(k => items[k].imageName == `essences/d${i}` && items[k].count > 0);
+            if (essence && this.hasItem(essence)) essences++
+        }
+        return essences >= target;
     }
 
     /**
@@ -465,6 +557,7 @@ class AgesGameLogic {
     canSummonDimitri() {
         return this.hasItem("Dimitri's Flute");
     }
+
 
     /**
      * Checks if the player can open a time portal.
@@ -672,6 +765,46 @@ class AgesGameLogic {
         ].some(Boolean) && this.hasFeather();
     }
 
+    canAccessChevalsGrave() {
+        return this.canUseEmberSeeds(false) && (
+            this.canKillNormalEnemy(true) || this.canJump3Wide()
+        )
+    }
+
+    canEnterFairiesWoods() {
+        return this.canAccessLynnaCity() && (
+            this.hasFlippers()
+            || this.hasBracelet()
+            || this.canSwitchPastAndPresent()
+            || ( // it's possible to switch hook the octorok through the boulder to enter fairies' woods. 
+                this.hasHardLogic()
+                && this.hasSwitchHook()
+            )
+        )
+    }
+
+    canEnterDekuForest() {
+        return this.canAccessLynnaCity() && (
+            this.hasBracelet()
+            || this.canSwitchPastAndPresent()
+        )
+    }
+
+    /**
+     * Checks to see if a player can get to tingle.
+     * @returns {boolean} True if a player can get to Tingle. If not, then it's false.
+     */
+    canGetToTingle() {
+        return this.hasAccessToPresentShore() && (
+            (
+                this.hasSeedShooter()
+                || this.canSummonRicky()
+                || this.hasItem("Ricky's Gloves")
+                || this.canGoBackToPresent() // lynna city and lynna village are connected, so no need to create a different logic                    
+            ) && this.canBreakTingleBalloon()
+        )
+    }
+
     /**
      * Checks if the player can harvest a regrowing bush.
      * @returns {boolean} True if the player can harvest a regrowing bush. If not, then it's false.
@@ -748,15 +881,17 @@ class AgesGameLogic {
 
     /**
      * Checks if the player can harvest a tree.
+     * @param {boolean} - True if the player can use dimitri for tree harvesting.
      * @returns {boolean} True if the player can harvest a tree. If not, then it's false.
      */
-    canHarvestTree() {
+    canHarvestTree(canUseDimitri = true) {
         return (
             this.canUseSeeds() &&
             [
                 this.hasSword(),
                 this.canPunch(),
                 (
+                    canUseDimitri &&
                     this.hasMediumLogic() &&
                     this.canSummonDimitri()
                 )
@@ -771,8 +906,20 @@ class AgesGameLogic {
     canPushEnemy() {
         return [
             // hasRod(),
-            this.hasShield()
+            this.hasShield(),
+            this.hasItem("Rod Of Seasons")
         ].some(Boolean);
+    }
+
+    canAccessCresentIsland(needsPresentIsland = true) {
+        return this.canAccessLynnaCity() && (
+            this.can_swim_deepwater(needsPresentIsland) || (
+                needsPresentIsland ? (
+                    this.hasAccessToRaftonsRaft() 
+                    && this.canGoBackToPresent()
+                ) : this.hasAccessToRaftonsRaft()
+            )
+        )
     }
 
     /**
@@ -1029,8 +1176,10 @@ class AgesGameLogic {
      * Checks if the player can swim in deepwater.
      * @returns {boolean} True if a player can swim in deepwater. If not, then it's false.
      */
-    can_swim_deepwater() {
-        return this.hasSirenSuit() || this.canSummonDimitri();
+    can_swim_deepwater(needsDimitri = true) {
+        return needsDimitri ? (
+            this.hasSirenSuit() || this.canSummonDimitri()
+        ) : this.hasSirenSuit();
     }
 
     /**
@@ -1043,10 +1192,11 @@ class AgesGameLogic {
 
     /**
      * Checks if the player can remove dirt.
+     * @param {boolean} - True if a user can use an animal companionn to remove dirt.
      * @returns {boolean} True if a player can remove dirt. If not, then it's false.
      */
-    can_remove_dirt() {
-        return this.hasShovel() || this.hasFlute();
+    can_remove_dirt(canUseAnimalCompanion = true) {
+        return this.hasShovel() || (canUseAnimalCompanion && this.hasFlute());
     }
 
     /**

@@ -56,12 +56,21 @@ class AgesGameLogic {
             "Jabu Jabu's Belly",
             "Ancient Tomb"
         ]
+
+        // Logic Settings and other stuff.
+        this.gameSettings = {
+            logicDifficulty: "basic",
+            required_essences_for_maku_seed: 8,
+            required_slates: 4,
+            randomizerMode: true // true by default since most people usually proitize a tracker for a randomizer. This can still be changed anytime.
+        }
+
     };
 
     /**
      * Finds info of a location using a given region name
      * @param {string} region - The region name from the locations variable.
-     * @returns {object} - The array full of any info that was found during the locations variable loop.
+     * @returns {object} The array full of any info that was found during the locations variable loop.
      */
     findLocationInfoByRegionName(region) {
         const array = []
@@ -78,7 +87,7 @@ class AgesGameLogic {
     /**
      * Finds info of a location using a starting location name.
      * @param {string} locationStartName - The name of a location to start with.
-     * @returns {object} - The array full of any info that was found during the locations variable loop.
+     * @returns {object} The array full of any info that was found during the locations variable loop.
      */
     findLocationInfoWithStartName(locationStartName) {
         const array = []
@@ -97,7 +106,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the player is playing in randomizer mode, false otherwise.
      */
     isRandomizer() {
-        return true; // Placeholder until we have settings implemented
+        return this.gameSettings.randomizerMode;
     }
 
     /**
@@ -229,11 +238,15 @@ class AgesGameLogic {
      * Checks if the player has ember seeds.
      * @returns {boolean} True if the player has ember seeds, false otherwise.
      */
-    hasEmberSeeds() {
+    hasEmberSeeds(allowsMysterySeeds = true) {
         return [
             this.hasItem("Ember Seeds"),
-            (this.hasMediumLogic() && this.hasMysterySeeds())
+            (allowsMysterySeeds && this.hasMediumLogic() && this.hasMysterySeeds())
         ].some(Boolean);
+    }
+
+    canAccessLynnaCity() {
+        return this.canBreakBush() || this.canOpenPortal()
     }
 
     /**
@@ -301,20 +314,18 @@ class AgesGameLogic {
 
     /**
      * Checks if the option is set to medium logic.
-     * @param {object} gameSettings - The current game settings.
      * @returns {boolean} True if the option is set to medium logic, false otherwise.
      */
-    hasMediumLogic(gameSettings) {
-        return gameSettings.logicDifficulty === "medium" || gameSettings.logicDifficulty === "hard";
+    hasMediumLogic() {
+        return this.gameSettings.logicDifficulty === "medium" || this.gameSettings.logicDifficulty === "hard";
     }
 
     /**
      * Checks if the option is set to hard logic.
-     * @param {object} gameSettings - The current game settings.
      * @returns {boolean} True if the option is set to hard logic, false otherwise.
      */
-    hasHardLogic(gameSettings) {
-        return gameSettings.logicDifficulty === "hard";
+    hasHardLogic() {
+        return this.gameSettings.logicDifficulty === "hard";
     }
 
     /**
@@ -329,11 +340,10 @@ class AgesGameLogic {
 
     /**
      * Checks if the player has enough essences for the Maku Seed.
-     * @param {object} gameSettings - The current game settings
      * @returns {boolean} True if the player has enough essences for the Maku Seed, false otherwise.
      */
-    hasEssencesForMakuSeed(gameSettings) {
-        return this.hasEssences(gameSettings.required_essences_for_maku_seed);
+    hasEssencesForMakuSeed() {
+        return this.hasEssences(this.gameSettings.required_essences_for_maku_seed);
     }
 
     /**
@@ -345,8 +355,12 @@ class AgesGameLogic {
         return this.hasItem("Slate", targetCount);
     }
 
-    hasEnoughSlates(gameSettings) {
-        return this.hasSlates(gameSettings.required_slates);
+    /**
+     * Checks if the player has enough slates for a certain check.
+     * @returns {boolean} True if the player has enough states for a certain check.
+     */
+    hasEnoughSlates() {
+        return this.hasSlates(this.gameSettings.required_slates);
     }
 
     /**
@@ -540,7 +554,7 @@ class AgesGameLogic {
      */
     hasSeedKindCount(count) {
         let seedCount = 0;
-        seedCount += this.hasEmberSeeds() ? 1 : 0;
+        seedCount += this.hasEmberSeeds(false) ? 1 : 0;
         seedCount += this.hasMysterySeeds() ? 1 : 0;
         seedCount += this.hasScentSeeds() ? 1 : 0;
         seedCount += this.hasPegasusSeeds() ? 1 : 0;
@@ -555,7 +569,7 @@ class AgesGameLogic {
      */
     canUseEmberSeeds(acceptMysterySeeds = false) {
         return this.canUseSeeds() &&
-            (this.hasEmberSeeds() ||
+            (this.hasEmberSeeds(acceptMysterySeeds) ||
                 (acceptMysterySeeds &&
                     this.isUsingMediumLogic() &&
                     this.hasMysterySeeds()));
@@ -1007,7 +1021,7 @@ class AgesGameLogic {
      * Checks if the player can swim.
      * @returns {boolean} True if a player can swim. If not, then it's false.
      */
-    ooa_can_swim() {
+    can_swim() {
         return this.hasFlippers() || this.canSummonDimitri();
     }
 
@@ -1015,7 +1029,7 @@ class AgesGameLogic {
      * Checks if the player can swim in deepwater.
      * @returns {boolean} True if a player can swim in deepwater. If not, then it's false.
      */
-    ooa_can_swim_deepwater() {
+    can_swim_deepwater() {
         return this.hasSirenSuit() || this.canSummonDimitri();
     }
 
@@ -1023,7 +1037,7 @@ class AgesGameLogic {
      * Checks if the player can remove rocks blocking caves or other things.
      * @returns {boolean} True if a player can remove rocks. If not, then it's false.
      */
-    ooa_can_remove_rockslide() {
+    can_remove_rockslide() {
         return this.hasBombs() || this.canSummonRicky();
     }
 
@@ -1031,7 +1045,7 @@ class AgesGameLogic {
      * Checks if the player can remove dirt.
      * @returns {boolean} True if a player can remove dirt. If not, then it's false.
      */
-    ooa_can_remove_dirt() {
+    can_remove_dirt() {
         return this.hasShovel() || this.hasFlute();
     }
 
@@ -1039,7 +1053,7 @@ class AgesGameLogic {
      * Checks if the player can toss a ring.
      * @returns {boolean} True if a player can toss a ring. If not, then it's false.
      */
-    ooa_can_toss_ring() {
+    can_toss_ring() {
         return (
             this.hasMediumLogic() &&
             this.hasBracelet() &&

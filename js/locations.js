@@ -24,7 +24,7 @@ const locations = {
         "flag_byte": 0xc6d0,
         "bit_mask": 0x08,
         "room": 0x0079,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canBreakTingleBalloon(),
         "symbolic_name": "tingleGift",
     },
     "Forest of Time: Tingle Upgrade": {
@@ -33,7 +33,7 @@ const locations = {
         "flag_byte": 0xc6d8,
         "bit_mask": 0x40,
         "room": 0x0079,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canBreakTingleBalloon() && gameLogic.hasKindSeedCount(4),
         "symbolic_name": "tingleUpgrade",
     },
 
@@ -43,7 +43,7 @@ const locations = {
         "vanilla_item": "Rupees (30)",
         "flag_byte": 0xc749,
         "room": 0x0049,
-        "reachable": () => gameLogic.canUseEmberSeeds(false)
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canUseEmberSeeds(false)
     },
     "Lynna City: Shop Item #1": {
         "region_id": "lynna shop",
@@ -54,7 +54,10 @@ const locations = {
         "bit_mask": 0x20,
         "scouting_byte": 0xc75e,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() 
+        /* 
+        I will have to work on including a rupee count as part of the logic as well for all shops, not just this one. 
+        */,
         "symbolic_name": "lynnaShop1",
     },
     "Lynna City: Shop Item #2": {
@@ -66,7 +69,7 @@ const locations = {
         "bit_mask": 0x40,
         "scouting_byte": 0xc75e,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         "symbolic_name": "lynnaShop2",
     },
     "Lynna City: Shop Item #3": {
@@ -78,7 +81,7 @@ const locations = {
         "bit_mask": 0x80,
         "scouting_byte": 0xc75e,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         "symbolic_name": "lynnaShop3",
     },
     "Lynna City: Hidden Shop Item #1": {
@@ -89,7 +92,7 @@ const locations = {
         "bit_mask": 0x01,
         "scouting_byte": 0xc77e,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent(),
         "symbolic_name": "hiddenShop1",
     },
     "Lynna City: Hidden Shop Item #2": {
@@ -100,7 +103,7 @@ const locations = {
         "bit_mask": 0x02,
         "scouting_byte": 0xc77e,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent(),
         "symbolic_name": "hiddenShop2",
     },
     "Lynna City: Hidden Shop Item #3": {
@@ -111,7 +114,7 @@ const locations = {
         "bit_mask": 0x08,
         "scouting_byte": 0xc77e,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent(),
         "symbolic_name": "hiddenShop3",
     },
     "Lynna City: Mayor Plen's House": {
@@ -120,7 +123,7 @@ const locations = {
         "flag_byte": 0xc8f9,
         "room": 0x03f9,
         "map_tile": 0x57,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasLongHook(),
     },
     "Lynna City: Vasu's Gift": {
         "region_id":"vasu's gift",
@@ -128,7 +131,7 @@ const locations = {
         "flag_byte": 0xc615,
         "bit_mask": 0x01,
         "room": 0x02ee,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         "symbolic_name": "vasuGift",
     },
     "Lynna City: Maku Tree gift": {
@@ -145,7 +148,7 @@ const locations = {
         "vanilla_item": "Dumbbell",
         "flag_byte": 0xc7e7,
         "room": 0x02e7,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasItem("Doggie Mask"),
         "symbolic_name": "mamamuYan",
     },
     "Lynna City: Comedian Trade": {
@@ -153,7 +156,7 @@ const locations = {
         "vanilla_item": "Funny Joke",
         "flag_byte": 0xc756,
         "room": 0x0056,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasItem("Cheesy Mustache"),
         "symbolic_name": "comedian",
     },
     "Lynna Village: Gasha Farmer": {
@@ -161,7 +164,7 @@ const locations = {
         "vanilla_item": "Gasha Seed",
         "flag_byte": 0xc8fc,
         "room": 0x03fc,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         "symbolic_name": "gashaFarmer",
     },
     "Lynna Village: Advance Shop Item #1": {
@@ -173,7 +176,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "conditional": true,
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasAdvanceShop() && gameLogic.canAccessLynnaCity(),
         "symbolic_name": "advanceShop1",
     },
     "Lynna Village: Advance Shop Item #2": {
@@ -185,7 +188,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "conditional": true,
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasAdvanceShop() && gameLogic.canAccessLynnaCity(),
         "symbolic_name": "advanceShop2",
     },
     "Lynna Village: Advance Shop Item #3": {
@@ -197,7 +200,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "conditional": true,
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasAdvanceShop() && gameLogic.canAccessLynnaCity(),
         "symbolic_name": "advanceShop3",
     },
     "Lynna Village: Baseball": {
@@ -206,7 +209,7 @@ const locations = {
         "flag_byte": 0xc6d9,
         "bit_mask": 0x02,
         "room": 0x02e9,
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasSword() && gameLogic.canAccessLynnaCity(),
         "symbolic_name": "lynnaShootingGallery",
     },
     "Lynna Village: Postman Trade": {
@@ -214,7 +217,7 @@ const locations = {
         "vanilla_item": "Stationery",
         "flag_byte": 0xc72f,
         "room": 0x022f, 
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasItem("Poe Clock") && gameLogic.canAccessLynnaCity(),
         "symbolic_name": "postman",
     },
     "Lynna Village: Toilet Hand Trade": {
@@ -222,7 +225,7 @@ const locations = {
         "vanilla_item": "Stink Bag",
         "flag_byte": 0xc73e,
         "room": 0x023e,
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasItem("Stationery") && gameLogic.canAccessLynnaCity(),
         "symbolic_name": "toiletHand",
     },
     "Lynna Village: Depressed Child Trade": {
@@ -230,7 +233,7 @@ const locations = {
         "vanilla_item": "Touching Book",
         "flag_byte": 0xc7f3,
         "room": 0x02f3,
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasItem("Funny Joke") && gameLogic.canAccessLynnaCity(),
         "symbolic_name": "sadBoi",
     },
 
@@ -241,7 +244,7 @@ const locations = {
         "flag_byte": 0xc9e1,
         "room": 0x04e1,
         "map_tile": 0x176,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         "symbolic_name": "towerWorker",
     },
     "Black Tower (Past): Heart Piece": {
@@ -249,7 +252,7 @@ const locations = {
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc886,
         "room": 0x0186,
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasShovel() && gameLogic.canAccessLynnaCity(),
         "symbolic_name": "blackTowerHP",
     },
 
@@ -287,7 +290,9 @@ const locations = {
         "vanilla_item": "Ricky's Gloves",
         "flag_byte": 0xc798,
         "room": 0x0098,
-        "reachable": () => false,
+        "reachable": () => gameLogic.can_remove_dirt() && (
+            gameLogic.canBreakBush() || (gameLogic.hasMediumLogic() && gameLogic.canGoBackToPresent())
+        ) && (gameLogic.hasFeather() || gameLogic.hasBracelet()),
         "symbolic_name": "southShoreDirt",
     },
     "South Shore (Past): Rafton Trade": {
@@ -295,7 +300,7 @@ const locations = {
         "vanilla_item": "Sea Ukulele",
         "flag_byte": 0xc71f,
         "room": 0x021f,
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasItem("Magic Oar") && gameLogic.canAccessLynnaCity(),
         "symbolic_name": "rafton",
     },
 
@@ -306,7 +311,7 @@ const locations = {
         "flag_byte": 0xcabf,
         "room": 0x05bf,
         "map_tile": 0x5b,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canUseEmberSeeds() && gameLogic.hasBracelet() && (gameLogic.hasFeather() || gameLogic.hasFlippers()),
         "symbolic_name": "chevalTest",
     },
     "Yoll Graveyard: Cheval's Invention": {
@@ -315,7 +320,7 @@ const locations = {
         "flag_byte": 0xcab6,
         "room": 0x05b6,
         "map_tile": 0x5b,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canUseEmberSeeds() && gameLogic.hasFlippers(),
         "symbolic_name": "chevalInvention",
     },
     "Yoll Graveyard: Grave Under The Tree": {
@@ -324,7 +329,7 @@ const locations = {
         "flag_byte": 0xcaed,
         "room": 0x05ed,
         "map_tile": 0x8d,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canUseEmberSeeds(),
         "symbolic_name": "graveUnderTree",
     },
     "Yoll Graveyard: Syrup Shop Item #1": {
@@ -335,7 +340,7 @@ const locations = {
         "bit_mask": 0x80,
         "scouting_byte": 0xc8ed,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canUseEmberSeeds() && gameLogic.hasFlippers(),
         "symbolic_name": "syrupShop1",
     },
     "Yoll Graveyard: Syrup Shop Item #2": {
@@ -346,7 +351,7 @@ const locations = {
         "bit_mask": 0x20,
         "scouting_byte": 0xc8ed,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canUseEmberSeeds() && gameLogic.hasFlippers(),
         "symbolic_name": "syrupShop2",
     },
     "Yoll Graveyard: Syrup Shop Item #3": {
@@ -357,7 +362,7 @@ const locations = {
         "bit_mask": 0x40,
         "scouting_byte": 0xc8ed,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canUseEmberSeeds() && gameLogic.hasFlippers(),
         "symbolic_name": "syrupShop3",
     },
     "Yoll Graveyard: Poe's Gift": {
@@ -365,7 +370,7 @@ const locations = {
         "vanilla_item": "Poe Clock",
         "flag_byte": 0xc77c,
         "room": 0x007c,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canUseEmberSeeds() && gameLogic.hasItem("Graveyard Key") && gameLogic.hasBracelet(),
         "symbolic_name": "graveyardPoe",
     },
     "Yoll Graveyard: Heart Piece": {
@@ -373,7 +378,7 @@ const locations = {
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc78b,
         "room": 0x008b,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canUseEmberSeeds() && gameLogic.hasBracelet(),
         "symbolic_name": "yollGraveyardHP",
     },
 
@@ -383,7 +388,7 @@ const locations = {
         "vanilla_item": "Rupees (20)",
         "flag_byte": 0xc784,
         "room": 0x0084,
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasFeather() && (gameLogic.hasFlippers() || gameLogic.hasBracelet()) && gameLogic.canAccessLynnaCity(),
     },
     "Deku Forest: Chest in Central Cave": {
         "region_id": "deku forest cave east",
@@ -391,7 +396,9 @@ const locations = {
         "flag_byte": 0xcab3,
         "room": 0x05b3,
         "map_tile": 0x172,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && (
+            gameLogic.hasBracelet() || gameLogic.hasFeather()
+        ) && ((gameLogic.hasMediumLogic() && gameLogic.canPushEnemy()) || gameLogic.canKillNormalEnemy(true, true)),
     },
     "Deku Forest: Chest in Path to Seed Tree": {
         "region_id": "deku forest cave west",
@@ -399,7 +406,9 @@ const locations = {
         "flag_byte": 0xcab5,
         "room": 0x05b5,
         "map_tile": 0x171,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasBracelet() && (
+            gameLogic.hasSwitchHook() || gameLogic.hasFeather()
+        ),
     },
     "Deku Forest: Soldier's Reward": {
         "region_id": "deku forest soldier",
@@ -407,7 +416,7 @@ const locations = {
         "flag_byte": 0xc6d9,
         "bit_mask": 0x04,
         "room": 0x0172,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasBracelet() && gameLogic.hasMysterySeeds(),
         "symbolic_name": "dekuForestSoldier",
     },
     "Deku Forest: Terrace in Cave Under Tree": {
@@ -415,7 +424,7 @@ const locations = {
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xcab1,
         "room": 0x05b1,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasBracelet() && gameLogic.hasEmberSeeds(false),
         "symbolic_name": "dekuForestHP",
     },
 

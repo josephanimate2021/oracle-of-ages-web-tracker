@@ -44,7 +44,7 @@ const items = {
         'classification': "progression",
         'id': 0x0a,
         'imageName': 'switchhook',
-        'limit': 2
+        'limit': 1
     },
     "Cane of Somaria": {
         'classification': "progression",

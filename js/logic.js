@@ -12,36 +12,403 @@ class AgesGameLogic {
         // Show progression items by default.
         this.showItemsWithClassification = "progression"
 
-        // The Map Layout for Oracle of Ages
-        this.mapLayout = {
-            "default/overworld_present": [ // Overworld Present Locations
-                { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
-                { x: 360, y: 200, array: this.findLocationInfoByRegionName("mayor plen's house") },
-                { x: 462, y: 125, array: this.findLocationInfoByRegionName("starting item") },
-                { x: 495, y: 120, array: this.findLocationInfoByRegionName("nayru's house") },
-            ],
-            "ingame/overworld_present": [ // Overworld Present Ingame Locations
-                { x: 163, y: 115, array: this.findLocationInfoByRegionName("mayor plen's house") },
-                { x: 147, y: 115, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
-                { x: 179, y: 115, array: this.findLocationInfoByRegionName("vasu's gift") },
-                // { x: 179, y: 99, array: this.findLocationInfoWithStartName("Hero's Cave") },
-                { x: 195, y: 99, array: this.findLocationInfoByRegionName("lynna city chest") },
-                { x: 195, y: 83, array: this.findLocationInfoByRegionName("starting item") },
-                { x: 211, y: 83, array: this.findLocationInfoByRegionName("nayru's house") },
-            ],
-            "ingame/overworld_past": [ // Overworld Past Ingame Locations
-                { x: 179, y: 99, array: this.findLocationInfoWithStartName("Maku Path") },
-            ],
-            "default/d0_past": [ // Maku Path Locations
-                { x: 66, y: 50, array: this.findLocationInfoByRegionName("maku path heartpiece") },
-                { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 key chest") },
-                { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 basement") },
-            ],
-            "default/d1": [ // Spirit's Grave Locations
-                { x: 310.5, y: 210, array: this.findLocationInfoByRegionName("d1 one-button chest") },
-                { x: 405, y: 178, array: this.findLocationInfoByRegionName("d1 two-button chest") },
-                { x: 303, y: 380, array: this.findLocationInfoByRegionName("d1 crystal room") }
-            ]
+        // The maps in Ages.
+        this.maps = {
+            "symmetry_city_present": {
+                layouts: {
+                    default: []
+                },
+                roomCondtionals: [
+                    {
+                        min: 0x012,
+                        max: 0x014
+                    },
+                    {
+                        min: 0x002,
+                        max: 0x004
+                    }
+                ]
+            },
+            "symmetry_city_past": {
+                layouts: {
+                    default: []
+                },
+                roomCondtionals: [
+                    {
+                        min: 0x112,
+                        max: 0x114
+                    },
+                    {
+                        min: 0x102,
+                        max: 0x104
+                    }
+                ]
+            },
+            "animal_companion_regions": {
+                layouts: {
+                    default: []
+                },
+                roomCondtionals: [
+                    {
+                        equals_to: 0x035
+                    },
+                    {
+                        min: 0x036,
+                        max: 0x037
+                    },
+                    {
+                        min: 0x026,
+                        max: 0x027
+                    },
+                    {
+                        min: 0x016,
+                        max: 0x017
+                    },
+                    {
+                        min: 0x006,
+                        max: 0x007
+                    }
+                ]
+            },
+            "overworld_present": {
+                layouts: {
+                    default: [
+                        { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
+                        { x: 360, y: 200, array: this.findLocationInfoByRegionName("mayor plen's house") },
+                        { x: 462, y: 125, array: this.findLocationInfoByRegionName("starting item") },
+                        { x: 495, y: 120, array: this.findLocationInfoByRegionName("nayru's house") },
+                    ],
+                    ingame: [
+                        { x: 163, y: 115, array: this.findLocationInfoByRegionName("mayor plen's house") },
+                        { x: 147, y: 115, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
+                        { x: 179, y: 115, array: this.findLocationInfoByRegionName("vasu's gift") },
+                        // { x: 179, y: 99, array: this.findLocationInfoWithStartName("Hero's Cave") },
+                        { x: 195, y: 99, array: this.findLocationInfoByRegionName("lynna city chest") },
+                        { x: 195, y: 83, array: this.findLocationInfoByRegionName("starting item") },
+                        { x: 211, y: 83, array: this.findLocationInfoByRegionName("nayru's house") },
+                    ]
+                },
+                roomCondtionals: [
+                    {
+                        equals_to: 0x10E
+                    },
+                    {
+                        min: 0x000,
+                        max: 0x0FF
+                    }
+                ]
+            },
+            "overworld_past": {
+                layouts: {
+                    default: [
+                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("maku path heartpiece") },
+                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 key chest") },
+                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 basement") },
+                    ],
+                    ingame: [
+                        { x: 179, y: 99, array: this.findLocationInfoWithStartName("Maku Path") },
+                    ]
+                },
+                roomCondtionals: [
+                    {
+                        min: 0x110,
+                        max: 0x1FF
+                    },
+                    {
+                        min: 0x100,
+                        max: 0x10D
+                    }
+                ]
+            },
+            "underwater_present": {
+                layouts: {
+                    default: []
+                },
+                roomCondtionals: [
+                    {
+                        min: 0x2D0,
+                        max: 0x2DD
+                    },
+                    {
+                        min: 0x2C0,
+                        max: 0x2CD
+                    },
+                    {
+                        min: 0x2B0,
+                        max: 0x2BD
+                    },
+                    {
+                        min: 0x2A0,
+                        max: 0x2AD
+                    },
+                    {
+                        min: 0x290,
+                        max: 0x29D
+                    }
+                ]
+            },
+            "underwater_past": {
+                layouts: {
+                    default: []
+                },
+                roomCondtionals: [
+                    {
+                        equals_to: 0x37A
+                    },
+                    {
+                        equals_to: 0x36A
+                    },
+                    {
+                        equals_to: 0x35A
+                    },
+                    {
+                        min: 0x3D0,
+                        max: 0x3DD
+                    },
+                    {
+                        min: 0x3C0,
+                        max: 0x3CD
+                    },
+                    {
+                        min: 0x3B0,
+                        max: 0x3BD
+                    },
+                    {
+                        min: 0x3A0,
+                        max: 0x3AD
+                    },
+                    {
+                        min: 0x390,
+                        max: 0x39D
+                    },
+                    {
+                        min: 0x388,
+                        max: 0x38D
+                    },
+                    {
+                        min: 0x34A,
+                        max: 0x34D
+                    }
+                ]
+            },
+            "d0_past": {
+                layouts: {
+                    default: [
+                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("maku path heartpiece") },
+                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 key chest") },
+                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 basement") },
+                    ]
+                },
+                roomCondtionals: [
+                    {
+                        equals_to: 0x605
+                    },
+                    {
+                        min: 0x406,
+                        max: 0x40D
+                    }
+                ]
+            },
+            "d0_present": {
+                roomCondtionals: [
+                    {
+                        min: 0x401,
+                        max: 0x404
+                    }
+                ]
+            },
+            "d0_hero": {
+                roomCondtionals: [
+                    {
+                        equal_to: 0x6C0
+                    },
+                    {
+                        min: 0x4C1,
+                        max: 0x4CE
+                    }
+                ]
+            },
+            "d1": {
+                layouts: {
+                    default: [ 
+                        { x: 310.5, y: 210, array: this.findLocationInfoByRegionName("d1 one-button chest") },
+                        { x: 405, y: 178, array: this.findLocationInfoByRegionName("d1 two-button chest") },
+                        { x: 303, y: 380, array: this.findLocationInfoByRegionName("d1 crystal room") }
+                    ]
+                },
+                roomCondtionals: [
+                    {
+                        equals_to: 0x610
+                    },
+                    {
+                        min: 0x627,
+                        max: 0x62B
+                    },
+                    {
+                        min: 0x420,
+                        max: 0x425
+                    },
+                    {
+                        min: 0x411,
+                        max: 0x41E
+                    }
+                ]
+            },
+            "d2": {
+                roomCondtionals: [
+                    {
+                        min: 0x440,
+                        max: 0x448
+                    },
+                    {
+                        min: 0x430,
+                        max: 0x43E
+                    },
+                    {
+                        min: 0x42C,
+                        max: 0x42E
+                    }
+                ]
+            },
+            "d3": {
+                roomCondtionals: [
+                    {
+                        min: 0x460,
+                        max: 0x466
+                    },
+                    {
+                        min: 0x450,
+                        max: 0x45E
+                    },
+                    {
+                        min: 0x449,
+                        max: 0x44E
+                    }
+                ]
+            },
+            "d4": {
+                roomCondtionals: [
+                    {
+                        equals_to: 0x668
+                    },
+                    {
+                        min: 0x693,
+                        max: 0x698
+                    },
+                    {
+                        min: 0x490,
+                        max: 0x492
+                    },
+                    {
+                        min: 0x480,
+                        max: 0x48E
+                    },
+                    {
+                        min: 0x470,
+                        max: 0x47E
+                    },
+                    {
+                        min: 0x469,
+                        max: 0x46E
+                    }
+                ]
+            },
+            "d5": {
+                roomCondtionals: [
+                    {
+                        min: 0x4A0,
+                        max: 0x4BE
+                    },
+                    {
+                        min: 0x499,
+                        max: 0x49E
+                    }
+                ]
+            },
+            "d9_turret": {
+                roomCondtionals: [
+                    {
+                        min: 0x4D0,
+                        max: 0x4FE
+                    }
+                ]
+            },
+            "d6_present": {
+                roomCondtionals: [
+                    {
+                        min: 0x710,
+                        max: 0x711
+                    },
+                    {
+                        min: 0x520,
+                        max: 0x528
+                    },
+                    {
+                        min: 0x512,
+                        max: 0x51E
+                    }
+                ]
+            },
+            "d6_past": {
+                roomCondtionals: [
+                    {
+                        min: 0x729,
+                        max: 0x72A
+                    },
+                    {
+                        min: 0x540,
+                        max: 0x546
+                    },
+                    {
+                        min: 0x530,
+                        max: 0x53E
+                    },
+                    {
+                        min: 0x52B,
+                        max: 0x52E
+                    },
+                    {
+                        min: 0x512,
+                        max: 0x51E
+                    }
+                ]
+            },
+            "d7": {
+                roomCondtionals: [
+                    {
+                        min: 0x747,
+                        max: 0x74A
+                    },
+                    {
+                        min: 0x570,
+                        max: 0x572
+                    },
+                    {
+                        min: 0x550,
+                        max: 0x56E
+                    }
+                ]
+            },
+            "d8": {
+                roomCondtionals: [
+                    {
+                        min: 0x773,
+                        max: 0x776
+                    },
+                    {
+                        min: 0x5A0,
+                        max: 0x5AA
+                    },
+                    {
+                        min: 0x580,
+                        max: 0x59E
+                    },
+                    {
+                        min: 0x577,
+                        max: 0x57E
+                    }
+                ]
+            }
         }
 
         // All dungeons in Ages.

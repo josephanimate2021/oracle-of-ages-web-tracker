@@ -149,7 +149,7 @@ const locations = {
         "map_tile": 0x38,
         "reachable": () => (
             (
-                gameLogic.dungeonsReacable['Maku Path'] && gameLogic.hasSmallKeys(0)
+                gameLogic.dungeonsReachable['Maku Path']() && gameLogic.hasSmallKeys(0)
             ) || gameLogic.canBeatVernanFirstStage()
         ),
         "symbolic_name": "makuTreeGift",
@@ -187,7 +187,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "invisible": true,
+        "hidden": true,
         "symbolic_name": "advanceShop1",
     },
     "Lynna Village: Advance Shop Item #2": {
@@ -199,7 +199,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "invisible": true,
+        "hidden": true,
         "symbolic_name": "advanceShop2",
     },
     "Lynna Village: Advance Shop Item #3": {
@@ -211,7 +211,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "invisible": true,
+        "hidden": true,
         "symbolic_name": "advanceShop3",
     },
     "Lynna Village: Baseball": {
@@ -355,7 +355,7 @@ const locations = {
         "bit_mask": 0x80,
         "scouting_byte": 0xc8ed,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.dungeonsReacable["Spirit's Grave"] && (gameLogic.hasFlippers() || gameLogic.canJump2Wide(true) || gameLogic.hasLongHook()),
+        "reachable": () => gameLogic.dungeonsReachable["Spirit's Grave"]() && (gameLogic.hasFlippers() || gameLogic.canJump2Wide(true) || gameLogic.hasLongHook()),
         "symbolic_name": "syrupShop1",
     },
     "Yoll Graveyard: Syrup Shop Item #2": {
@@ -366,7 +366,7 @@ const locations = {
         "bit_mask": 0x20,
         "scouting_byte": 0xc8ed,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.dungeonsReacable["Spirit's Grave"] && (gameLogic.hasFlippers() || gameLogic.canJump2Wide(true) || gameLogic.hasLongHook()),
+        "reachable": () => gameLogic.dungeonsReachable["Spirit's Grave"]() && (gameLogic.hasFlippers() || gameLogic.canJump2Wide(true) || gameLogic.hasLongHook()),
         "symbolic_name": "syrupShop2",
     },
     "Yoll Graveyard: Syrup Shop Item #3": {
@@ -377,7 +377,7 @@ const locations = {
         "bit_mask": 0x40,
         "scouting_byte": 0xc8ed,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.dungeonsReacable["Spirit's Grave"] && (gameLogic.hasFlippers() || gameLogic.canJump2Wide(true) || gameLogic.hasLongHook()),
+        "reachable": () => gameLogic.dungeonsReachable["Spirit's Grave"]() && (gameLogic.hasFlippers() || gameLogic.canJump2Wide(true) || gameLogic.hasLongHook()),
         "symbolic_name": "syrupShop3",
     },
     "Yoll Graveyard: Poe's Gift": {
@@ -385,7 +385,7 @@ const locations = {
         "vanilla_item": "Poe Clock",
         "flag_byte": 0xc77c,
         "room": 0x007c,
-        "reachable": () => gameLogic.dungeonsReacable["Spirit's Grave"]&& gameLogic.hasBracelet(),
+        "reachable": () => gameLogic.dungeonsReachable["Spirit's Grave"]() && gameLogic.hasBracelet(),
         "symbolic_name": "graveyardPoe",
     },
     "Yoll Graveyard: Heart Piece": {
@@ -999,7 +999,7 @@ const locations = {
         "flag_byte": 0xc906,
         "room": 0x0406,
         "reachable": () => (
-            gameLogic.dungeonsReacable['Maku Path'] && gameLogic.hasSmallKeys(0)
+            gameLogic.dungeonsReachable['Maku Path']() && gameLogic.hasSmallKeys(0)
         ) || gameLogic.canBeatVernanFirstStage(),
         "symbolic_name": "makuPathHP",
     },
@@ -1012,7 +1012,7 @@ const locations = {
         "map_tile": 0x148,
         "reachable": () => (
             gameLogic.hasSmallKeys(0) && gameLogic.canBeatVernanFirstStage()
-        ) || gameLogic.dungeonsReacable['Maku Path'],
+        ) || gameLogic.dungeonsReachable['Maku Path'](),
     },
     "Maku Path: Basement": {
         "region_id": "d0 basement",
@@ -1021,7 +1021,7 @@ const locations = {
         "flag_byte": 0xc905,
         "room": 0x0605,
         "reachable": () => (
-            gameLogic.dungeonsReacable['Maku Path'] && gameLogic.hasSmallKeys(0)
+            gameLogic.dungeonsReachable['Maku Path']() && gameLogic.hasSmallKeys(0)
         ) || gameLogic.canBeatVernanFirstStage(),
         "symbolic_name": "d0Basement",
     },

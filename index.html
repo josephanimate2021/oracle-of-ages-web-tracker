@@ -13,7 +13,6 @@
     <script src="./assets/js/color-modes.js"></script>
     <script src="./js/items.js"></script>
     <script src="./js/locations.js"></script>
-    <script src="./js/maps.js"></script>
     <script src="./js/logic.js"></script>
     <link href="./assets/dist/css/bootstrap.min.css" rel="stylesheet" />
     <meta name="theme-color" content="#712cf9" />
@@ -481,15 +480,14 @@
                                     data-mapImage="symmetry_city_present">
                                     Symmetry City (Present)
                                 </button>
-                                <!-- 
-                I don't know where the map image for Symmetry City (Past) is, so I'm leaving this button out for now.
-                <button type="button" class="btn btn-sm btn-outline-secondary mapSwitcher" data-mapImage="symmetry_city_past">
-                  Symmetry City (Past)
-                </button>
-                 -->
+                                <button type="button" class="btn btn-sm btn-outline-secondary mapSwitcher" data-mapImage="symmetry_city_past">
+                                    Symmetry City (Past)
+                                </button>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div id="overWorldView" style="display: none;">
                     <label for="overworld-view-select">Overworld View: </label>
                     <select id="overworld-view-select" class="btn btn-sm btn-outline-secondary">
                         <option value="default">Default</option>
@@ -652,6 +650,13 @@
   <div class="d-flex">
     <div class="toast-body">
       Sorry, but you cannot check off an item when connected to a server.
+    </div>
+  </div>
+</div>
+<div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" id="cannotSwitchMapsError">
+  <div class="d-flex">
+    <div class="toast-body">
+      Sorry, but you cannot switch maps when connected to a server.
     </div>
   </div>
 </div>

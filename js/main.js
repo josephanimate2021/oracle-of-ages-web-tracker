@@ -1,10 +1,16 @@
+// Initizlizes the logic for Ages.
 const gameLogic = new AgesGameLogic();
+
+// Images that are default when things change.
 let defaultMapImages = {
     overworld: "overworld_present",
     dungeons: "d0_present",
     specialAreas: "d9_zeldaRescue"
 }, defaultStageView = "overworld", currentMap = `default/${defaultMapImages[defaultStageView]}`, mapImageData = '', connected2archipelago = false;
 
+/**
+ * Appends items to the sidebar
+ */
 function drawItems() {
     const itemsElem = document.getElementById("gameItems");
     const allItemClassifications = [];
@@ -58,11 +64,22 @@ function drawItems() {
     })
 }
 
+/**
+ * Changes the way a user views a item when they request it.
+ * @param {HTMLSelectElement} info - Infomation from a select element.
+ */
 function changeItemViewPreference(info) {
     gameLogic.showItemsWithClassification = info.value;
     drawItems();
 }
 
+/**
+ * Checks off an item when it is clicked
+ * @param {object} itemInfo - Infomation about the item
+ * @param {number} times - The amount of times an item should be checked off. Default is 1 
+ * @param {boolean} dontCallItemsDrawFunction - The drawItems function won't be called if this parameter is set to true. 
+ * @param {boolean} dontDrawMap - The goToMap function won't be called if this parameter is set to true. 
+ */
 function triggerItem(itemInfo, times = 1, dontCallItemsDrawFunction = false, dontDrawMap = false) {
     for (var i = 0; i < times; i++) {
         itemInfo.count ||= 0;
@@ -73,18 +90,21 @@ function triggerItem(itemInfo, times = 1, dontCallItemsDrawFunction = false, don
     if (!dontDrawMap) goToMap()
 }
 
+/**
+ * Draw a map to the canvas
+ */
 function goToMap() {
     gameLogic.popovers = {};
     gameLogic.counts = {};
-    gameLogic.mapLayout[currentMap] ||= [];
+    const [layoutType, mapImage] = currentMap.split("/");
     const mapCanvas = document.getElementById("mapCanvas");
     mapCanvas.innerHTML = "";
     const image = document.createElement("img");
     image.src = mapImageData || `maps/${currentMap}.png`;
     image.alt = `Map: ${currentMap.split("/")[1].replaceAll("_", " ")}`;
     const reachableLocations = [];
-    for (const position of gameLogic.mapLayout[currentMap]) {
-        if (position.invisible) continue;
+    document.getElementById('overWorldView').style.display = gameLogic.maps[mapImage].layouts.ingame ? 'block' : 'none';
+    for (const position of gameLogic.maps[mapImage].layouts[layoutType]) {
         const info = position.array[0];
         if (info?.hidden) continue;
         const marker = document.createElement("button");
@@ -102,16 +122,17 @@ function goToMap() {
             const htmls = [];
             for (let i = 0; i < position.array.length; i++) {
                 const v = position.array[i];
-                htmls.push(`<img src="./items/chest_${currentMap.endsWith("past") ? 'past' : 'present'
-                    }${v.checked ? '_open' : ''}.png" ${
-                        !connected2archipelago ? 'onclick="checkLocation(this)"' : ''
-                    } style="cursor: pointer;" data-region="${v.region_id}" data-index="${v.providedStartName ? (() => {
+                htmls.push(`<img src="./items/chest_${
+                    currentMap.endsWith("past") ? 'past' : 'present'
+                }${v.checked ? '_open' : ''}.png" ${
+                    !connected2archipelago ? 'onclick="checkLocation(this)"' : ''
+                } style="cursor: pointer;" data-region="${v.region_id}" data-index="${
+                    v.providedStartName ? (() => {
                         if (gameLogic.counts[v.region_id] != undefined) gameLogic.counts[v.region_id]++;
                         gameLogic.counts[v.region_id] ||= 0;
                         return gameLogic.counts[v.region_id];
                     })() : i
-                    }" data-popoverProperty="${marker.getAttribute('title')}"> <span style="color: ${v.checked ? 'gray' : v.reachable() ? 'green' : 'red'};">${v.checkLocation
-                    }</span>`);
+                }" data-popoverProperty="${marker.getAttribute('title')}"> <span style="color: ${v.checked ? 'gray' : v.reachable() ? 'green' : 'red'};">${v.checkLocation}</span>`);
             }
             return htmls.join('<br>');
         })());
@@ -142,9 +163,14 @@ function goToMap() {
     });
 }
 
+/**
+ * Handler for all of the map switching buttons.
+ * @param {function} myFunction - Can be replaced with a custom function representing a button to avoid repeating code.
+ */
 function mapSwitchButtonsHandler(myFunction) {
     document.querySelectorAll(".mapSwitcher").forEach(button => {
         if (!myFunction) button.addEventListener("click", (e) => {
+            if (connected2archipelago) new bootstrap.Toast(document.getElementById("cannotSwitchMapsError"));
             const mapImage = button.getAttribute("data-mapImage");
             if (mapImage == "animal_companion_regions") askUserWhatCompanionTheyWant();
             else changeMapImage(mapImage)
@@ -152,8 +178,14 @@ function mapSwitchButtonsHandler(myFunction) {
         else myFunction(button);
     });
 }
-initTracker();
+window.addEventListener("DOMContentLoaded", initTracker)
 
+/**
+ * Changes the image of the map and then draws it to the canvas.
+ * @param {string} mapImage - The type of map to draw from the maps folder.
+ * @param {boolean} drawMapImage - calls the goToMap function when set to true.
+ * @param {Base64URLString} imageData - Data URL of a map image if provided.
+ */
 function changeMapImage(mapImage, drawMapImage = true, imageData) {
     mapImageData = imageData;
     const array = currentMap.split("/");
@@ -162,6 +194,9 @@ function changeMapImage(mapImage, drawMapImage = true, imageData) {
     if (drawMapImage) goToMap()
 }
 
+/**
+ * Pops up a modal window asking a user what animal companion they want to use for their map.
+ */
 function askUserWhatCompanionTheyWant() {
     
 }
@@ -177,6 +212,12 @@ function checkLocation(e) {
     goToMap();
 }
 
+/**
+ * 
+ * @param {string} view - The type of view to change to.
+ * @param {boolean} goToMapAfterwards - calls the goToMap function when this parameter is set to true
+ * @returns 
+ */
 function changeOverworldView(view, goToMapAfterwards = true) {
     const array = currentMap.split("/");
     array[0] = view;
@@ -189,7 +230,11 @@ function changeOverworldView(view, goToMapAfterwards = true) {
     } else return array;
 }
 
-function archipelagoConnector(obj) { // Connects to an Archipelago server
+/**
+ * Connects to an Archipelago Server.
+ * @param {HTMLFormElement} obj - The form that handles connection for Archipelago.
+ */
+function archipelagoConnector(obj) {
     $(obj).find("p").text('')
     if (connected2archipelago) { // disconnects from the archipelago server when the user clicks on the Disconnect From Archipelago button.
         if ($(obj).find('button[type="submit"]').data("connected")) jQuery(obj).trigger("archipelagoDisconnect");
@@ -298,12 +343,12 @@ function archipelagoConnector(obj) { // Connects to an Archipelago server
                         } case "Bounced": {
                             if (info2.data) {
                                 if (info2.data['Current Room']) {
-                                    for (const i in maps) {
-                                        const info = maps[i].roomCondtionals.find(i => (i.equals_to === info2.data['Current Room']) || (
+                                    for (const i in gameLogic.maps) {
+                                        const info = gameLogic.maps[i].roomCondtionals.find(i => (i.equals_to === info2.data['Current Room']) || (
                                             info2.data['Current Room'] >= i.min && info2.data['Current Room'] <= i.max
                                         ));
                                         if (info) {
-                                            const image2draw = maps[i]
+                                            const image2draw = gameLogic.maps[i]
                                             if (!image2draw.hasIngameMap) {
                                                 if (currentMap.startsWith("ingame")) {
                                                     image2draw.wasInGame = true;

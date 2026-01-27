@@ -13,6 +13,7 @@
     <script src="./assets/js/color-modes.js"></script>
     <script src="./js/items.js"></script>
     <script src="./js/locations.js"></script>
+    <script src="./js/maps.js"></script>
     <script src="./js/logic.js"></script>
     <link href="./assets/dist/css/bootstrap.min.css" rel="stylesheet" />
     <meta name="theme-color" content="#712cf9" />
@@ -647,5 +648,18 @@
         </div>
     </div>
 </div>
-
+<div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" id="itemCheckErrorWhenUserIsConnectedToServer">
+  <div class="d-flex">
+    <div class="toast-body">
+      Sorry, but you cannot check off an item when connected to a server.
+    </div>
+  </div>
+</div>
+<div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" id="locationCheckErrorWhenUserIsConnectedToServer">
+  <div class="d-flex">
+    <div class="toast-body">
+      Sorry, but you cannot check off a location when connected to a server.
+    </div>
+  </div>
+</div>
 </html>

@@ -3,7 +3,7 @@ let defaultMapImages = {
     overworld: "overworld_present",
     dungeons: "d0_present",
     specialAreas: "d9_zeldaRescue"
-}, defaultStageView = "overworld", currentMap = `default/${defaultMapImages[defaultStageView]}`, connected2archipelago = false;
+}, defaultStageView = "overworld", currentMap = `default/${defaultMapImages[defaultStageView]}`, mapImageData = '', connected2archipelago = false;
 
 function drawItems() {
     const itemsElem = document.getElementById("gameItems");
@@ -26,7 +26,7 @@ function drawItems() {
         a.className = `nav-link d-flex align-items-center ${info.count >= 1 ? ' active' : ''}`;
         a.style.cursor = "pointer";
         a.title = item + (info.displayCount ? ` (Count: ${info.count || 0})` : '')
-        if (!info.unclickable) a.addEventListener("click", e => {
+        if (!info.unclickable && !connected2archipelago) a.addEventListener("click", e => {
             triggerItem(info);
         })
         const img = document.createElement("img");
@@ -57,21 +57,20 @@ function drawItems() {
         }).join("");
     })
 }
-drawItems();
 
 function changeItemViewPreference(info) {
     gameLogic.showItemsWithClassification = info.value;
     drawItems();
 }
 
-function triggerItem(itemInfo, times = 1, dontCallItemsDrawFunction = false) {
+function triggerItem(itemInfo, times = 1, dontCallItemsDrawFunction = false, dontDrawMap = false) {
     for (var i = 0; i < times; i++) {
         itemInfo.count ||= 0;
         if (((!itemInfo.limit && itemInfo.count == 1) || itemInfo.count > itemInfo.limit) && !itemInfo.unlimited) itemInfo.count = 0;
         else itemInfo.count++
     }
     if (!dontCallItemsDrawFunction) drawItems()
-    goToMap()
+    if (!dontDrawMap) goToMap()
 }
 
 function goToMap() {
@@ -81,7 +80,7 @@ function goToMap() {
     const mapCanvas = document.getElementById("mapCanvas");
     mapCanvas.innerHTML = "";
     const image = document.createElement("img");
-    image.src = `maps/${currentMap}.png`;
+    image.src = mapImageData || `maps/${currentMap}.png`;
     image.alt = `Map: ${currentMap.split("/")[1].replaceAll("_", " ")}`;
     const reachableLocations = [];
     for (const position of gameLogic.mapLayout[currentMap]) {
@@ -104,7 +103,9 @@ function goToMap() {
             for (let i = 0; i < position.array.length; i++) {
                 const v = position.array[i];
                 htmls.push(`<img src="./items/chest_${currentMap.endsWith("past") ? 'past' : 'present'
-                    }${v.checked ? '_open' : ''}.png" onclick="checkLocation(this)" style="cursor: pointer;" data-region="${v.region_id}" data-index="${v.providedStartName ? (() => {
+                    }${v.checked ? '_open' : ''}.png" ${
+                        !connected2archipelago ? 'onclick="checkLocation(this)"' : ''
+                    } style="cursor: pointer;" data-region="${v.region_id}" data-index="${v.providedStartName ? (() => {
                         if (gameLogic.counts[v.region_id] != undefined) gameLogic.counts[v.region_id]++;
                         gameLogic.counts[v.region_id] ||= 0;
                         return gameLogic.counts[v.region_id];
@@ -131,7 +132,7 @@ function goToMap() {
     }
     document.getElementById('reachable-count').innerText = reachableLocations.length;
     document.getElementById("itemsUserCanGet").innerHTML = reachableLocations.map(d => `<tr><td>${d.checkLocation}</td></tr><tr></tr><tr></tr>${
-        gameLogic.connectedToArchipelago ? '<tr></tr>' : ''
+        connected2archipelago ? '<tr></tr>' : ''
     }<tr></tr>`).join("")
     mapCanvas.appendChild(image);
     mapSwitchButtonsHandler(button => {
@@ -140,21 +141,30 @@ function goToMap() {
         button.classList.add(appImageMatchesCurrentMap ? "btn-outline-secondary" : "btn-secondary");
     });
 }
-goToMap();
 
 function mapSwitchButtonsHandler(myFunction) {
     document.querySelectorAll(".mapSwitcher").forEach(button => {
         if (!myFunction) button.addEventListener("click", (e) => {
             const mapImage = button.getAttribute("data-mapImage");
-            const array = currentMap.split("/");
-            array[1] = mapImage;
-            currentMap = array.join("/");
-            goToMap()
+            if (mapImage == "animal_companion_regions") askUserWhatCompanionTheyWant();
+            else changeMapImage(mapImage)
         });
         else myFunction(button);
     });
 }
-mapSwitchButtonsHandler()
+initTracker();
+
+function changeMapImage(mapImage, drawMapImage = true, imageData) {
+    mapImageData = imageData;
+    const array = currentMap.split("/");
+    array[1] = mapImage;
+    currentMap = array.join("/");
+    if (drawMapImage) goToMap()
+}
+
+function askUserWhatCompanionTheyWant() {
+    
+}
 
 /**
  * Checks off a location when an image of a treasure chest is clicked inside a popover.
@@ -247,12 +257,10 @@ function archipelagoConnector(obj) { // Connects to an Archipelago server
                                     version: roomInfo.version,
                                 });
                                 for (const location in games[game].location_name_to_id) {
-                                    const locationInfo = trackerStuff.layout.searchFor(location);
-                                    if (locationInfo.cat && locationInfo.realLocationName) trackerStuff.layout[locationInfo.cat][locationInfo.realLocationName][location].id = games[game].location_name_to_id[location];
+                                    locations[location].APID  = games[game].location_name_to_id[location]
                                 }
                                 for (const item in games[game].item_name_to_id) {
-                                    const itemInfo = trackerStuff.itemLayout.searchFor(item);
-                                    if (itemInfo.cat) trackerStuff.itemLayout[itemInfo.cat][itemInfo.realItemName || item].id = games[game].item_name_to_id[item]
+                                    items[item].APID = games[game].item_name_to_id[item]
                                 }
                             }
                             break;
@@ -263,9 +271,11 @@ function archipelagoConnector(obj) { // Connects to an Archipelago server
                                 $(obj).find('button[type="submit"]').text(originalText);
                                 $("#statusKindof").html(originalText2);
                                 connected2archipelago = false;
+                                initTracker()
                                 connectionSuccessful = false;
                                 $(obj).find("p").text('Successfully disconnected from the Archipelago Server')
                             })
+                            initTracker()
                             connectionSuccessful = true;
                             $("#statusKindof").text("Connected To Archipelago")
                             $(obj).find("p").css("color", "lime");
@@ -276,18 +286,58 @@ function archipelagoConnector(obj) { // Connects to an Archipelago server
                             break;
                         } case "ReceivedItems": {
                             for (const archipelagoItemInfo of info2.items) {
-                                console.log(archipelagoItemInfo);
+                                const item = Object.keys(items).find(i => items[i].APID == archipelagoItemInfo.item);
+                                if (item) triggerItem(items[item], 1, true, true);
+                                const location = Object.keys(locations).find(i => locations[i].APID == archipelagoItemInfo.location);
+                                if (location) {
+                                    locations[location].checked = true;
+                                    (gameLogic.popovers[location] || gameLogic.popovers[locations[location].region_id])?.dispose();
+                                }
                             }
                             break;
+                        } case "Bounced": {
+                            if (info2.data) {
+                                if (info2.data['Current Room']) {
+                                    for (const i in maps) {
+                                        const info = maps[i].roomCondtionals.find(i => (i.equals_to === info2.data['Current Room']) || (
+                                            info2.data['Current Room'] >= i.min && info2.data['Current Room'] <= i.max
+                                        ));
+                                        if (info) {
+                                            const image2draw = maps[i]
+                                            if (!image2draw.hasIngameMap) {
+                                                if (currentMap.startsWith("ingame")) {
+                                                    image2draw.wasInGame = true;
+                                                    currentMap = (changeOverworldView("default", false)).join("");
+                                                } else if (image2draw.wasInGame) {
+                                                    delete image2draw.wasInGame;
+                                                    currentMap = (changeOverworldView("ingame", false)).join("");
+                                                }
+                                            }
+                                            changeMapImage(i)
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
                 if (!connectionSuccessful) socket.send(JSON.stringify(array));
+                else {
+                    drawItems();
+                    goToMap();
+                }
             })
         } catch (e) {
             handleError(e);
         }
     }
+}
+
+function initTracker() {
+    drawItems();
+    goToMap();
+    mapSwitchButtonsHandler();
 }
 
 document.getElementById("overworld-view-select").addEventListener("change", e => {

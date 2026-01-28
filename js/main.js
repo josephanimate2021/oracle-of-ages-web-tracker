@@ -54,16 +54,14 @@ function drawItems() {
     const canBeatGame = parseInt(document.getElementById("goModeItemsNeeded-count").innerHTML) == 0;
     goModeElem.style.color = canBeatGame ? 'green' : 'red';
     goModeElem.innerHTML = canBeatGame ? 'Yes' : 'No';
-    window.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("itemsView").innerHTML = allItemClassifications.map(d => {
-            const word = d.split("_").map(g => {
-                const end = g.substring(1);
-                const beg = g.slice(0, -end.length);
-                return beg.toUpperCase() + end;
-            }).join(" ");
-            return `<option value="${d}"${gameLogic.showItemsWithClassification == d ? " selected" : ''}>View ${word} Items</option>`
-        }).join("");
-    })
+    document.getElementById("itemsView").innerHTML = allItemClassifications.map(d => {
+        const word = d.split("_").map(g => {
+            const end = g.substring(1);
+            const beg = g.slice(0, -end.length);
+            return beg.toUpperCase() + end;
+        }).join(" ");
+        return `<option value="${d}"${gameLogic.showItemsWithClassification == d ? " selected" : ''}>View ${word} Items</option>`
+    }).join("");
 }
 
 /**
@@ -127,17 +125,14 @@ function goToMap() {
             const htmls = [];
             for (let i = 0; i < position.array.length; i++) {
                 const v = position.array[i];
-                htmls.push(`<img src="./items/chest_${
-                    currentMap.endsWith("past") ? 'past' : 'present'
-                }${v.checked ? '_open' : ''}.png" ${
-                    !connected2archipelago ? 'onclick="checkLocation(this)"' : ''
-                } style="cursor: pointer;" data-region="${v.region_id}" data-index="${
-                    v.providedStartName ? (() => {
+                htmls.push(`<img src="./items/chest_${currentMap.endsWith("past") ? 'past' : 'present'
+                    }${v.checked ? '_open' : ''}.png" ${!connected2archipelago ? 'onclick="checkLocation(this)"' : ''
+                    } style="cursor: pointer;" data-region="${v.region_id}" data-index="${v.providedStartName ? (() => {
                         if (gameLogic.counts[v.region_id] != undefined) gameLogic.counts[v.region_id]++;
                         gameLogic.counts[v.region_id] ||= 0;
                         return gameLogic.counts[v.region_id];
                     })() : i
-                }" data-popoverProperty="${marker.getAttribute('title')}"> <span style="color: ${v.checked ? 'gray' : v.reachable() ? 'green' : 'red'};">${v.checkLocation}</span>`);
+                    }" data-popoverProperty="${marker.getAttribute('title')}"> <span style="color: ${v.checked ? 'gray' : v.reachable() ? 'green' : 'red'};">${v.checkLocation}</span>`);
             }
             return htmls.join('<br>');
         })());
@@ -157,9 +152,8 @@ function goToMap() {
         });
     }
     document.getElementById('reachable-count').innerText = reachableLocations.length;
-    document.getElementById("itemsUserCanGet").innerHTML = reachableLocations.map(d => `<tr><td>${d.checkLocation}</td></tr><tr></tr><tr></tr>${
-        connected2archipelago ? '<tr></tr>' : ''
-    }<tr></tr>`).join("")
+    document.getElementById("itemsUserCanGet").innerHTML = reachableLocations.map(d => `<tr><td>${d.checkLocation}</td></tr><tr></tr><tr></tr>${connected2archipelago ? '<tr></tr>' : ''
+        }<tr></tr>`).join("")
     mapCanvas.appendChild(image);
     mapSwitchButtonsHandler(button => {
         const appImageMatchesCurrentMap = button.getAttribute("data-mapImage") !== currentMap.split("/")[1]
@@ -202,7 +196,7 @@ function changeMapImage(mapImage, drawMapImage = true, imageData) {
  * Pops up a modal window asking a user what animal companion they want to use for their map.
  */
 function askUserWhatCompanionTheyWant() {
-    
+
 }
 
 /**
@@ -306,7 +300,7 @@ function archipelagoConnector(obj) {
                                     version: roomInfo.version,
                                 });
                                 for (const location in games[game].location_name_to_id) {
-                                    locations[location].APID  = games[game].location_name_to_id[location]
+                                    locations[location].APID = games[game].location_name_to_id[location]
                                 }
                                 for (const item in games[game].item_name_to_id) {
                                     items[item].APID = games[game].item_name_to_id[item]

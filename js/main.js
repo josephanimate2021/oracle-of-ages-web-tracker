@@ -106,7 +106,6 @@ function goToMap() {
     gameLogic.maps[mapImage].layouts ||= {
         default: []
     };
-    document.getElementById('overWorldView').style.display = gameLogic.maps[mapImage].layouts.ingame ? 'block' : 'none';
     for (const position of gameLogic.maps[mapImage].layouts[layoutType]) {
         const info = position.array[0];
         if (info?.hidden) continue;
@@ -222,6 +221,7 @@ function changeOverworldView(view, goToMapAfterwards = true) {
     mapSwitchButtonsHandler(button => {
         if (!button.getAttribute("data-partOfIngameMaps")) button.style.display = view === "ingame" ? "none" : "inline-block";
     });
+    if (!gameLogic.maps[array[1]].layouts?.ingame) array[1] = `overworld_${(array[1].endsWith("past") || gameLogic.maps[array[1]].locatedInPast) ? 'past' : 'present'}`;
     if (goToMapAfterwards) {
         currentMap = array.join("/");
         goToMap();
@@ -399,6 +399,32 @@ function initTracker() {
     drawItems();
     goToMap();
     mapSwitchButtonsHandler();
+}
+
+function feedbackBlock(alertType = "primary", header, body) {
+    const feedbackContainer = document.getElementById('feedbackContainer');
+    const div = document.createElement();
+    div.className = `alert alert-${alertType}`;
+    div.role = "alert";
+    if (header) {
+        const h4 = document.createElement("h4");
+        h4.className = "alert-heading";
+        h4.innerText = header;
+        div.appendChild(h4);
+    }
+    if (body) {
+        const p = document.createElement("p");
+        p.innerText = body;
+        div.appendChild(p);
+    }
+    const button = document.createElement();
+    button.type = "button";
+    button.className = "btn-close";
+    button.setAttribute("data-bs-dismiss", "alert");
+    button.setAttribute("aria-label", "Close");
+    div.appendChild(button);
+    feedbackContainer.appendChild(div);
+    div.addEventListener("closed.bs.alert", () => feedbackContainer.removeChild(div))
 }
 
 /**

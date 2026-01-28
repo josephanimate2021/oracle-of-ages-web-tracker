@@ -434,6 +434,7 @@
                 </div>
             </div>
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div id="feedbackContainer"></div>
                 <div id="stageView">
                     <label for="stage-view-select">View: </label>
                     <select id="stage-view-select" class="btn btn-sm btn-outline-secondary">
@@ -477,13 +478,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id="overWorldView" style="display: none;">
-                    <label for="overworld-view-select">Overworld View: </label>
-                    <select id="overworld-view-select" class="btn btn-sm btn-outline-secondary">
-                        <option value="default">Default</option>
-                        <option value="ingame">Ingame</option>
-                    </select>
                 </div>
                 <div data-view="dungeons" class="stageViewOption" style="display: none;">
                     <h4>Dungeons</h4>
@@ -558,6 +552,13 @@
                             </button>
                         </div>
                     </div>
+                </div>
+                <div id="overWorldView">
+                    <label for="overworld-view-select">Overworld View: </label>
+                    <select id="overworld-view-select" class="btn btn-sm btn-outline-secondary">
+                        <option value="default">Default</option>
+                        <option value="ingame">Ingame</option>
+                    </select>
                 </div>
                 <div id="mapCanvas" style="position: relative;"></div>
                 <h2>Locations That You Can Check Right Now</h2>

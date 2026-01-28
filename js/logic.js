@@ -255,6 +255,7 @@ class AgesGameLogic {
                 ]
             },
             "d2": {
+                locatedInPast: true,
                 roomCondtionals: [
                     {
                         min: 0x440,

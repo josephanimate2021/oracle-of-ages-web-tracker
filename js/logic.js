@@ -16,7 +16,11 @@ class AgesGameLogic {
         this.maps = {
             "symmetry_city_present": {
                 layouts: {
-                    default: []
+                    default: [
+                        { x: 395, y: 185, array: this.customItemRequirementsForRegion("symmetry city tree", [!this.hasItem("Tuni Nut", 2)]) },
+                        { x: 395, y: 340, array: this.findLocationInfoWithStartName("Skull Dungeon") },
+                        { x: 395, y: 474, array: this.customItemRequirementsForRegion("symmetry city tree", [this.hasItem("Tuni Nut", 2)]) }
+                    ]
                 },
                 roomCondtionals: [
                     {
@@ -73,6 +77,7 @@ class AgesGameLogic {
             "overworld_present": {
                 layouts: {
                     default: [
+                        { x: 165, y: 10, array: this.findLocationInfoWithStartName("Skull Dungeon") },
                         { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
                         { x: 360, y: 200, array: this.findLocationInfoByRegionName("mayor plen's house") },
                         { x: 462, y: 125, array: this.findLocationInfoByRegionName("starting item") },
@@ -101,6 +106,10 @@ class AgesGameLogic {
             "overworld_past": {
                 layouts: {
                     default: [
+                        { x: 602, y: 195, array: this.findLocationInfoWithStartName("Ancient Tomb") },
+                        { x: 103.5, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
+                        { x: 225, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
+                        { x: 164.5, y: 60, array: this.findLocationInfoByRegionName("symmetry middle man trade") },
                         { x: 66, y: 50, array: this.findLocationInfoWithStartName("Maku Path") },
                         { x: 366, y: 205, array: this.findLocationInfoByRegionName("postman trade") },
                         { x: 395, y: 205, array: this.findLocationInfoByRegionName("lynna shooting gallery") },
@@ -108,7 +117,9 @@ class AgesGameLogic {
                         { x: 322.5, y: 200, array: this.findLocationInfoByRegionName("sad boi trade") },
                         { x: 247.5, y: 209, array: this.findLocationInfoByRegionName("toilet hand trade") },
                         { x: 249, y: 177, array: this.findLocationInfoByRegionName("gasha farmer") },
-                        { x: 390, y: 162, array: this.findLocationInfoWithStartName("Maku Path") },
+                        { x: 249, y: 177, array: this.findLocationInfoByRegionName("gasha farmer") },
+                        { x: 310, y: 288, array: this.findLocationInfoByRegionName("black tower worker") },
+                        { x: 325, y: 316, array: this.findLocationInfoByRegionName("black tower heartpiece") },
                         // { x: 247.5, y: 199, array: this.findLocationInfoByStartName("Gasha Nut") },
                     ],
                     ingame: [
@@ -365,7 +376,7 @@ class AgesGameLogic {
         // All dungeons in Ages.
         this.dungeonsReachable = {
             "Maku Path": () => this.canAccessLynnaCity() && (
-                this.can_remove_dirt(false) || this.canBeatVernanFirstStage()
+                this.hasShovel() || this.canBeatVernanFirstStage()
             ),
             "Spirit's Grave": () => this.canUseEmberSeeds(false) && this.hasItem("Graveyard Key"),
             "Wing Dungeon": () => (
@@ -373,7 +384,7 @@ class AgesGameLogic {
             ) || ( // For Present D2 (Randomizer Usage Only)
                 this.isRandomizer() && this.canEnterFairiesWoods() && this.canGoBackToPresent()
             ),
-            "Moonlit Grotto": () => false,
+            "Moonlit Grotto": () => this.canAccessCresentIsland(),
             "Skull Dungeon": () => false,
             "Crown Dungeon": () => false,
             "Mermaid's Cave": () => false,
@@ -435,6 +446,15 @@ class AgesGameLogic {
                 locations[i].providedRegion = region;
                 array.unshift(locations[i]);
             }
+        }
+        return array;
+    }
+
+    customItemRequirementsForRegion(region, requirements) {
+        const locationArray = this.findLocationInfoByRegionName(region);
+        const array = [];
+        for (const location of locationArray) {
+            if (location.reachable() == (requirements.length == locationArray.length)) array.push(location);
         }
         return array;
     }
@@ -1093,6 +1113,16 @@ class AgesGameLogic {
      */
     hasItem(itemName, count = 1) {
         return items[itemName].count >= count;
+    }
+
+    /**
+     * Checks if the player has a specified item at a specified value
+     * @param {string} itemName - The name of the item.
+     * @param {number} count - The amount of item a user has.
+     * @returns {boolean} True if a user has that item. If not, then it's false.
+     */
+    hasItemExact(itemName, count = 1) {
+        return items[itemName].count === count;
     }
 
     /**

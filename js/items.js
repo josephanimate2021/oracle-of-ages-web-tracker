@@ -68,31 +68,55 @@ const items = {
         'imageName': "Ricky's Flute",
         'id': 0x0e,
         'subid': 0x00,
-        'unclickable': true
+        'afterItemTrigger': ($this, triggerITem, resetItem) => {
+            const strangeFlute = items['Strange Flute'];
+            resetItem(strangeFlute)
+            if ($this.count) {
+                triggerITem(strangeFlute, 3, false, false);
+                strangeFlute.afterItemTrigger(strangeFlute, triggerITem, resetItem);
+            }
+        }
     },
     "Dimitri's Flute": {
         'classification': "animal_companion_flute",
         'imageName': "Dimitri's Flute",
         'id': 0x0e,
         'subid': 0x01,
-        'unclickable': true
+        'afterItemTrigger': ($this, triggerITem, resetItem) => {
+            const strangeFlute = items['Strange Flute'];
+            resetItem(strangeFlute)
+            if ($this.count) {
+                triggerITem(strangeFlute, 4, false, false);
+                strangeFlute.afterItemTrigger(strangeFlute, triggerITem, resetItem);
+            }
+        }
     },
     "Moosh's Flute": {
         'classification': "animal_companion_flute",
         'imageName': "Moosh's Flute",
         'id': 0x0e,
         'subid': 0x02,
-        'unclickable': true
+        'afterItemTrigger': ($this, triggerITem, resetItem) => {
+            const strangeFlute = items['Strange Flute'];
+            resetItem(strangeFlute)
+            if ($this.count) {
+                triggerITem(strangeFlute, 2, false, false);
+                strangeFlute.afterItemTrigger(strangeFlute, triggerITem, resetItem);
+            }
+        }
     },
     "Strange Flute": {
         'classification': "progression",
         'limit': 3,
-        'onChange': ($this) => {
-            const flutes = ['flute', "Moosh's Flute (Icon)", "Ricky's Flute (Icon)", "Dimitri's Flute (Icon)"];
-            $this.imageName = flutes[($this.count >= 1 ? $this.count - 1 : 0) || 0]
-            for (const flute of flutes) {
+        'flutes': ['flute', "Moosh's Flute (Icon)", "Ricky's Flute (Icon)", "Dimitri's Flute (Icon)"],
+        'onChange': ($this) => $this.imageName = $this.flutes[($this.count > 0 ? ($this.count - 1) : 0) || 0],
+        'afterItemTrigger': ($this, triggerITem, resetItem) => {
+            for (const flute of $this.flutes) {
                 if (flute.endsWith("(Icon)")) {
-                    items[flute.slice(0, -7)].count = flute == $this.imageName ? 1 : 0
+                    const fluteName = flute.slice(0, -7)
+                    const fluteInfo = items[fluteName];
+                    resetItem(fluteInfo);
+                    if (!fluteInfo.count && $this.imageName == flute) triggerITem(fluteInfo);
                 }
             }
         },
@@ -828,6 +852,12 @@ const items = {
     "Cracked Tuni Nut": {
         'classification': "progression",
         'invisible': true,
+        'onChange': ($this, triggerItem, resetItem) => {
+            const tuniNut = items['Tuni Nut'];
+            if (tuniNut.count > 0 && !$this.count) triggerItem(tuniNut, 2);
+            else if ($this.count > 0) triggerItem(tuniNut);
+            else resetItem(tuniNut);
+        },
         'id': 0x4c,
         'subid': 0x00
     },

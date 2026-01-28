@@ -17,9 +17,9 @@ function drawItems() {
     itemsElem.innerHTML = '';
     for (const item in items) {
         const info = items[item];
+        if (info.onChange) info.onChange(info, triggerItem, resetItem);
         if (info.invisible) continue;
         if (!allItemClassifications.find(i => i == info.classification)) allItemClassifications.push(info.classification);
-        if (info.onChange) info.onChange(info, triggerItem);
         const li = document.createElement("li");
         li.setAttribute("data-classification", info.classification);
         if (info.classification != gameLogic.showItemsWithClassification) li.style.display = 'none';
@@ -33,9 +33,15 @@ function drawItems() {
         a.style.cursor = "pointer";
         a.title = item + (info.displayCount ? ` (Count: ${info.count || 0})` : '')
         a.addEventListener("click", e => {
-            if (info.unclickable) return alert(`${item} cannot be checked.`);
-            if (connected2archipelago) return alert(`A server is relying on ${item} to be checked, so you cannot check off this item manually right now.`);
+            if (info.unclickable) return feedbackBlock('warning', 'Warning!', `${item} cannot be checked.`);
+            if (connected2archipelago) return feedbackBlock(
+                'warning', 'Server Connected Warning!', `A server is relying on ${
+                    item
+                } to be checked on it's own, this means that you cannot check off this item manually right now.`
+            );
+            if (info.beforeItemTrigger) info.beforeItemTrigger(info, triggerItem, resetItem);
             triggerItem(info);
+            if (info.afterItemTrigger) info.afterItemTrigger(info, triggerItem, resetItem);
         })
         const img = document.createElement("img");
         img.height = info.scaleViaHeight || 32;
@@ -92,7 +98,7 @@ function changeView(itemsVisibility, gameMapVisibility, obj) {
     if (gameItemsElem.classList.contains("d-none")) gameItemsElem.classList.remove("d-none");
     gameItemsElem.classList.add(itemsVisibility)
     document.getElementById('gameMap').style.display = gameMapVisibility;
-    for (const elem of document.getElementsByClassName("itemViewerOptions")) if (elem.classList.contains("active")) jQuery(elem).removeClass("active")
+    for (const elem of document.getElementsByClassName("itemViewerOptions")) if (elem.classList.contains("active")) elem.classList.remove("active")
     jQuery(obj).addClass("active");
 }
 
@@ -117,13 +123,13 @@ function goToMap() {
     };
     for (const position of gameLogic.maps[mapImage].layouts[layoutType]) {
         const info = position.array[0];
-        if (info?.hidden) continue;
+        if ((connected2archipelago && !info?.APID) || info?.hidden) continue;
         const marker = document.createElement("button");
         marker.type = "button";
         marker.className = `btn btn-${position.array.filter(i => i.checked).length == position.array.length ? 'secondary' : (() => {
             return position.array.filter(i => i.reachable()).length == position.array.length ? (() => {
                 if (
-                    gameLogic.settings.show_reachable_locations_bassed_from_current_map
+                    gameLogic.settings.show_reachable_locations_from_current_map
                 ) position.array.forEach(f => reachableLocations.push(f));
                 return 'success'
             })() : 'danger';
@@ -189,8 +195,9 @@ function mapSwitchButtonsHandler(myFunction) {
     document.querySelectorAll(".mapSwitcher").forEach(button => {
         if (!myFunction) button.addEventListener("click", (e) => {
             const mapImage = button.getAttribute("data-mapImage");
-            if (mapImage == "animal_companion_regions") askUserWhatCompanionTheyWant();
-            else changeMapImage(mapImage)
+            if (mapImage == "animal_companion_regions") {
+
+            } else changeMapImage(mapImage)
         });
         else myFunction(button);
     });
@@ -209,13 +216,6 @@ function changeMapImage(mapImage, drawMapImage = true, imageData) {
     array[1] = mapImage;
     currentMap = array.join("/");
     if (drawMapImage) goToMap()
-}
-
-/**
- * Pops up a modal window asking a user what animal companion they want to use for their map.
- */
-function askUserWhatCompanionTheyWant() {
-
 }
 
 /**
@@ -246,6 +246,17 @@ function changeOverworldView(view, goToMapAfterwards = true) {
         currentMap = array.join("/");
         goToMap();
     } else return array;
+}
+
+/**
+ * Toggles Universal Tracker Mode
+ * @param {HTMLButtonElement} elem - The button that was clicked 
+ */
+function toggleUniversalTrackerMode(elem) {
+    gameLogic.universalTrackerToggled = !gameLogic.universalTrackerToggled;
+    elem.classList[gameLogic.universalTrackerToggled ? 'add' : 'remove']('active');
+    document.getElementById('sidebarMenu').parentElement.classList[gameLogic.universalTrackerToggled ? 'add' : 'remove']("d-none");
+    document.getElementById('gameMap').classList[gameLogic.universalTrackerToggled ? 'add' : 'remove']("d-none");
 }
 
 /**
@@ -341,7 +352,10 @@ function archipelagoConnector(obj) {
                                 $(obj).find("p").text('Successfully disconnected from the Archipelago Server')
                             })
                             initTracker();
-                            for (const elem of document.getElementsByClassName("mapSwitcher")) elem.setAttribute("disabled", "");
+                            for (const elem of [
+                                ...document.getElementsByClassName("mapSwitcher"), 
+                                document.getElementById("trackerSettings")
+                            ]) elem.setAttribute("disabled", "");
                             document.getElementById("stageView").style.display = "none";
                             connectionSuccessful = true;
                             $("#statusKindof").text("Connected To Archipelago")
@@ -354,7 +368,12 @@ function archipelagoConnector(obj) {
                         } case "ReceivedItems": {
                             for (const archipelagoItemInfo of info2.items) {
                                 const item = Object.keys(items).find(i => items[i].APID == archipelagoItemInfo.item);
-                                if (item) triggerItem(items[item], 1, true, true);
+                                if (item) {
+                                    const info = items[item];
+                                    if (info.beforeItemTrigger) info.beforeItemTrigger(info, triggerItem, resetItem);
+                                    triggerItem(info);
+                                    if (info.afterItemTrigger) info.afterItemTrigger(info, triggerItem, resetItem);
+                                }
                                 const location = Object.keys(locations).find(i => locations[i].APID == archipelagoItemInfo.location);
                                 if (location) {
                                     locations[location].checked = true;
@@ -408,12 +427,19 @@ function archipelagoConnector(obj) {
     }
 }
 
+/**
+ * Puts in an Uppercase Letter at the begining of a word.
+ * @returns {string} The completed word
+ */
 function upperCaseFirstLetterInWord(word) {
     const end = word.substring(1);
     const beg = word.slice(0, -end.length);
     return beg.toLocaleUpperCase() + end;
 }
 
+/**
+ * Sets up the tracker each time the website is loaded.
+ */
 function initTracker() {
     localStorage.OoAWebTrackerSettings ||= (() => {
         const settings = {};
@@ -451,19 +477,35 @@ function initTracker() {
             }
         }
         return html;
-    }).join('<br>')
-    for (const i in items) {
-        function resetItems() {
-            items[i].count--
-            if (items[i].count > 0) resetItems()
-        }
-        if (items[i].count) resetItems();
-    }
+    }).join('<br>');
+    resetAllItems();
     drawItems();
     goToMap();
     mapSwitchButtonsHandler();
 }
 
+/**
+ * Resets an item
+ * @param {object} itemInfo - The item to reset.
+ */
+function resetItem(itemInfo) {
+    if (!itemInfo?.count) return;
+    itemInfo.count--
+    if (itemInfo.count > 0) resetItem(itemInfo);
+    else drawItems()
+}
+
+/**
+ * Resets all items at once.
+ */
+function resetAllItems() {
+    for (const i in items) resetItem(items[i]);
+}
+
+/**
+ * Changes the settings for a user.
+ * @param {HTMLFormElement} obj - A form element assosiated with the settings. 
+ */
 function trackerSettingsChange(obj) {
     gameLogic.settings = Object.fromEntries(new URLSearchParams($(obj).serialize()));
     localStorage.OoAWebTrackerSettings = JSON.stringify(gameLogic.settings);
@@ -471,30 +513,18 @@ function trackerSettingsChange(obj) {
     goToMap();
 }
 
+/**
+ * Creates a feedback block for a user to look at.
+ * @param {string} alertType - The type of feedback that a user will be recieving
+ * @param {string} header - Text for a header if included.
+ * @param {string} body - Text for a body if included.
+ */
 function feedbackBlock(alertType = "primary", header, body) {
     const feedbackContainer = document.getElementById('feedbackContainer');
-    const div = document.createElement();
-    div.className = `alert alert-${alertType}`;
-    div.role = "alert";
-    if (header) {
-        const h4 = document.createElement("h4");
-        h4.className = "alert-heading";
-        h4.innerText = header;
-        div.appendChild(h4);
-    }
-    if (body) {
-        const p = document.createElement("p");
-        p.innerText = body;
-        div.appendChild(p);
-    }
-    const button = document.createElement();
-    button.type = "button";
-    button.className = "btn-close";
-    button.setAttribute("data-bs-dismiss", "alert");
-    button.setAttribute("aria-label", "Close");
-    div.appendChild(button);
-    feedbackContainer.appendChild(div);
-    div.addEventListener("closed.bs.alert", () => feedbackContainer.removeChild(div))
+    let html = `<div class="alert alert-${alertType} alert-dismissible show">`;
+    if (header) html += `<h4 class="alert-heading">${header}</h4>`;
+    if (body) html += `<p>${body}</p>`
+    feedbackContainer.innerHTML = html + `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`
 }
 
 /**

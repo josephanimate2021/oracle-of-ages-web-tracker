@@ -647,7 +647,7 @@ const items = {
     },
     "Maku Seed": {
         'classification': "progression",
-        'imageName': 'makuseed',
+        'imageName': 'makuSeed',
         'id': 0x36
     },
 
@@ -679,7 +679,7 @@ const items = {
     },
     "Dumbbell": {
         'classification': "trade",
-        'imageName': 'Dumbbell',
+        'imageName': 'dumbBell',
         'id': 0x57
     },
     "Cheesy Mustache": {
@@ -774,7 +774,7 @@ const items = {
     },
     "Lava Juice": {
         'classification': "progression",
-        'imageName': 'lavajuice',
+        'imageName': 'lavaJuice',
         'id': 0x5a
     },
     "Letter of Introduction": {

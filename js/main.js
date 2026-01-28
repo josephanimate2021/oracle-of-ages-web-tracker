@@ -55,11 +55,7 @@ function drawItems() {
     goModeElem.style.color = canBeatGame ? 'green' : 'red';
     goModeElem.innerHTML = canBeatGame ? 'Yes' : 'No';
     document.getElementById("itemsView").innerHTML = allItemClassifications.map(d => {
-        const word = d.split("_").map(g => {
-            const end = g.substring(1);
-            const beg = g.slice(0, -end.length);
-            return beg.toUpperCase() + end;
-        }).join(" ");
+        const word = d.split("_").map(upperCaseFirstLetterInWord).join(" ");
         return `<option value="${d}"${gameLogic.showItemsWithClassification == d ? " selected" : ''}>View ${word} Items</option>`
     }).join("");
 }
@@ -103,6 +99,9 @@ function goToMap() {
     image.src = mapImageData || `maps/${currentMap}.png`;
     image.alt = `Map: ${currentMap.split("/")[1].replaceAll("_", " ")}`;
     const reachableLocations = [];
+    for (const i in locations) {
+        if (locations[i].region_id == "advance shop") locations[i].hidden = !gameLogic.settings.open_advance_shop;
+    }
     gameLogic.maps[mapImage].layouts ||= {
         default: []
     };
@@ -113,7 +112,9 @@ function goToMap() {
         marker.type = "button";
         marker.className = `btn btn-${position.array.filter(i => i.checked).length == position.array.length ? 'secondary' : (() => {
             return position.array.filter(i => i.reachable()).length == position.array.length ? (() => {
-                position.array.forEach(f => reachableLocations.push(f));
+                if (
+                    gameLogic.settings.show_reachable_locations_bassed_from_current_map
+                ) position.array.forEach(f => reachableLocations.push(f));
                 return 'success'
             })() : 'danger';
         })()}`;
@@ -149,6 +150,15 @@ function goToMap() {
             html: true,
             sanitize: false
         });
+    }
+    if (reachableLocations.length == 0) {
+        for (const i in locations) {
+            if (locations[i].hidden) continue;
+            if (locations[i].reachable() && !locations[i].checked) {
+                locations[i].checkLocation = i;
+                reachableLocations.push(locations[i])
+            }
+        }
     }
     document.getElementById('reachable-count').innerText = reachableLocations.length;
     document.getElementById("itemsUserCanGet").innerHTML = reachableLocations.map(d => `<tr><td>${d.checkLocation}</td></tr><tr></tr><tr></tr>${connected2archipelago ? '<tr></tr>' : ''
@@ -388,7 +398,50 @@ function archipelagoConnector(obj) {
     }
 }
 
+function upperCaseFirstLetterInWord(word) {
+    const end = word.substring(1);
+    const beg = word.slice(0, -end.length);
+    return beg.toLocaleUpperCase() + end;
+}
+
 function initTracker() {
+    localStorage.OoAWebTrackerSettings ||= (() => {
+        const settings = {};
+        for (const i in gameLogic.gameSettingOptions) settings[i] = gameLogic.gameSettingOptions[i].default;
+        return JSON.stringify(settings);
+    })();
+    gameLogic.settings = JSON.parse(localStorage.OoAWebTrackerSettings);
+    document.getElementById("trackerSettings").innerHTML = Object.keys(gameLogic.gameSettingOptions).map(i => {
+        const setting = gameLogic.gameSettingOptions[i];
+        const defaultSetting = gameLogic.settings[i];
+        let html = `<label for="${i}_label" class="form-label">${i.split("_").map(upperCaseFirstLetterInWord).join(" ")}</label>`;
+        let options = setting.options;
+        switch (typeof setting.default) {
+            case "boolean": options = [true, false];
+            case "string": {
+                html += `<select class="form-select" id="${i}" name="${i}">${
+                    options.map(i => `<option value="${i}"${defaultSetting == i ? ' selected' : ''}>${
+                        i.toString().split("_").map(upperCaseFirstLetterInWord).join(" ")
+                    }</option>`).join('')
+                }</select>`;
+                break;
+            } case "number": {
+                html += `<input type="range" min="${setting.lowestValue}" max="${setting.highestValue}" value="${
+                    defaultSetting
+                }" class="form-range" id="${i}_range" name="${i}" oninput="(() => {
+                    const rangeOutput = document.getElementById('${i}_rangeValue');
+
+                    // Set initial value
+                    rangeOutput.value = this.value
+                })()"><input type="number" id="${
+                    i
+                }_rangeValue" value="${defaultSetting}" oninput="(() => {
+                    document.getElementById('${i}_range').value = this.value;
+                })()" min="${setting.lowestValue}" max="${setting.highestValue}"><br>`
+            }
+        }
+        return html;
+    }).join('<br>')
     for (const i in items) {
         function resetItems() {
             items[i].count--
@@ -399,6 +452,13 @@ function initTracker() {
     drawItems();
     goToMap();
     mapSwitchButtonsHandler();
+}
+
+function trackerSettingsChange(obj) {
+    gameLogic.settings = Object.fromEntries(new URLSearchParams($(obj).serialize()));
+    localStorage.OoAWebTrackerSettings = JSON.stringify(gameLogic.settings);
+    drawItems();
+    goToMap();
 }
 
 function feedbackBlock(alertType = "primary", header, body) {

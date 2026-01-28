@@ -101,9 +101,15 @@ class AgesGameLogic {
             "overworld_past": {
                 layouts: {
                     default: [
-                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("maku path heartpiece") },
-                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 key chest") },
-                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 basement") },
+                        { x: 66, y: 50, array: this.findLocationInfoWithStartName("Maku Path") },
+                        { x: 366, y: 205, array: this.findLocationInfoByRegionName("postman trade") },
+                        { x: 395, y: 205, array: this.findLocationInfoByRegionName("lynna shooting gallery") },
+                        { x: 410, y: 205, array: this.findLocationInfoByRegionName("advance shop") },
+                        { x: 322.5, y: 200, array: this.findLocationInfoByRegionName("sad boi trade") },
+                        { x: 247.5, y: 209, array: this.findLocationInfoByRegionName("toilet hand trade") },
+                        { x: 249, y: 177, array: this.findLocationInfoByRegionName("gasha farmer") },
+                        { x: 390, y: 162, array: this.findLocationInfoWithStartName("Maku Path") },
+                        // { x: 247.5, y: 199, array: this.findLocationInfoByStartName("Gasha Nut") },
                     ],
                     ingame: [
                         { x: 179, y: 99, array: this.findLocationInfoWithStartName("Maku Path") },
@@ -301,6 +307,10 @@ class AgesGameLogic {
             "d6_present": {
                 roomCondtionals: [
                     {
+                        min: 0x710,
+                        max: 0x711
+                    },
+                    {
                         min: 0x512,
                         max: 0x528
                     }
@@ -373,11 +383,41 @@ class AgesGameLogic {
         this.dungeons = Object.keys(this.dungeonsReachable);
 
         // Logic Settings and other stuff.
-        this.gameSettings = {
-            logic_difficulty: "basic",
-            required_essences_for_maku_seed: 8,
-            required_slates: 4,
-            randomizerMode: true // true by default since most people usually proitize a tracker for a randomizer. This can still be changed anytime.
+        this.gameSettingOptions = {
+            logic_difficulty: {
+                options: ["basic", "medium", "hard"],
+                default: "basic"
+            },
+            required_essences_for_maku_seed: {
+                default: 8,
+                lowestValue: 0,
+                highestValue: 8
+            },
+            required_slates: {
+                default: 4,
+                lowestValue: 0,
+                highestValue: 4
+            },
+            randomizer_mode: {
+                default: true // true by default since most people usually proitize a tracker for a randomizer. This can still be changed anytime.
+            },
+            goal: {
+                default: "beat_ganon",
+                options: ['beat_ganon', 'beat_vernan']
+            },
+            show_reachable_locations_bassed_from_current_map: {
+                default: false // I guess I am keeping this false by defaut since the universal tracker gives out all reachable locations no matter what map a user is on.
+            },
+            animal_companion: {
+                default: "Choose Companion",
+                options: ["moosh", "ricky", "dimitri"]
+            },
+            dungeon_shuffle: {
+                default: false
+            },
+            open_advance_shop: {
+                default: false
+            }
         }
 
     };
@@ -421,7 +461,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the player is playing in randomizer mode, false otherwise.
      */
     isRandomizer() {
-        return this.gameSettings.randomizerMode;
+        return this.settings.randomizer_mode;
     }
 
     /**
@@ -448,7 +488,7 @@ class AgesGameLogic {
 
     calculateItemsNeededForGameCompletion() {
         let neededItems = 0;
-        for (let i = 1; i <= this.gameSettings.required_essences_for_maku_seed; i++) {
+        for (let i = 1; i <= this.settings.required_essences_for_maku_seed; i++) {
             const essence = Object.keys(items).find(k => items[k].imageName == `essences/d${i}`);
             if (essence && !this.hasItem(essence)) neededItems++
         }
@@ -456,7 +496,7 @@ class AgesGameLogic {
         if (!this.hasBombs()) neededItems++;
         if (!this.hasSwitchHook()) neededItems++;
         if (!this.canUseMysterySeeds()) neededItems++;
-        if (this.gameSettings.isBeatingGannon) {
+        if (this.settings.goal == "beat_ganon") {
             if (!this.hasMediumLogic() && !this.hasNobleSword()) neededItems++;
             if (!this.hasSeedShooter() || (
                 this.hasHardLogic() && !this.canUseSeeds()
@@ -713,7 +753,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the option is set to medium logic, false otherwise.
      */
     hasMediumLogic() {
-        return this.gameSettings.logic_difficulty === "medium" || this.gameSettings.logic_difficulty === "hard";
+        return this.settings.logic_difficulty === "medium" || this.settings.logic_difficulty === "hard";
     }
 
     /**
@@ -721,7 +761,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the option is set to hard logic, false otherwise.
      */
     hasHardLogic() {
-        return this.gameSettings.logic_difficulty === "hard";
+        return this.settings.logic_difficulty === "hard";
     }
 
     /**
@@ -743,7 +783,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the player has enough essences for the Maku Seed, false otherwise.
      */
     hasEssencesForMakuSeed() {
-        return this.hasEssences(this.gameSettings.required_essences_for_maku_seed);
+        return this.hasEssences(this.settings.required_essences_for_maku_seed);
     }
 
     /**
@@ -760,7 +800,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the player has enough states for a certain check.
      */
     hasEnoughSlates() {
-        return this.hasSlates(this.gameSettings.required_slates);
+        return this.hasSlates(this.settings.required_slates);
     }
 
     /**
@@ -1150,7 +1190,7 @@ class AgesGameLogic {
                 // not to be frustrating
                 this.hasMediumLogic() &&
                 [
-                    this.hasBombs(2),
+                    this.hasBombs(),
                     this.canUseEmberSeeds(false),
                     (this.hasSeedShooter() && this.hasGaleSeeds()),
                 ].some(Boolean)

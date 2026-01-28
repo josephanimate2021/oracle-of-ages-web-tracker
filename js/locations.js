@@ -187,7 +187,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "hidden": true,
+        "reachable": () => false,
         "symbolic_name": "advanceShop1",
     },
     "Lynna Village: Advance Shop Item #2": {
@@ -199,7 +199,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "hidden": true,
+        "reachable": () => false,
         "symbolic_name": "advanceShop2",
     },
     "Lynna Village: Advance Shop Item #3": {
@@ -211,7 +211,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "hidden": true,
+        "reachable": () => false,
         "symbolic_name": "advanceShop3",
     },
     "Lynna Village: Baseball": {
@@ -988,7 +988,7 @@ const locations = {
         "flag_byte": 0xc6d2,
         "room": 0x0300,
         "bit_mask": 0x80,
-        "reachable": () => gameLogic.canKillNormalEnemy(true),
+        "reachable": () => gameLogic.canKillNormalEnemy(true) && gameLogic.hasItem("Touching Book"),
         "symbolic_name": "mapleTrade",
     },
 

@@ -33,7 +33,7 @@ const locations = {
         "flag_byte": 0xc6d8,
         "bit_mask": 0x40,
         "room": 0x0079,
-        "reachable": () => gameLogic.canGetToTingle() && gameLogic.hasKindSeedCount(3),
+        "reachable": () => gameLogic.canGetToTingle() && gameLogic.hasSeedKindCount(3),
         "symbolic_name": "tingleUpgrade",
     },
 
@@ -479,7 +479,7 @@ const locations = {
         "flag_byte": 0xcaca,
         "room": 0x05ca,
         "map_tile": 0x1bb,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.canBreaskCrystal() && gameLogic.hasFeather(),
+        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.canBreakCrystal() && gameLogic.hasFeather(),
     },
     "Crescent Island (Past): Bomb Cave Chest": {
         "region_id": "tokay bomb cave",
@@ -506,9 +506,7 @@ const locations = {
         "bit_mask": 0x40,
         "scouting_byte": 0xc7e4,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && (
-            gameLogic.isRandomizer() // I'll come back once I remember the type of seed needed to buy item #1 from this shop.
-        ),
+        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasMysterySeeds(),
         "symbolic_name": "tokayMarket1",
     },
     "Crescent Island (Past): Market Item #2": {
@@ -519,9 +517,7 @@ const locations = {
         "bit_mask": 0x80,
         "scouting_byte": 0xc7e4,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && (
-            gameLogic.isRandomizer() // I'll come back once I remember the type of seed needed to buy item #2 from this shop.
-        ),
+        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasScentSeeds(),
         "symbolic_name": "tokayMarket2",
     },
     "Crescent Island (Past): Pot Cave": {
@@ -530,9 +526,7 @@ const locations = {
         "flag_byte": 0xcaf7,
         "room": 0x05f7,
         "map_tile": 0x1dd,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && (
-            gameLogic.isRandomizer() // I'll come back once I remember the type of seed needed to buy item #3 from this shop.
-        ),
+        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasLongHook(),
     },
 
     // Nuun Highlands Items

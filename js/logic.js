@@ -936,12 +936,14 @@ class AgesGameLogic {
      * @param {boolean} liquid - Whatever or not the player is jumping over liquid.
      * @returns {boolean} the player can jump one pixel wide. If not, then it's false.
      */
-    canJump1Wide(liquid = false) {
+    canJump1Wide(liquid = false, canUseAnimalCompanion = true) {
         if (liquid) return [
             this.hasFeather(),
-            this.hasMediumLogic() && this.canSummonRicky()
+            this.hasMediumLogic() && canUseAnimalCompanion && this.canSummonRicky()
         ].some(Boolean);
-        return this.hasFeather() || this.canSummonMoosh() || this.canSummonRicky();
+        return this.hasFeather() || (
+            canUseAnimalCompanion && (this.canSummonMoosh() || this.canSummonRicky())
+        );
     }
 
     /**
@@ -949,7 +951,7 @@ class AgesGameLogic {
      * @param {boolean} liquid - Whatever or not the player is jumping over liquid.
      * @returns {boolean} True if the player can jump two pixels wide. If not, then it's false.
      */
-    canJump2Wide(liquid = false) {
+    canJump2Wide(liquid = false, canUseAnimalCompanion = true) {
         if (liquid) return [
             this.hasFeather() && this.canUsePegasusSeeds(),
             this.hasHardLogic() && this.hasFeather() && this.hasBombs()
@@ -958,7 +960,7 @@ class AgesGameLogic {
             this.hasFeather() && (
                 this.hasMediumLogic() || this.canUsePegasusSeeds()
             )
-        ) || this.canSummonMoosh();
+        ) || (canUseAnimalCompanion && this.canSummonMoosh());
     }
 
     /**
@@ -966,7 +968,7 @@ class AgesGameLogic {
      * @param {boolean} liquid - Whatever or not the player is jumping over liquid.
      * @returns {boolean} True if the player can jump three pixels wide. If not, then it's false.
      */
-    canJump3Wide(liquid = false) {
+    canJump3Wide(liquid = false, canUseAnimalCompanion = false) {
         if (liquid) return [
             this.hasHardLogic(),
             this.hasFeather(),
@@ -977,7 +979,7 @@ class AgesGameLogic {
             this.isUsingMediumLogic() &&
             this.hasFeather() &&
             this.canUsePegasusSeeds()
-        ) || this.canSummonMoosh();
+        ) || (canUseAnimalCompanion && this.canSummonMoosh());
     }
 
     /**
@@ -1097,8 +1099,10 @@ class AgesGameLogic {
      * Checks if the player can break a bush.
      * @returns {boolean} True if the player can break a bush. If not, then it's false.
      */
-    canBreakBush() {
-        return this.canBreakFlowers() || this.hasBracelet() || this.hasSwitchHook();
+    canBreakBush(canUseAnimalCompanion = true) {
+        return this.canBreakFlowers(
+            canUseAnimalCompanion
+        ) || this.hasBracelet() || this.hasSwitchHook();
     }
 
     /**
@@ -1109,7 +1113,7 @@ class AgesGameLogic {
         return [
             this.hasSword(),
             this.hasBoomerang(),
-            // canPunch(), ?
+            // this.canPunch(), ?
         ].some(Boolean) && this.hasFeather();
     }
 
@@ -1181,10 +1185,10 @@ class AgesGameLogic {
      * Checks if the player can break flowers.
      * @returns {boolean} True if the player can break flowers. If not, then it's false.
      */
-    canBreakFlowers() {
+    canBreakFlowers(canUseAnimalCompanion = true) {
         return [
             this.hasSword(),
-            this.hasFlute(),
+            canUseAnimalCompanion && this.hasFlute(),
             (
                 // Consumables need at least medium logic, since they need a good knowledge of the game
                 // not to be frustrating

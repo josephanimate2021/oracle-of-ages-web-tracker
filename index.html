@@ -308,7 +308,7 @@
                         <ul class="nav flex-column mb-auto">
                             <li class="nav-item">
                                 <a id="itemsAndMap" class="nav-link d-flex align-items-center gap-2 active"
-                                    href="javascript:;">
+                                    href="javascript:;" onclick="changeView('flex-row', 'block', this)" class="itemViewerOptions">
                                     <svg class="bi" viewBox="0 0 512 512">
                                         <path d="M256,110.933c-18.825,0-34.133,15.309-34.133,34.133S237.175,179.2,256,179.2s34.133-15.309,34.133-34.133
                         S274.825,110.933,256,110.933z" />
@@ -343,7 +343,7 @@
                             </li>
                             <li class="nav-item">
                                 <a id="items" class="nav-link d-flex align-items-center gap-2"
-                                    href="javascript:;">
+                                    href="javascript:;" onclick="changeView('flex-row', 'none', this)" class="itemViewerOptions">
                                     <svg class="bi" viewBox="0 0 512 512">
                                         <path d="M256,110.933c-18.825,0-34.133,15.309-34.133,34.133S237.175,179.2,256,179.2s34.133-15.309,34.133-34.133
                         S274.825,110.933,256,110.933z" />
@@ -373,7 +373,7 @@
                             </li>
                             <li class="nav-item">
                                 <a id="map" class="nav-link d-flex align-items-center gap-2"
-                                    href="javascript:;">
+                                    href="javascript:;" onclick="changeView('d-none', 'block', this)" class="itemViewerOptions">
                                     <svg class="bi" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M4 2L0 1V14L4 15V2Z" />
                                         <path d="M16 2L12 1V14L16 15V2Z" />
@@ -420,7 +420,7 @@
                     </div>
                 </div>
             </div>
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" id="gameMap">
                 <div id="feedbackContainer"></div>
                 <div id="stageView">
                     <label for="stage-view-select">View: </label>

@@ -86,6 +86,16 @@ function triggerItem(itemInfo, times = 1, dontCallItemsDrawFunction = false, don
     if (!dontDrawMap) goToMap()
 }
 
+function changeView(itemsVisibility, gameMapVisibility, obj) {
+    const gameItemsElem = document.getElementById('gameItems');
+    if (gameItemsElem.classList.contains("flex-row")) gameItemsElem.classList.remove("flex-row");
+    if (gameItemsElem.classList.contains("d-none")) gameItemsElem.classList.remove("d-none");
+    gameItemsElem.classList.add(itemsVisibility)
+    document.getElementById('gameMap').style.display = gameMapVisibility;
+    for (const elem of document.getElementsByClassName("itemViewerOptions")) if (elem.classList.contains("active")) jQuery(elem).removeClass("active")
+    jQuery(obj).addClass("active");
+}
+
 /**
  * Draw a map to the canvas
  */

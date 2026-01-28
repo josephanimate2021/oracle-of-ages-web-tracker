@@ -241,16 +241,8 @@ class AgesGameLogic {
                         equals_to: 0x610
                     },
                     {
-                        min: 0x627,
-                        max: 0x62B
-                    },
-                    {
-                        min: 0x420,
-                        max: 0x425
-                    },
-                    {
                         min: 0x411,
-                        max: 0x41E
+                        max: 0x425
                     }
                 ]
             },
@@ -258,32 +250,20 @@ class AgesGameLogic {
                 locatedInPast: true,
                 roomCondtionals: [
                     {
-                        min: 0x440,
-                        max: 0x448
-                    },
-                    {
-                        min: 0x430,
-                        max: 0x43E
+                        min: 0x627,
+                        max: 0x62B
                     },
                     {
                         min: 0x42C,
-                        max: 0x42E
+                        max: 0x448
                     }
                 ]
             },
             "d3": {
                 roomCondtionals: [
                     {
-                        min: 0x460,
-                        max: 0x466
-                    },
-                    {
-                        min: 0x450,
-                        max: 0x45E
-                    },
-                    {
                         min: 0x449,
-                        max: 0x44E
+                        max: 0x466
                     }
                 ]
             },
@@ -293,36 +273,20 @@ class AgesGameLogic {
                         equals_to: 0x668
                     },
                     {
-                        min: 0x693,
-                        max: 0x698
-                    },
-                    {
-                        min: 0x490,
-                        max: 0x492
-                    },
-                    {
-                        min: 0x480,
-                        max: 0x48E
-                    },
-                    {
-                        min: 0x470,
-                        max: 0x47E
-                    },
-                    {
                         min: 0x469,
-                        max: 0x46E
+                        max: 0x492
                     }
                 ]
             },
             "d5": {
                 roomCondtionals: [
                     {
-                        min: 0x4A0,
-                        max: 0x4BE
+                        min: 0x693,
+                        max: 0x698
                     },
                     {
                         min: 0x499,
-                        max: 0x49E
+                        max: 0x4BF
                     }
                 ]
             },
@@ -330,23 +294,15 @@ class AgesGameLogic {
                 roomCondtionals: [
                     {
                         min: 0x4D0,
-                        max: 0x4FE
+                        max: 0x4FF
                     }
                 ]
             },
             "d6_present": {
                 roomCondtionals: [
                     {
-                        min: 0x710,
-                        max: 0x711
-                    },
-                    {
-                        min: 0x520,
-                        max: 0x528
-                    },
-                    {
                         min: 0x512,
-                        max: 0x51E
+                        max: 0x528
                     }
                 ]
             },
@@ -357,21 +313,9 @@ class AgesGameLogic {
                         max: 0x72A
                     },
                     {
-                        min: 0x540,
+                        min: 0x52B,
                         max: 0x546
                     },
-                    {
-                        min: 0x530,
-                        max: 0x53E
-                    },
-                    {
-                        min: 0x52B,
-                        max: 0x52E
-                    },
-                    {
-                        min: 0x512,
-                        max: 0x51E
-                    }
                 ]
             },
             "d7": {
@@ -381,12 +325,8 @@ class AgesGameLogic {
                         max: 0x74A
                     },
                     {
-                        min: 0x570,
+                        min: 0x54B,
                         max: 0x572
-                    },
-                    {
-                        min: 0x550,
-                        max: 0x56E
                     }
                 ]
             },
@@ -397,16 +337,16 @@ class AgesGameLogic {
                         max: 0x776
                     },
                     {
-                        min: 0x5A0,
-                        max: 0x5AA
-                    },
-                    {
-                        min: 0x580,
-                        max: 0x59E
-                    },
-                    {
                         min: 0x577,
-                        max: 0x57E
+                        max: 0x5AA
+                    }
+                ]
+            },
+            "roomOfRites": {
+                roomCondtionals: [
+                    {
+                        min: 0x5F0,
+                        max: 0x5F5
                     }
                 ]
             }

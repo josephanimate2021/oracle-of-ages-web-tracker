@@ -276,9 +276,6 @@
                 </button>
             </li>
         </ul>
-        <div id="navbarSearch" class="navbar-search w-100 collapse">
-            <input class="form-control w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search" />
-        </div>
     </header>
     <div class="container-fluid">
         <div class="row">
@@ -437,20 +434,14 @@
                 </div>
             </div>
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="alert alert-warning" role="alert">
-                    This Tracker is currently in a development beta stage. Things may not work as intended for the time
-                    being.
-                    Please use the Oracle of Ages <a href="https://github.com/Dranzior/ooa_brooty">PopTracker Pack</a>
-                    in the meantime.
-                    Now of course, you are welcome to try out this web tracker and report any bugs or issues you find! I
-                    do encourage that behavior as it helps improve the tracker overtime.
+                <div id="stageView">
+                    <label for="stage-view-select">View: </label>
+                    <select id="stage-view-select" class="btn btn-sm btn-outline-secondary">
+                        <option value="overworld">Overworld</option>
+                        <option value="dungeons">Dungeons</option>
+                        <option value="specialAreas">Special Areas</option>
+                    </select>
                 </div>
-                <label for="stage-view-select">View: </label>
-                <select id="stage-view-select" class="btn btn-sm btn-outline-secondary">
-                    <option value="overworld">Overworld</option>
-                    <option value="dungeons">Dungeons</option>
-                    <option value="specialAreas">Special Areas</option>
-                </select>
                 <div data-view="overworld" class="stageViewOption">
                     <h4>Overworld</h4>
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -645,26 +636,5 @@
             </center>
         </div>
     </div>
-</div>
-<div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" id="itemCheckErrorWhenUserIsConnectedToServer">
-  <div class="d-flex">
-    <div class="toast-body">
-      Sorry, but you cannot check off an item when connected to a server.
-    </div>
-  </div>
-</div>
-<div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" id="cannotSwitchMapsError">
-  <div class="d-flex">
-    <div class="toast-body">
-      Sorry, but you cannot switch maps when connected to a server.
-    </div>
-  </div>
-</div>
-<div class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true" id="locationCheckErrorWhenUserIsConnectedToServer">
-  <div class="d-flex">
-    <div class="toast-body">
-      Sorry, but you cannot check off a location when connected to a server.
-    </div>
-  </div>
 </div>
 </html>

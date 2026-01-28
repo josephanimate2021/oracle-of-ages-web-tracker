@@ -32,7 +32,9 @@ function drawItems() {
         a.className = `nav-link d-flex align-items-center ${info.count >= 1 ? ' active' : ''}`;
         a.style.cursor = "pointer";
         a.title = item + (info.displayCount ? ` (Count: ${info.count || 0})` : '')
-        if (!info.unclickable && !connected2archipelago) a.addEventListener("click", e => {
+        a.addEventListener("click", e => {
+            if (info.unclickable) return alert(`${item} cannot be checked.`);
+            if (connected2archipelago) return alert(`A server is relying on ${item} to be checked, so you cannot check off this item manually right now.`);
             triggerItem(info);
         })
         const img = document.createElement("img");
@@ -103,6 +105,9 @@ function goToMap() {
     image.src = mapImageData || `maps/${currentMap}.png`;
     image.alt = `Map: ${currentMap.split("/")[1].replaceAll("_", " ")}`;
     const reachableLocations = [];
+    gameLogic.maps[mapImage].layouts ||= {
+        default: []
+    };
     document.getElementById('overWorldView').style.display = gameLogic.maps[mapImage].layouts.ingame ? 'block' : 'none';
     for (const position of gameLogic.maps[mapImage].layouts[layoutType]) {
         const info = position.array[0];
@@ -170,7 +175,6 @@ function goToMap() {
 function mapSwitchButtonsHandler(myFunction) {
     document.querySelectorAll(".mapSwitcher").forEach(button => {
         if (!myFunction) button.addEventListener("click", (e) => {
-            if (connected2archipelago) new bootstrap.Toast(document.getElementById("cannotSwitchMapsError"));
             const mapImage = button.getAttribute("data-mapImage");
             if (mapImage == "animal_companion_regions") askUserWhatCompanionTheyWant();
             else changeMapImage(mapImage)
@@ -315,12 +319,16 @@ function archipelagoConnector(obj) {
                                 socket.close();
                                 $(obj).find('button[type="submit"]').text(originalText);
                                 $("#statusKindof").html(originalText2);
+                                document.getElementById("stageView").style.display = "block";
                                 connected2archipelago = false;
                                 initTracker()
+                                for (const elem of document.getElementsByClassName("mapSwitcher")) elem.removeAttribute("disabled");
                                 connectionSuccessful = false;
                                 $(obj).find("p").text('Successfully disconnected from the Archipelago Server')
                             })
-                            initTracker()
+                            initTracker();
+                            for (const elem of document.getElementsByClassName("mapSwitcher")) elem.setAttribute("disabled", "");
+                            document.getElementById("stageView").style.display = "none";
                             connectionSuccessful = true;
                             $("#statusKindof").text("Connected To Archipelago")
                             $(obj).find("p").css("color", "lime");
@@ -344,21 +352,28 @@ function archipelagoConnector(obj) {
                             if (info2.data) {
                                 if (info2.data['Current Room']) {
                                     for (const i in gameLogic.maps) {
+                                        console.log("Current Room:", info2.data['Current Room'])
                                         const info = gameLogic.maps[i].roomCondtionals.find(i => (i.equals_to === info2.data['Current Room']) || (
                                             info2.data['Current Room'] >= i.min && info2.data['Current Room'] <= i.max
                                         ));
                                         if (info) {
-                                            const image2draw = gameLogic.maps[i]
-                                            if (!image2draw.hasIngameMap) {
-                                                if (currentMap.startsWith("ingame")) {
-                                                    image2draw.wasInGame = true;
-                                                    currentMap = (changeOverworldView("default", false)).join("");
-                                                } else if (image2draw.wasInGame) {
-                                                    delete image2draw.wasInGame;
-                                                    currentMap = (changeOverworldView("ingame", false)).join("");
+                                            console.log("Current Room Info:", info);
+                                            const image2draw = gameLogic.maps[i];
+                                            console.log("Current Map Info:", image2draw);
+                                            let element = jQuery(".stageViewOption").find(`button[data-mapImage="${i}"]`)[0];
+                                            function goToElemWithViewData() {
+                                                element = element.parentElement;
+                                                const view = element.getAttribute("data-view");
+                                                if (!view) goToElemWithViewData();
+                                                else {
+                                                    changeStageView(view);
+                                                    changeMapImage(i);
                                                 }
                                             }
-                                            changeMapImage(i)
+                                            gameLogic.serverCurrentMap = i;
+                                            if (currentMap.startsWith("ingame")) {
+                                                if (image2draw.layouts?.ingame) goToElemWithViewData()
+                                            } else goToElemWithViewData();
                                             break;
                                         }
                                     }
@@ -380,22 +395,39 @@ function archipelagoConnector(obj) {
 }
 
 function initTracker() {
+    for (const i in items) {
+        function resetItems() {
+            items[i].count--
+            if (items[i].count > 0) resetItems()
+        }
+        if (items[i].count) resetItems();
+    }
     drawItems();
     goToMap();
     mapSwitchButtonsHandler();
 }
 
+/**
+ * Changes the stage view along with a map change.
+ * @param {string} value - The stage to change into
+ * @param {HTMLElement} $this - an HTML element
+ */
+function changeStageView(value) {
+    let array = currentMap.split("/");
+    if (array[0] == "ingame" && value != "overworld") array = changeOverworldView("default", false);
+    array[1] = defaultMapImages[value];
+    for (const divElement of document.querySelectorAll(".stageViewOption")) {
+        divElement.style.display = divElement.getAttribute("data-view") === value ? "block" : "none";
+    }
+    currentMap = array.join("/");
+}
+
 document.getElementById("overworld-view-select").addEventListener("change", e => {
     changeOverworldView(e.target.value);
+    if (e.target.value == "default" && gameLogic.serverCurrentMap) changeMapImage(gameLogic.serverCurrentMap);
 });
 
 document.getElementById("stage-view-select").addEventListener("change", e => {
-    let array = currentMap.split("/");
-    if (array[0] == "ingame") array = changeOverworldView("default", false);
-    array[1] = defaultMapImages[e.target.value];
-    for (const button of document.querySelectorAll(".stageViewOption")) {
-        button.style.display = button.getAttribute("data-view") === e.target.value ? "block" : "none";
-    }
-    currentMap = array.join("/");
+    changeStageView(e.target.value);
     goToMap();
 });

@@ -100,6 +100,27 @@
         .bd-mode-toggle .dropdown-menu .active .bi {
             display: block !important;
         }
+
+        .animal_companion {
+            height: 384px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .animal_companion img#ricky {
+            position: absolute;
+        }
+
+        .animal_companion img#dimitri {
+            top: -400px;
+            position: absolute;
+        }
+
+        .animal_companion img#moosh {
+            top: -800px;
+            position: absolute;
+        }
+
     </style>
 </head>
 
@@ -268,7 +289,7 @@
             </li>
         </ul>
         <button type="button" class="btn btn-secondary col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" onclick="toggleUniversalTrackerMode(this)">
-            Toggle Universal Tracker Mode (Server Connection Recommended)
+            Toggle Universal Tracker Mode<br>(Server Connection Recommended)
         </button>
     </header>
     <div class="container-fluid">
@@ -543,18 +564,12 @@
                 </div>
                 <div id="mapCanvas" style="position: relative;"></div>
             </main>
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" id="universalTrackerSimulator">
-                <h2>Locations That You Can Check Right Now</h2>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="table-responsive small">
                     <table class="table table-striped table-sm">
                         <thead>
                             <tr>
-                                <th scope="col">Locations:
-                                    <script>
-                                        const locationsArray = Object.keys(locations).filter(i => !locations[i].invisible);
-                                        document.write(`${locationsArray.length}`)
-                                    </script>
-                                </th>
+                                <th scope="col">Locations: <span id="locations-count"></span></th>
                                 <th scope="col">Reachable (Depending on Logic Settings): <span id="reachable-count"
                                         style="color: green;"></span></th>
                                 <th scope="col">Items Needed to Finish Game: <span id="goModeItemsNeeded-count"

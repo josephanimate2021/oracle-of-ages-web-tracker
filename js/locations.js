@@ -489,6 +489,17 @@ const locations = {
         "map_tile": 0x1cd,
         "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasBracelet() && gameLogic.gameLogic.hasBombs(),
     },
+    "Crescent Island (Past): Tokay Chicken House": {
+        "region_id": "tokay chicken house",
+        "vanilla_item": "Bombs (10)",
+        /* "flag_byte": 0xc2e3, 
+        - I am not sure if flag byte 0xc2e3 is correct. I tested it and the item still does not appear on the other side of the fence in it's vanilla position at the
+        tokay chicken house. I know that the tracker does not need this property, but the randomizer does. */
+        "room": 0x02e3,
+        "map_tile": 0x1dc,
+        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasBracelet(),
+        "symbolic_name": "tokayChickenHouse",
+    },
     "Crescent Island (Past): Wild Tokay Prize": {
         "region_id": "wild tokay game",
         "vanilla_item": "Scent Seedling",

@@ -17,9 +17,9 @@ class AgesGameLogic {
             "symmetry_city_present": {
                 layouts: {
                     default: [
-                        { x: 395, y: 185, array: this.customItemRequirementsForRegion("symmetry city tree", [!this.hasItem("Tuni Nut", 2)]) },
+                        // { x: 395, y: 185, array: this.customItemRequirementsForRegion("symmetry city tree", [!this.hasItem("Tuni Nut", 2)]) },
                         { x: 395, y: 340, array: this.findLocationInfoWithStartName("Skull Dungeon") },
-                        { x: 395, y: 474, array: this.customItemRequirementsForRegion("symmetry city tree", [this.hasItem("Tuni Nut", 2)]) }
+                        // { x: 395, y: 474, array: this.customItemRequirementsForRegion("symmetry city tree", [this.hasItem("Tuni Nut", 2)]) }
                     ]
                 },
                 roomCondtionals: [
@@ -35,7 +35,11 @@ class AgesGameLogic {
             },
             "symmetry_city_past": {
                 layouts: {
-                    default: []
+                    default: [
+                        { x: 103.5, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
+                        { x: 225, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
+                        { x: 164.5, y: 60, array: this.findLocationInfoByRegionName("symmetry middle man trade") },
+                    ]
                 },
                 roomCondtionals: [
                     {
@@ -50,7 +54,9 @@ class AgesGameLogic {
             },
             "animal_companion_regions": {
                 layouts: {
-                    default: []
+                    dimitri: [],
+                    ricky: [],
+                    moosh: []
                 },
                 roomCondtionals: [
                     {
@@ -399,7 +405,7 @@ class AgesGameLogic {
                 options: ["basic", "medium", "hard"],
                 default: "basic"
             },
-            required_essences_for_maku_seed: {
+            required_essences: {
                 default: 8,
                 lowestValue: 0,
                 highestValue: 8
@@ -414,14 +420,11 @@ class AgesGameLogic {
             },
             goal: {
                 default: "beat_ganon",
-                options: ['beat_ganon', 'beat_vernan']
-            },
-            show_reachable_locations_from_current_map: {
-                default: false // I guess I am keeping this false by defaut since the universal tracker gives out all reachable locations no matter what map a user is on.
+                options: ['beat_vernan', 'beat_ganon']
             },
             animal_companion: {
-                default: "Choose Companion",
-                options: ["Choose Companion", "moosh", "ricky", "dimitri"]
+                default: "ricky",
+                options: ["ricky", "dimitri", "moosh"]
             },
             shuffle_dungeons: {
                 default: false
@@ -442,19 +445,9 @@ class AgesGameLogic {
         const array = []
         for (const i in locations) {
             if (region == locations[i].region_id) {
-                locations[i].checkLocation = i;
                 locations[i].providedRegion = region;
                 array.unshift(locations[i]);
             }
-        }
-        return array;
-    }
-
-    customItemRequirementsForRegion(region, requirements) {
-        const locationArray = this.findLocationInfoByRegionName(region);
-        const array = [];
-        for (const location of locationArray) {
-            if (location.reachable() == (requirements.length == locationArray.length)) array.push(location);
         }
         return array;
     }
@@ -468,7 +461,6 @@ class AgesGameLogic {
         const array = []
         for (const i in locations) {
             if (i.startsWith(locationStartName)) {
-                locations[i].checkLocation = i;
                 locations[i].providedStartName = locationStartName;
                 array.unshift(locations[i]);
             }
@@ -508,7 +500,7 @@ class AgesGameLogic {
 
     calculateItemsNeededForGameCompletion() {
         let neededItems = 0;
-        for (let i = 1; i <= this.settings.required_essences_for_maku_seed; i++) {
+        for (let i = 1; i <= this.settings.required_essences; i++) {
             const essence = Object.keys(items).find(k => items[k].imageName == `essences/d${i}`);
             if (essence && !this.hasItem(essence)) neededItems++
         }
@@ -803,7 +795,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the player has enough essences for the Maku Seed, false otherwise.
      */
     hasEssencesForMakuSeed() {
-        return this.hasEssences(this.settings.required_essences_for_maku_seed);
+        return this.hasEssences(this.settings.required_essences);
     }
 
     /**

@@ -108,15 +108,24 @@ function changeView(itemsVisibility, gameMapVisibility, obj) {
 function goToMap() {
     gameLogic.popovers = {};
     gameLogic.counts = {};
-    const [layoutType, mapImage] = currentMap.split("/");
+    let [layoutType, mapImage] = currentMap.split("/");
     const mapCanvas = document.getElementById("mapCanvas");
     mapCanvas.innerHTML = "";
     const image = document.createElement("img");
-    image.src = mapImageData || `maps/${currentMap}.png`;
+    image.src = `maps/${currentMap}.png`;
+    if (mapImage == "animal_companion_regions") {
+        layoutType = gameLogic.settings.animal_companion;
+        mapCanvas.className = `animal_companion`
+        image.id = layoutType
+    }
     image.alt = `Map: ${currentMap.split("/")[1].replaceAll("_", " ")}`;
-    const reachableLocations = [];
-    for (const i in locations) {
-        if (locations[i].region_id == "advance shop") locations[i].hidden = !gameLogic.settings.open_advance_shop;
+    let locationsArray = Object.keys(locations).filter(i => {
+        locations[i].checkLocation = i;
+        return connected2archipelago ? locations[i].APID : true
+    });
+    if (!connected2archipelago) for (const i of locationsArray) {
+        if (locations[i].region_id != "advance shop") continue;
+        locations[i].hidden = !gameLogic.settings.open_advance_shop;
     }
     gameLogic.maps[mapImage].layouts ||= {
         default: []
@@ -127,12 +136,7 @@ function goToMap() {
         const marker = document.createElement("button");
         marker.type = "button";
         marker.className = `btn btn-${position.array.filter(i => i.checked).length == position.array.length ? 'secondary' : (() => {
-            return position.array.filter(i => i.reachable()).length == position.array.length ? (() => {
-                if (
-                    gameLogic.settings.show_reachable_locations_from_current_map
-                ) position.array.forEach(f => reachableLocations.push(f));
-                return 'success'
-            })() : 'danger';
+            return position.array.filter(i => i.reachable()).length == position.array.length ? 'success' : 'danger';
         })()}`;
         marker.setAttribute("data-bs-toggle", "popover");
         marker.setAttribute("title", info?.providedStartName || info?.providedRegion);
@@ -148,7 +152,9 @@ function goToMap() {
                         gameLogic.counts[v.region_id] ||= 0;
                         return gameLogic.counts[v.region_id];
                     })() : i
-                    }" data-popoverProperty="${marker.getAttribute('title')}"> <span style="color: ${v.checked ? 'gray' : v.reachable() ? 'green' : 'red'};">${v.checkLocation}</span>`);
+                    }" data-popoverProperty="${marker.getAttribute('title')}"> <span style="color: ${
+                        v.checked ? 'gray' : v.reachable() ? 'green' : 'red'
+                    };">${v.checkLocation}</span>`);
             }
             return htmls.join('<br>');
         })());
@@ -167,18 +173,15 @@ function goToMap() {
             sanitize: false
         });
     }
-    if (reachableLocations.length == 0) {
-        for (const i in locations) {
-            if (locations[i].hidden) continue;
-            if (locations[i].reachable() && !locations[i].checked) {
-                locations[i].checkLocation = i;
-                reachableLocations.push(locations[i])
-            }
-        }
-    }
+    locationsArray = locationsArray.filter(i => !locations[i].hidden);
+    const reachableLocations = locationsArray.filter(i => {
+        return locations[i].reachable() && !locations[i].checked
+    })
+    document.getElementById('locations-count').innerText = `${locationsArray.filter(i => locations[i].checked).length}/${locationsArray.length}`;
     document.getElementById('reachable-count').innerText = reachableLocations.length;
-    document.getElementById("itemsUserCanGet").innerHTML = reachableLocations.map(d => `<tr><td>${d.checkLocation}</td></tr><tr></tr><tr></tr>${connected2archipelago ? '<tr></tr>' : ''
-        }<tr></tr>`).join("")
+    document.getElementById("itemsUserCanGet").innerHTML = reachableLocations.map(d => `<tr><td>${
+        locations[d].checkLocation
+    }</td></tr><tr></tr><tr></tr>${connected2archipelago ? '<tr></tr>' : ''}<tr></tr>`).join("")
     mapCanvas.appendChild(image);
     mapSwitchButtonsHandler(button => {
         const appImageMatchesCurrentMap = button.getAttribute("data-mapImage") !== currentMap.split("/")[1]
@@ -195,9 +198,7 @@ function mapSwitchButtonsHandler(myFunction) {
     document.querySelectorAll(".mapSwitcher").forEach(button => {
         if (!myFunction) button.addEventListener("click", (e) => {
             const mapImage = button.getAttribute("data-mapImage");
-            if (mapImage == "animal_companion_regions") {
-
-            } else changeMapImage(mapImage)
+            changeMapImage(mapImage)
         });
         else myFunction(button);
     });
@@ -208,10 +209,8 @@ window.addEventListener("DOMContentLoaded", initTracker)
  * Changes the image of the map and then draws it to the canvas.
  * @param {string} mapImage - The type of map to draw from the maps folder.
  * @param {boolean} drawMapImage - calls the goToMap function when set to true.
- * @param {Base64URLString} imageData - Data URL of a map image if provided.
  */
-function changeMapImage(mapImage, drawMapImage = true, imageData) {
-    mapImageData = imageData;
+function changeMapImage(mapImage, drawMapImage = true) {
     const array = currentMap.split("/");
     array[1] = mapImage;
     currentMap = array.join("/");
@@ -331,10 +330,10 @@ function archipelagoConnector(obj) {
                                     version: roomInfo.version,
                                 });
                                 for (const location in games[game].location_name_to_id) {
-                                    locations[location].APID = games[game].location_name_to_id[location]
+                                    if (locations[location]) locations[location].APID = games[game].location_name_to_id[location]
                                 }
                                 for (const item in games[game].item_name_to_id) {
-                                    items[item].APID = games[game].item_name_to_id[item]
+                                    if (items[item]) items[item].APID = games[game].item_name_to_id[item]
                                 }
                             }
                             break;
@@ -349,13 +348,44 @@ function archipelagoConnector(obj) {
                                 initTracker()
                                 for (const elem of document.getElementsByClassName("mapSwitcher")) elem.removeAttribute("disabled");
                                 connectionSuccessful = false;
-                                $(obj).find("p").text('Successfully disconnected from the Archipelago Server')
+                                hideNotSafeSettingOptions("block")
+                                $(obj).find("p").text('Successfully disconnected from the Archipelago Server');
                             })
                             initTracker();
-                            for (const elem of [
-                                ...document.getElementsByClassName("mapSwitcher"), 
-                                document.getElementById("trackerSettings")
-                            ]) elem.setAttribute("disabled", "");
+                            for (const elem of document.getElementsByClassName("mapSwitcher")) elem.setAttribute("disabled", "");
+                            for (const i in info2.slot_data) {
+                                switch (i) {
+                                    case "advance_shop": {
+                                        gameLogic.settings.open_advance_shop = info2.slot_data.advance_shop == 1;
+                                        break;
+                                    } default: {
+                                        gameLogic.settings[i] = (() => {
+                                            if (typeof info2.slot_data[i] == "string") return info2.slot_data[i].toLowerCase()
+                                            if (gameLogic.gameSettingOptions[i]?.options) return gameLogic.gameSettingOptions[i].options[info2.slot_data[i]]
+                                            return info2.slot_data[i]
+                                        })();
+                                    }
+                                }
+                            }
+                            function hideNotSafeSettingOptions(display = "none") {
+                                for (const i in gameLogic.gameSettingOptions) {
+                                    const setting = gameLogic.gameSettingOptions[i];
+                                    if (setting.canBeSafelyChangedDuringServerConnection) continue;
+                                    document.getElementById(`${i}_label`).style.display = display;
+                                    switch (typeof setting.default) {
+                                        case "boolean":
+                                        case "string": {
+                                            document.getElementById(`${i}`).style.display = display;
+                                            break;
+                                        } case "number": {
+                                            document.getElementById(`${i}_range`).style.display = display;
+                                            document.getElementById(`${i}_rangeValue`).style.display = display;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            hideNotSafeSettingOptions()
                             document.getElementById("stageView").style.display = "none";
                             connectionSuccessful = true;
                             $("#statusKindof").text("Connected To Archipelago")
@@ -384,13 +414,13 @@ function archipelagoConnector(obj) {
                         } case "Bounced": {
                             if (info2.data) {
                                 if (info2.data['Current Room']) {
+                                    console.log("Current Room:", info2.data['Current Room'])
                                     for (const i in gameLogic.maps) {
-                                        console.log("Current Room:", info2.data['Current Room'])
                                         const info = gameLogic.maps[i].roomCondtionals.find(i => (i.equals_to === info2.data['Current Room']) || (
                                             info2.data['Current Room'] >= i.min && info2.data['Current Room'] <= i.max
                                         ));
                                         if (info) {
-                                            console.log("Current Room Info:", info);
+                                            console.log("Current Room Conditional Info:", info);
                                             const image2draw = gameLogic.maps[i];
                                             console.log("Current Map Info:", image2draw);
                                             let element = jQuery(".stageViewOption").find(`button[data-mapImage="${i}"]`)[0];
@@ -441,19 +471,26 @@ function upperCaseFirstLetterInWord(word) {
  * Sets up the tracker each time the website is loaded.
  */
 function initTracker() {
-    localStorage.OoAWebTrackerSettings ||= (() => {
-        const settings = {};
-        for (const i in gameLogic.gameSettingOptions) settings[i] = gameLogic.gameSettingOptions[i].default;
-        return JSON.stringify(settings);
-    })();
-    gameLogic.settings = JSON.parse(localStorage.OoAWebTrackerSettings);
+    function gameLogicSettingsFiller() {
+        try {
+            gameLogic.settings = JSON.parse(localStorage.OoAWebTrackerSettings);
+        } catch {
+            localStorage.OoAWebTrackerSettings = (() => {
+                const settings = {};
+                for (const i in gameLogic.gameSettingOptions) settings[i] = gameLogic.gameSettingOptions[i].default;
+                return JSON.stringify(settings);
+            })();
+            gameLogicSettingsFiller();
+        }
+    }
+    gameLogicSettingsFiller();
     document.getElementById("trackerSettings").innerHTML = Object.keys(gameLogic.gameSettingOptions).map(i => {
         const setting = gameLogic.gameSettingOptions[i];
         const defaultSetting = gameLogic.settings[i];
-        let html = `<label for="${i}_label" class="form-label">${i.split("_").map(upperCaseFirstLetterInWord).join(" ")}</label>`;
+        let html = `<label id="${i}_label" class="form-label">${i.split("_").map(upperCaseFirstLetterInWord).join(" ")}</label>`;
         let options = setting.options;
         switch (typeof setting.default) {
-            case "boolean": options = [true, false];
+            case "boolean": options = ["true", "false"];
             case "string": {
                 html += `<select class="form-select" id="${i}" name="${i}">${
                     options.map(i => `<option value="${i}"${defaultSetting == i ? ' selected' : ''}>${
@@ -464,12 +501,7 @@ function initTracker() {
             } case "number": {
                 html += `<input type="range" min="${setting.lowestValue}" max="${setting.highestValue}" value="${
                     defaultSetting
-                }" class="form-range" id="${i}_range" name="${i}" oninput="(() => {
-                    const rangeOutput = document.getElementById('${i}_rangeValue');
-
-                    // Set initial value
-                    rangeOutput.value = this.value
-                })()"><input type="number" id="${
+                }" class="form-range" id="${i}_range" name="${i}" oninput="document.getElementById('${i}_rangeValue').value = this.value"><input type="number" id="${
                     i
                 }_rangeValue" value="${defaultSetting}" oninput="(() => {
                     document.getElementById('${i}_range').value = this.value;

@@ -416,14 +416,14 @@ class AgesGameLogic {
                 default: "beat_ganon",
                 options: ['beat_ganon', 'beat_vernan']
             },
-            show_reachable_locations_bassed_from_current_map: {
+            show_reachable_locations_from_current_map: {
                 default: false // I guess I am keeping this false by defaut since the universal tracker gives out all reachable locations no matter what map a user is on.
             },
             animal_companion: {
                 default: "Choose Companion",
-                options: ["moosh", "ricky", "dimitri"]
+                options: ["Choose Companion", "moosh", "ricky", "dimitri"]
             },
-            dungeon_shuffle: {
+            shuffle_dungeons: {
                 default: false
             },
             open_advance_shop: {

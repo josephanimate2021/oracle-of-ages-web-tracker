@@ -497,14 +497,14 @@ function upperCaseFirstLetterInWord(word) {
  * Sets up the tracker each time the website is loaded.
  */
 function initTracker() {
-    localStorage.OoAWebTrackerSettings = (() => {
+    localStorage.OoAWebTrackerSettings ||= (() => {
         const settings = {
             dungeon_entrances: gameLogic.vanilaDungeonEntrances
         };
         for (const i in gameLogic.gameSettingOptions) settings[i] = gameLogic.gameSettingOptions[i].default;
         return JSON.stringify(settings);
     })();
-    gameLogic.settings ||= parseEverything(localStorage.OoAWebTrackerSettings);
+    gameLogic.settings = parseEverything(localStorage.OoAWebTrackerSettings);
     document.getElementById("trackerSettings").innerHTML = Object.keys(gameLogic.gameSettingOptions).map(i => {
         const setting = gameLogic.gameSettingOptions[i];
         const defaultSetting = gameLogic.settings[i]
@@ -570,7 +570,7 @@ function resetAllItems() {
  * @param {HTMLFormElement} obj - A form element assosiated with the settings. 
  */
 function trackerSettingsChange(obj) {
-    gameLogic.settings = Object.assign(gameLogic.settings, Object.fromEntries(new URLSearchParams($(obj).serialize())));
+    Object.assign(gameLogic.settings, parseEverything(Object.fromEntries(new URLSearchParams($(obj).serialize()))));
     saveModifiedSettings()
 }
 
@@ -579,7 +579,6 @@ function trackerSettingsChange(obj) {
  */
 function saveModifiedSettings() {
     localStorage.OoAWebTrackerSettings = JSON.stringify(gameLogic.settings);
-    gameLogic.settings = parseEverything(localStorage.OoAWebTrackerSettings);
     drawItems();
     goToMap();
 }
@@ -589,7 +588,7 @@ function saveModifiedSettings() {
  * @param {HTMLFormElement} obj - A form element assosiated with the settings. 
  */
 function dungeonEntrancesChange(obj) {
-    gameLogic.settings.dungeon_entrances = Object.fromEntries(new URLSearchParams($(obj).serialize()));
+    gameLogic.settings.dungeon_entrances = parseEverything(Object.fromEntries(new URLSearchParams($(obj).serialize())))
     saveModifiedSettings()
 }
 

@@ -92,6 +92,8 @@ class AgesGameLogic {
                         { x: 165, y: 10, dungeonEntrance: "d4" },
                         { x: 165, y: 53, array: this.customItemRequirementsForRegion("symmetry city tree", [this.hasItem("Tuni Nut", 2)]) },
                         { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
+                        { x: 420, y: 240, array: this.findLocationInfoByRegionName("lynna shop") },
+                        { x: 410, y: 240, array: this.findLocationInfoByRegionName("hidden shop") },
                         { x: 360, y: 200, array: this.findLocationInfoByRegionName("mayor plen's house") },
                         { x: 462, y: 125, array: this.findLocationInfoByRegionName("starting item") },
                         { x: 495, y: 120, array: this.findLocationInfoByRegionName("nayru's house") },
@@ -104,6 +106,7 @@ class AgesGameLogic {
                         { x: 163, y: 115, array: this.findLocationInfoByRegionName("mayor plen's house") },
                         { x: 147, y: 115, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
                         { x: 179, y: 115, array: this.findLocationInfoByRegionName("vasu's gift") },
+
                         // { x: 179, y: 99, array: this.findLocationInfoWithStartName("Hero's Cave") },
                         { x: 195, y: 99, array: this.findLocationInfoByRegionName("lynna city chest") },
                         { x: 195, y: 83, array: this.findLocationInfoByRegionName("starting item") },

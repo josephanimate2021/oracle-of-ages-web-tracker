@@ -56,7 +56,7 @@ const locations = {
         "bit_mask": 0x20,
         "scouting_byte": 0xc75e,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.canAccessLynnaCity(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasRupees(400),
         'vanilaPrice': 30,
         /* 
         I will have to work on including a rupee count as part of the logic as well for all shops, not just this one. 
@@ -72,7 +72,7 @@ const locations = {
         "bit_mask": 0x40,
         "scouting_byte": 0xc75e,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.canAccessLynnaCity(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasRupees(400),
         'vanilaPrice': 20,
         "symbolic_name": "lynnaShop2",
     },
@@ -85,7 +85,7 @@ const locations = {
         "bit_mask": 0x80,
         "scouting_byte": 0xc75e,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.canAccessLynnaCity(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasRupees(400),
         'vanilaPrice': 150,
         "symbolic_name": "lynnaShop3",
     },
@@ -98,7 +98,7 @@ const locations = {
         "scouting_byte": 0xc77e,
         "scouting_mask": 0x10,
         'vanilaPrice': 300,
-        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent()  && gameLogic.hasRupees(400),
         "symbolic_name": "hiddenShop1",
     },
     "Lynna City: Hidden Shop Item #2": {
@@ -110,7 +110,7 @@ const locations = {
         "scouting_byte": 0xc77e,
         "scouting_mask": 0x10,
         'vanilaPrice': 500,
-        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent() && gameLogic.hasRupees(400),
         "symbolic_name": "hiddenShop2",
     },
     "Lynna City: Hidden Shop Item #3": {
@@ -121,7 +121,7 @@ const locations = {
         "bit_mask": 0x08,
         "scouting_byte": 0xc77e,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent() && gameLogic.hasRupees(400),
         "symbolic_name": "hiddenShop3",
     },
     "Lynna City: Mayor Plen's House": {
@@ -130,7 +130,7 @@ const locations = {
         "flag_byte": 0xc8f9,
         "room": 0x03f9,
         "map_tile": 0x57,
-        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasLongHook(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasLongHook() && gameLogic.hasRupees(400),
     },
     "Lynna City: Vasu's Gift": {
         "region_id":"vasu's gift",
@@ -187,7 +187,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "reachable": () => gameLogic.canAccessLynnaCity(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasRupees(400),
         "symbolic_name": "advanceShop1",
     },
     "Lynna Village: Advance Shop Item #2": {
@@ -199,7 +199,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "reachable": () => gameLogic.canAccessLynnaCity(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasRupees(400),
         "symbolic_name": "advanceShop2",
     },
     "Lynna Village: Advance Shop Item #3": {
@@ -211,7 +211,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "reachable": () => gameLogic.canAccessLynnaCity(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasRupees(400),
         "symbolic_name": "advanceShop3",
     },
     "Lynna Village: Baseball": {

@@ -121,6 +121,7 @@ function goToMap() {
     // Add clickable markers to the map canvas
     let locationsArray = Object.keys(locations).filter(i => connected2archipelago ? locations[i].APID : true);
     for (const i of locationsArray) {
+        locations[i].checkLocation = i;
         if (locations[i].region_id != "advance shop") continue;
         locations[i].hidden = !gameLogic.settings.open_advance_shop;
     }
@@ -137,7 +138,8 @@ function goToMap() {
                     return gameLogic.findLocationInfoWithStartName(gameLogic.dungeons[entranceLeadsTo]);
                 }
             }
-        })()
+        })();
+        console.log(position)
         const info = position.array[0];
         if ((connected2archipelago && !info?.APID) || info?.hidden) continue;
         const marker = document.createElement("button");
@@ -568,7 +570,7 @@ function resetAllItems() {
  * @param {HTMLFormElement} obj - A form element assosiated with the settings. 
  */
 function trackerSettingsChange(obj) {
-    gameLogic.settings = parseEverything(Object.fromEntries(new URLSearchParams($(obj).serialize())));
+    gameLogic.settings = Object.assign(gameLogic.settings, Object.fromEntries(new URLSearchParams($(obj).serialize())));
     saveModifiedSettings()
 }
 
@@ -577,6 +579,7 @@ function trackerSettingsChange(obj) {
  */
 function saveModifiedSettings() {
     localStorage.OoAWebTrackerSettings = JSON.stringify(gameLogic.settings);
+    gameLogic.settings = parseEverything(localStorage.OoAWebTrackerSettings);
     drawItems();
     goToMap();
 }
@@ -586,7 +589,7 @@ function saveModifiedSettings() {
  * @param {HTMLFormElement} obj - A form element assosiated with the settings. 
  */
 function dungeonEntrancesChange(obj) {
-    gameLogic.settings.dungeon_entrances = parseEverything(Object.fromEntries(new URLSearchParams($(obj).serialize())));
+    gameLogic.settings.dungeon_entrances = Object.fromEntries(new URLSearchParams($(obj).serialize()));
     saveModifiedSettings()
 }
 

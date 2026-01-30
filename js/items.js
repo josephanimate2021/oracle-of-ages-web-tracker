@@ -341,6 +341,11 @@ const items = {
     "King Zora's Potion": {
         'classification': "progression",
         'invisible': true,
+        'beforeItemTrigger': (_, triggerItem, resetItem) => {
+            const kingZoraPotionAndFairyPowder = items["Fairy Powder & King Zora's Potion"];
+            resetItem(kingZoraPotionAndFairyPowder, false);
+            triggerItem(kingZoraPotionAndFairyPowder, !items["Fairy Powder"].count ? 1 : 2, false)
+        },
         'id': 0x37
     },
 
@@ -767,6 +772,11 @@ const items = {
     "Fairy Powder": {
         'classification': "progression",
         'invisible': true,
+        'beforeItemTrigger': (_, triggerItem, resetItem) => {
+            const kingZoraPotionAndFairyPowder = items["Fairy Powder & King Zora's Potion"];
+            resetItem(kingZoraPotionAndFairyPowder, false);
+            triggerItem(kingZoraPotionAndFairyPowder, !items["King Zora's Potion"].count ? 3 : 2, false)
+        },
         'id': 0x51
     },
     "Fairy Powder & King Zora's Potion": {
@@ -852,14 +862,12 @@ const items = {
     "Cracked Tuni Nut": {
         'classification': "progression",
         'invisible': true,
-        'onChange': ($this, triggerItem, resetItem) => {
-            const tuniNut = items['Tuni Nut'];
-            if (tuniNut.count > 0 && !$this.count) triggerItem(tuniNut, 2);
-            else if ($this.count > 0) triggerItem(tuniNut);
-            else resetItem(tuniNut);
-        },
         'id': 0x4c,
-        'subid': 0x00
+        'subid': 0x00,
+        'beforeItemTrigger': (_, triggerItem, resetItem) => {
+            const tuninut = items['Tuni Nut'];
+            if (!tuninut.count) triggerItem(tuninut, 1, false)
+        }
     },
     "Tuni Nut": {
         'classification': "progression",
@@ -868,6 +876,13 @@ const items = {
         'noDisable': true,
         'defaultCount': 0,
         'id': 0x3b,
+        'afterItemTrigger': ($this, triggerItem, resetItem) => {
+            if (connected2archipelago) {
+                resetItem($this, false);
+                const crackedTuniNut = items['Cracked Tuni Nut'];
+                triggerItem($this, (crackedTuniNut.count > 0) ? 2 : 3, false);
+            }
+        },
         'subid': 0x00
     },
     "Zora Scale": {

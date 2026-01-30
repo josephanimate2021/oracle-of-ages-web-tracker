@@ -29,16 +29,10 @@ function drawItems() {
             for (const i in info.position) li.style[i] = info.position[i];
         }
         const a = document.createElement("a");
-        a.className = `nav-link d-flex align-items-center ${info.count >= 1 ? ' active' : ''}`;
+        a.className = `nav-link d-flex align-items-center${(info.unclickable || connected2archipelago) ? ' disabled' : ''}`;
         a.style.cursor = "pointer";
         a.title = item + (info.displayCount ? ` (Count: ${info.count || 0})` : '')
         a.addEventListener("click", e => {
-            if (info.unclickable) return feedbackBlock('warning', 'Warning!', `${item} cannot be checked.`);
-            if (connected2archipelago) return feedbackBlock(
-                'warning', 'Server Connected Warning!', `A server is relying on ${
-                    item
-                } to be checked on it's own, this means that you cannot check off this item manually right now.`
-            );
             if (info.beforeItemTrigger) info.beforeItemTrigger(info, triggerItem, resetItem);
             triggerItem(info);
             if (info.afterItemTrigger) info.afterItemTrigger(info, triggerItem, resetItem);
@@ -106,8 +100,11 @@ function changeView(itemsVisibility, gameMapVisibility, obj) {
  * Draw a map to the canvas
  */
 function goToMap() {
+    // Create gameLogic variables
     gameLogic.popovers = {};
     gameLogic.counts = {};
+
+    // Draw map image to canvas
     let [layoutType, mapImage] = currentMap.split("/");
     const mapCanvas = document.getElementById("mapCanvas");
     mapCanvas.innerHTML = "";
@@ -117,13 +114,16 @@ function goToMap() {
         layoutType = gameLogic.settings.animal_companion;
         mapCanvas.className = `animal_companion`
         image.id = layoutType
-    }
+    } else if (mapCanvas.classList.contains("animal_companion")) mapCanvas.classList.remove("animal_companion")
     image.alt = `Map: ${currentMap.split("/")[1].replaceAll("_", " ")}`;
+    mapCanvas.appendChild(image);
+
+    // Add clickable markers to the map canvas
     let locationsArray = Object.keys(locations).filter(i => {
         locations[i].checkLocation = i;
         return connected2archipelago ? locations[i].APID : true
     });
-    if (!connected2archipelago) for (const i of locationsArray) {
+    for (const i of locationsArray) {
         if (locations[i].region_id != "advance shop") continue;
         locations[i].hidden = !gameLogic.settings.open_advance_shop;
     }
@@ -131,6 +131,16 @@ function goToMap() {
         default: []
     };
     for (const position of gameLogic.maps[mapImage].layouts[layoutType]) {
+        if (position.dungeonEntrance) position.array = (() => {
+            const dungeonEntrances = gameLogic.settings.dungeon_entrances;
+            for (const i in dungeonEntrances) {
+                if (i.startsWith(position.dungeonEntrance)) {
+                    let entranceLeadsTo = dungeonEntrances[i].substring(7);
+                    if (entranceLeadsTo.includes("6")) entranceLeadsTo = 6;
+                    return gameLogic.findLocationInfoWithStartName(gameLogic.dungeons[entranceLeadsTo]);
+                }
+            }
+        })()
         const info = position.array[0];
         if ((connected2archipelago && !info?.APID) || info?.hidden) continue;
         const marker = document.createElement("button");
@@ -173,7 +183,9 @@ function goToMap() {
             sanitize: false
         });
     }
-    locationsArray = locationsArray.filter(i => !locations[i].hidden);
+
+    // Add location logic to the locations table
+    locationsArray = locationsArray.filter(i => connected2archipelago ? locations[i].APID : !locations[i].hidden);
     const reachableLocations = locationsArray.filter(i => {
         return locations[i].reachable() && !locations[i].checked
     })
@@ -182,7 +194,6 @@ function goToMap() {
     document.getElementById("itemsUserCanGet").innerHTML = reachableLocations.map(d => `<tr><td>${
         locations[d].checkLocation
     }</td></tr><tr></tr><tr></tr>${connected2archipelago ? '<tr></tr>' : ''}<tr></tr>`).join("")
-    mapCanvas.appendChild(image);
     mapSwitchButtonsHandler(button => {
         const appImageMatchesCurrentMap = button.getAttribute("data-mapImage") !== currentMap.split("/")[1]
         button.classList.remove(appImageMatchesCurrentMap ? "btn-secondary" : "btn-outline-secondary");
@@ -232,7 +243,7 @@ function checkLocation(e) {
  * 
  * @param {string} view - The type of view to change to.
  * @param {boolean} goToMapAfterwards - calls the goToMap function when this parameter is set to true
- * @returns 
+ * @returns {object} returns an array if goToMapAfterwards is set to false.
  */
 function changeOverworldView(view, goToMapAfterwards = true) {
     const array = currentMap.split("/");
@@ -295,7 +306,7 @@ function archipelagoConnector(obj) {
             }, 35042)
             let roomInfo;
             socket.addEventListener("message", async e => {
-                const array = JSON.parse(e.data);
+                const array = parseEverything(e.data);
                 for (const info2 of array) {
                     switch (info2.cmd) {
                         case "RoomInfo": {
@@ -345,18 +356,23 @@ function archipelagoConnector(obj) {
                                 $("#statusKindof").html(originalText2);
                                 document.getElementById("stageView").style.display = "block";
                                 connected2archipelago = false;
+                                delete gameLogic.settings;
                                 initTracker()
                                 for (const elem of document.getElementsByClassName("mapSwitcher")) elem.removeAttribute("disabled");
                                 connectionSuccessful = false;
-                                hideNotSafeSettingOptions("block")
+                                hideNotSafeSettingOptions(false)
                                 $(obj).find("p").text('Successfully disconnected from the Archipelago Server');
                             })
-                            initTracker();
-                            for (const elem of document.getElementsByClassName("mapSwitcher")) elem.setAttribute("disabled", "");
                             for (const i in info2.slot_data) {
                                 switch (i) {
                                     case "advance_shop": {
                                         gameLogic.settings.open_advance_shop = info2.slot_data.advance_shop == 1;
+                                        break;
+                                    } case "required_essences": {
+                                        gameLogic.settings.required_essences_for_maku_seed = info2.slot_data.required_essences;
+                                        break;
+                                    } case "required_slates": {
+                                        gameLogic.settings.required_slates_for_ancient_tomb_second_basement = info2.slot_data.required_slates;
                                         break;
                                     } default: {
                                         gameLogic.settings[i] = (() => {
@@ -367,22 +383,29 @@ function archipelagoConnector(obj) {
                                     }
                                 }
                             }
-                            function hideNotSafeSettingOptions(display = "none") {
+                            initTracker();
+                            for (const elem of document.getElementsByClassName("mapSwitcher")) elem.setAttribute("disabled", "");
+                            function hideNotSafeSettingOptions(disabled = true) {
                                 for (const i in gameLogic.gameSettingOptions) {
                                     const setting = gameLogic.gameSettingOptions[i];
                                     if (setting.canBeSafelyChangedDuringServerConnection) continue;
-                                    document.getElementById(`${i}_label`).style.display = display;
+                                    document.getElementById(`${i}_label`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
                                     switch (typeof setting.default) {
                                         case "boolean":
                                         case "string": {
-                                            document.getElementById(`${i}`).style.display = display;
+                                            document.getElementById(`${i}`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
                                             break;
                                         } case "number": {
-                                            document.getElementById(`${i}_range`).style.display = display;
-                                            document.getElementById(`${i}_rangeValue`).style.display = display;
+                                            document.getElementById(`${i}_range`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
+                                            document.getElementById(`${i}_rangeValue`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
                                             break;
                                         }
                                     }
+                                }
+                                for (const i in gameLogic.settings.dungeon_entrances) {
+                                    const labelToId = i.split(" ").join("_");
+                                    document.getElementById(`${labelToId}_label`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
+                                    document.getElementById(`${labelToId}`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
                                 }
                             }
                             hideNotSafeSettingOptions()
@@ -471,26 +494,21 @@ function upperCaseFirstLetterInWord(word) {
  * Sets up the tracker each time the website is loaded.
  */
 function initTracker() {
-    function gameLogicSettingsFiller() {
-        try {
-            gameLogic.settings = JSON.parse(localStorage.OoAWebTrackerSettings);
-        } catch {
-            localStorage.OoAWebTrackerSettings = (() => {
-                const settings = {};
-                for (const i in gameLogic.gameSettingOptions) settings[i] = gameLogic.gameSettingOptions[i].default;
-                return JSON.stringify(settings);
-            })();
-            gameLogicSettingsFiller();
-        }
-    }
-    gameLogicSettingsFiller();
+    localStorage.OoAWebTrackerSettings = (() => {
+        const settings = {
+            dungeon_entrances: gameLogic.vanilaDungeonEntrances
+        };
+        for (const i in gameLogic.gameSettingOptions) settings[i] = gameLogic.gameSettingOptions[i].default;
+        return JSON.stringify(settings);
+    })();
+    gameLogic.settings ||= parseEverything(localStorage.OoAWebTrackerSettings);
     document.getElementById("trackerSettings").innerHTML = Object.keys(gameLogic.gameSettingOptions).map(i => {
         const setting = gameLogic.gameSettingOptions[i];
-        const defaultSetting = gameLogic.settings[i];
+        const defaultSetting = gameLogic.settings[i]
         let html = `<label id="${i}_label" class="form-label">${i.split("_").map(upperCaseFirstLetterInWord).join(" ")}</label>`;
         let options = setting.options;
-        switch (typeof setting.default) {
-            case "boolean": options = ["true", "false"];
+        switch (typeof defaultSetting) {
+            case "boolean": options = [true, false];
             case "string": {
                 html += `<select class="form-select" id="${i}" name="${i}">${
                     options.map(i => `<option value="${i}"${defaultSetting == i ? ' selected' : ''}>${
@@ -510,6 +528,16 @@ function initTracker() {
         }
         return html;
     }).join('<br>');
+    document.getElementById('dungeonEntrances').innerHTML = Object.keys(gameLogic.settings.dungeon_entrances).map(v => {
+        const labelToId = v.split(" ").join("_");
+        let html = `<label id="${labelToId}_label" class="form-label">${v}</label>`
+        html += `<select class="form-select" id="${labelToId}" name="${v}">${
+            Object.keys(gameLogic.settings.dungeon_entrances).map(i => `<option value="${gameLogic.settings.dungeon_entrances[i]}"${
+                gameLogic.settings.dungeon_entrances[i] == gameLogic.settings.dungeon_entrances[v] ? ' selected' : ''
+            }>${gameLogic.settings.dungeon_entrances[i]}</option>`).join('')
+        }</select>`;
+        return html;
+    }).join('<br>')
     resetAllItems();
     drawItems();
     goToMap();
@@ -520,11 +548,11 @@ function initTracker() {
  * Resets an item
  * @param {object} itemInfo - The item to reset.
  */
-function resetItem(itemInfo) {
+function resetItem(itemInfo, callDrawItemsFunction = true) {
     if (!itemInfo?.count) return;
     itemInfo.count--
-    if (itemInfo.count > 0) resetItem(itemInfo);
-    else drawItems()
+    if (itemInfo.count && itemInfo.count > 0) resetItem(itemInfo);
+    else if (!callDrawItemsFunction) drawItems()
 }
 
 /**
@@ -539,10 +567,55 @@ function resetAllItems() {
  * @param {HTMLFormElement} obj - A form element assosiated with the settings. 
  */
 function trackerSettingsChange(obj) {
-    gameLogic.settings = Object.fromEntries(new URLSearchParams($(obj).serialize()));
+    gameLogic.settings = parseEverything(Object.fromEntries(new URLSearchParams($(obj).serialize())));
+    saveModifiedSettings()
+}
+
+/**
+ * Saves new changes to a user's tracker settings
+ */
+function saveModifiedSettings() {
     localStorage.OoAWebTrackerSettings = JSON.stringify(gameLogic.settings);
     drawItems();
     goToMap();
+}
+
+/**
+ * Changes the dungeon entrances for a user.
+ * @param {HTMLFormElement} obj - A form element assosiated with the settings. 
+ */
+function dungeonEntrancesChange(obj) {
+    gameLogic.settings.dungeon_entrances = parseEverything(Object.fromEntries(new URLSearchParams($(obj).serialize())));
+    saveModifiedSettings()
+}
+
+/**
+ * Parses everything.
+ * @param {object|string} object - Anything that needs parsing
+ * @returns {string|boolean|number|object} The result of the parsing
+ */
+function parseEverything(object) {
+    try {
+        return parseEverything(JSON.parse(object))
+    } catch {
+        if (Array.isArray(object)) return object.map(parseEverything);
+        else switch (typeof object) {
+            case "object": {
+                const info = {};
+                for (const i in object) info[i] = parseEverything(object[i]);
+                return info;
+            } case "string": {
+                switch (object) {
+                    case "true": return true;
+                    case "false": return false;
+                    default: {
+                        const parsedNumberMaybe = parseInt(object);
+                        return isNaN(parsedNumberMaybe) ? object : parsedNumberMaybe;
+                    }
+                }
+            } default: return object
+        }
+    }
 }
 
 /**

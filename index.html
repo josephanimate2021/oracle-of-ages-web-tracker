@@ -104,21 +104,16 @@
         .animal_companion {
             height: 384px;
             overflow: hidden;
-            position: relative;
-        }
-
-        .animal_companion img#ricky {
-            position: absolute;
         }
 
         .animal_companion img#dimitri {
-            top: -400px;
             position: absolute;
+            top: -400px;
         }
 
         .animal_companion img#moosh {
-            top: -800px;
             position: absolute;
+            top: -800px;
         }
 
     </style>
@@ -399,7 +394,7 @@
                                 </a>
                             </li>
                             <li class="nav-item"
-                                title="If you are playing the ALBW randomizer with Archipelago, please take advantage of this button.">
+                                title="If you are playing the a randomizer with Archipelago, please take advantage of this button.">
                                 <a class="nav-link d-flex align-items-center gap-2" data-bs-toggle="modal"
                                     data-bs-target="#archipelagoConnector" href="#">
                                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0"
@@ -424,6 +419,14 @@
                         </ul>
                         <hr class="my-3" />
                         <ul class="nav flex-column mb-auto">
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center gap-2" href="#" data-bs-toggle="modal" data-bs-target="#dungeonEntrancesModal">
+                                    <svg class="bi" aria-hidden="true">
+                                        <use xlink:href="#door-closed"></use>
+                                    </svg>
+                                    Customize Dungeon Entrances
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link d-flex align-items-center gap-2" href="#" data-bs-toggle="modal" data-bs-target="#settingsMenu">
                                     <svg class="bi" aria-hidden="true">
@@ -610,6 +613,20 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form class="modal-body" id="trackerSettings" onchange="trackerSettingsChange(this)"></form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="dungeonEntrancesModal" tabindex="-1" aria-labelledby="dungeonEntrancesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="dungeonEntrancesModalLabel">Customize Dungeon Entrances</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form class="modal-body" id="dungeonEntrances" onchange="dungeonEntrancesChange(this)"></form>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>

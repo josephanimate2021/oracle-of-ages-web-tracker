@@ -18,7 +18,7 @@ class AgesGameLogic {
                 layouts: {
                     default: [
                         // { x: 395, y: 185, array: this.customItemRequirementsForRegion("symmetry city tree", [!this.hasItem("Tuni Nut", 2)]) },
-                        { x: 395, y: 340, array: this.findLocationInfoWithStartName("Skull Dungeon") },
+                        { x: 395, y: 340, dungeonEntrance: "d4" },
                         // { x: 395, y: 474, array: this.customItemRequirementsForRegion("symmetry city tree", [this.hasItem("Tuni Nut", 2)]) }
                     ]
                 },
@@ -54,9 +54,15 @@ class AgesGameLogic {
             },
             "animal_companion_regions": {
                 layouts: {
-                    dimitri: [],
-                    ricky: [],
-                    moosh: []
+                    dimitri: [
+                        { x: 345.5, y: 272, array: this.findLocationInfoByRegionName("nuun highlands cave") }
+                    ],
+                    ricky: [
+                        { x: 402, y: 209, array: this.findLocationInfoByRegionName("nuun highlands cave") }
+                    ],
+                    moosh: [
+                        { x: 370, y: 305, array: this.findLocationInfoByRegionName("nuun highlands cave") }
+                    ]
                 },
                 roomCondtionals: [
                     {
@@ -83,7 +89,7 @@ class AgesGameLogic {
             "overworld_present": {
                 layouts: {
                     default: [
-                        { x: 165, y: 10, array: this.findLocationInfoWithStartName("Skull Dungeon") },
+                        { x: 165, y: 10, dungeonEntrance: "d4" },
                         { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
                         { x: 360, y: 200, array: this.findLocationInfoByRegionName("mayor plen's house") },
                         { x: 462, y: 125, array: this.findLocationInfoByRegionName("starting item") },
@@ -112,24 +118,24 @@ class AgesGameLogic {
             "overworld_past": {
                 layouts: {
                     default: [
-                        { x: 602, y: 195, array: this.findLocationInfoWithStartName("Ancient Tomb") },
+                        { x: 602, y: 195, dungeonEntrance: "d8" },
                         { x: 103.5, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
                         { x: 225, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
                         { x: 164.5, y: 60, array: this.findLocationInfoByRegionName("symmetry middle man trade") },
-                        { x: 66, y: 50, array: this.findLocationInfoWithStartName("Maku Path") },
+                        { x: 393, y: 162, dungeonEntrance: "d0" },
                         { x: 366, y: 205, array: this.findLocationInfoByRegionName("postman trade") },
                         { x: 395, y: 205, array: this.findLocationInfoByRegionName("lynna shooting gallery") },
                         { x: 410, y: 205, array: this.findLocationInfoByRegionName("advance shop") },
                         { x: 322.5, y: 200, array: this.findLocationInfoByRegionName("sad boi trade") },
                         { x: 247.5, y: 209, array: this.findLocationInfoByRegionName("toilet hand trade") },
                         { x: 249, y: 177, array: this.findLocationInfoByRegionName("gasha farmer") },
-                        { x: 249, y: 177, array: this.findLocationInfoByRegionName("gasha farmer") },
+                        // { x: 249, y: 177, array: this.findLocationInfoByRegionName("gasha farmer") },
                         { x: 310, y: 288, array: this.findLocationInfoByRegionName("black tower worker") },
                         { x: 325, y: 316, array: this.findLocationInfoByRegionName("black tower heartpiece") },
                         // { x: 247.5, y: 199, array: this.findLocationInfoByStartName("Gasha Nut") },
                     ],
                     ingame: [
-                        { x: 179, y: 99, array: this.findLocationInfoWithStartName("Maku Path") },
+                        { x: 179, y: 99, dungeonEntrance: "d0" },
                     ]
                 },
                 roomCondtionals: [
@@ -405,12 +411,12 @@ class AgesGameLogic {
                 options: ["basic", "medium", "hard"],
                 default: "basic"
             },
-            required_essences: {
+            required_essences_for_maku_seed: {
                 default: 8,
                 lowestValue: 0,
                 highestValue: 8
             },
-            required_slates: {
+            required_slates_for_ancient_tomb_second_basement: {
                 default: 4,
                 lowestValue: 0,
                 highestValue: 4
@@ -426,12 +432,21 @@ class AgesGameLogic {
                 default: "ricky",
                 options: ["ricky", "dimitri", "moosh"]
             },
-            shuffle_dungeons: {
-                default: false
-            },
             open_advance_shop: {
                 default: false
             }
+        }
+        this.vanilaDungeonEntrances = {
+            "d0 entrance": "enter d0",
+            "d1 entrance": "enter d1",
+            "d2 past entrance": "enter d2",
+            "d3 entrance": "enter d3",
+            "d4 entrance": "enter d4",
+            "d5 entrance": "enter d5",
+            "d6 past entrance": "enter d6 past",
+            "d6 present entrance": "enter d6 present",
+            "d7 entrance": "enter d7",
+            "d8 entrance": "enter d8"
         }
 
     };
@@ -500,7 +515,7 @@ class AgesGameLogic {
 
     calculateItemsNeededForGameCompletion() {
         let neededItems = 0;
-        for (let i = 1; i <= this.settings.required_essences; i++) {
+        for (let i = 1; i <= this.settings.required_essences_for_maku_seed; i++) {
             const essence = Object.keys(items).find(k => items[k].imageName == `essences/d${i}`);
             if (essence && !this.hasItem(essence)) neededItems++
         }
@@ -795,7 +810,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the player has enough essences for the Maku Seed, false otherwise.
      */
     hasEssencesForMakuSeed() {
-        return this.hasEssences(this.settings.required_essences);
+        return this.hasEssences(this.settings.required_essences_for_maku_seed);
     }
 
     /**

@@ -17,9 +17,9 @@ class AgesGameLogic {
             "symmetry_city_present": {
                 layouts: {
                     default: [
-                        // { x: 395, y: 185, array: this.customItemRequirementsForRegion("symmetry city tree", [!this.hasItem("Tuni Nut", 2)]) },
+                        { x: 395, y: 185, array: this.customItemRequirementsForRegion("symmetry city tree", [!this.hasItem("Tuni Nut", 2)]) },
                         { x: 395, y: 340, dungeonEntrance: "d4" },
-                        // { x: 395, y: 474, array: this.customItemRequirementsForRegion("symmetry city tree", [this.hasItem("Tuni Nut", 2)]) }
+                        { x: 395, y: 473, array: this.customItemRequirementsForRegion("symmetry city tree", [this.hasItem("Tuni Nut", 2)]) }
                     ]
                 },
                 roomCondtionals: [
@@ -36,9 +36,9 @@ class AgesGameLogic {
             "symmetry_city_past": {
                 layouts: {
                     default: [
-                        { x: 103.5, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
-                        { x: 225, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
-                        { x: 164.5, y: 60, array: this.findLocationInfoByRegionName("symmetry middle man trade") },
+                        { x: 78, y: 86, array: this.findLocationInfoByRegionName("symmetry city brother") },
+                        { x: 940, y: 86, array: this.findLocationInfoByRegionName("symmetry city brother") },
+                        { x: 509, y: 465, array: this.findLocationInfoByRegionName("symmetry middle man trade") },
                     ]
                 },
                 roomCondtionals: [
@@ -90,10 +90,15 @@ class AgesGameLogic {
                 layouts: {
                     default: [
                         { x: 165, y: 10, dungeonEntrance: "d4" },
+                        { x: 165, y: 53, array: this.customItemRequirementsForRegion("symmetry city tree", [this.hasItem("Tuni Nut", 2)]) },
                         { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
                         { x: 360, y: 200, array: this.findLocationInfoByRegionName("mayor plen's house") },
                         { x: 462, y: 125, array: this.findLocationInfoByRegionName("starting item") },
                         { x: 495, y: 120, array: this.findLocationInfoByRegionName("nayru's house") },
+                        { x: 446, y: 281, array: [
+                            ...this.findLocationInfoByRegionName("balloon guy's gift"), 
+                            ...this.findLocationInfoByRegionName("balloon guy's upgrade") 
+                        ] },
                     ],
                     ingame: [
                         { x: 163, y: 115, array: this.findLocationInfoByRegionName("mayor plen's house") },
@@ -123,6 +128,10 @@ class AgesGameLogic {
                         { x: 225, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
                         { x: 164.5, y: 60, array: this.findLocationInfoByRegionName("symmetry middle man trade") },
                         { x: 393, y: 162, dungeonEntrance: "d0" },
+                        { x: 311, y: 4, array: (
+                            this.findLocationInfoWithStartName("Ambi's Palace")
+                        ).filter(i => !i.checkLocation.endsWith("Seed Tree")) },
+                        { x: 267, y: 92, array: this.findLocationInfoByRegionName("ambi's palace tree") },
                         { x: 366, y: 205, array: this.findLocationInfoByRegionName("postman trade") },
                         { x: 395, y: 205, array: this.findLocationInfoByRegionName("lynna shooting gallery") },
                         { x: 410, y: 205, array: this.findLocationInfoByRegionName("advance shop") },
@@ -397,7 +406,9 @@ class AgesGameLogic {
                 this.isRandomizer() && this.canEnterFairiesWoods() && this.canGoBackToPresent()
             ),
             "Moonlit Grotto": () => this.canAccessCresentIsland(),
-            "Skull Dungeon": () => false,
+            "Skull Dungeon": () => this.canGoToSymmetryPresent() && (
+                this.hasItem("Tuni Nut", 2) && this.canOpenPortal()
+            ),
             "Crown Dungeon": () => false,
             "Mermaid's Cave": () => false,
             "Jabu Jabu's Belly": () => false,
@@ -425,7 +436,7 @@ class AgesGameLogic {
                 default: true // true by default since most people usually proitize a tracker for a randomizer. This can still be changed anytime.
             },
             goal: {
-                default: "beat_ganon",
+                default: "beat_vernan",
                 options: ['beat_vernan', 'beat_ganon']
             },
             animal_companion: {
@@ -460,9 +471,28 @@ class AgesGameLogic {
         const array = []
         for (const i in locations) {
             if (region == locations[i].region_id) {
+                locations[i].checkLocation = i
                 locations[i].providedRegion = region;
                 array.unshift(locations[i]);
             }
+        }
+        return array;
+    }
+
+    /**
+     * Finds info of a location using a given region name and then takes custom requirements into the array.
+     * @param {object} region - The region name from the locations variable.
+     * @param {string} requirements - Custom requirements for the returned array
+     * @returns {object} The array full of any info that was found during the locations variable loop.
+     */
+    customItemRequirementsForRegion(region, requirements) {
+        const array = [];
+        for (const info of this.findLocationInfoByRegionName(region)) {
+            const info2push = {
+                reachable: () => (requirements.filter(i => i).length == requirements.length) && info.reachable()
+            }
+            for (const i in info) info2push[i] ||= info[i];
+            array.unshift(info2push);
         }
         return array;
     }
@@ -476,6 +506,7 @@ class AgesGameLogic {
         const array = []
         for (const i in locations) {
             if (i.startsWith(locationStartName)) {
+                locations[i].checkLocation = i
                 locations[i].providedStartName = locationStartName;
                 array.unshift(locations[i]);
             }
@@ -508,7 +539,7 @@ class AgesGameLogic {
      * @returns {boolean} True if the player cab beat the first stage of Vernan in Ambi's Palace. if not, then it's false.
      */
     canBeatVernanFirstStage() {
-        return this.canAccessAmbisPalace() && this.hasMysterySeeds() && this.canUseSeeds() && this.hasSwitchHook() && (
+        return this.canAccessAmbisPalace() && this.canUseMysterySeeds() && this.hasSwitchHook() && (
             this.hasSword() || this.canPunch()
         )
     }
@@ -519,23 +550,21 @@ class AgesGameLogic {
             const essence = Object.keys(items).find(k => items[k].imageName == `essences/d${i}`);
             if (essence && !this.hasItem(essence)) neededItems++
         }
-        if (!this.hasSword(this.hasMediumLogic())) neededItems++;
+        if (!this.hasSword(!this.hasMediumLogic()) && !this.canPunch()) neededItems++;
         if (!this.hasBombs()) neededItems++;
         if (!this.hasSwitchHook()) neededItems++;
-        if (!this.canUseMysterySeeds()) neededItems++;
+        if (!this.hasMysterySeeds()) neededItems++;
         if (this.settings.goal == "beat_ganon") {
-            if (!this.hasMediumLogic() && !this.hasNobleSword()) neededItems++;
-            if (!this.hasSeedShooter() || (
-                this.hasHardLogic() && !this.canUseSeeds()
-            )) neededItems++;
-            if (
-                !this.hasMediumLogic() 
-                && !this.canUseEmberSeeds(false)
-            ) neededItems++;
-            if (this.hasHardLogic()) {
-                if (!this.hasEmberSeeds()) neededItems++;
-                if (!this.hasScentSeeds()) neededItems++;
-                if (!this.hasGaleSeeds()) neededItems++
+            if (!this.hasSeedShooter()) neededItems++;
+            if (!this.hasMediumLogic()) {
+                if (!this.hasNobleSword()) neededItems++
+                if (!this.hasEmberSeeds(false)) neededItems++;
+            } else {
+                if (this.hasHardLogic() && (
+                    this.hasEmberSeeds()
+                    || this.hasScentSeeds()
+                    || this.hasGaleSeeds()
+                )) neededItems++
             }
         }
         return neededItems;
@@ -547,12 +576,14 @@ class AgesGameLogic {
      */
     hasAccessToPresentShore() {
         return this.hasItem("Ricky's Gloves") || (
-            this.can_swim_deepwater()
-            || this.hasBracelet()
-            || this.canGoBackToPresent()
-            || (
-                this.canBreakBush()
-                && this.canJump1Wide()
+            this.canAccessLynnaCity() && (
+                this.can_swim_deepwater()
+                || this.hasBracelet()
+                || this.canGoBackToPresent()
+                || (
+                    this.canBreakBush()
+                    && this.canJump1Wide()
+                )
             )
         )
     }
@@ -708,7 +739,10 @@ class AgesGameLogic {
                 && this.canUseScentSeedsForSmell()
                 && this.canUsePegasusSeeds()
             )
-            || this.hasSirenSuit() || this.canSwitchPastAndPresent()
+            || (
+                this.hasSirenSuit()
+                && this.canBreakBush()
+            ) || this.canSwitchPastAndPresent()
         ));
     }
 
@@ -1009,6 +1043,89 @@ class AgesGameLogic {
         ) || (canUseAnimalCompanion && this.canSummonMoosh());
     }
 
+    canGoToSymmetryPresent() {
+        return this.canEnterNuun() || (
+            this.canGoBackToPresent()
+            || this.hasFlute()
+            || (
+                this.canSummonMoosh()
+                && this.canBreakBush()
+                && this.canJump3Wide(false, true)
+                && this.hasHardLogic()
+            )
+        )
+    }
+
+    canAccessSymmetryPast() {
+        return this.canGoToSymmetryPresent() && (
+            this.canSwitchPastAndPresent()
+            && (
+                this.canOpenPortal()
+                || this.canBreakBush(false)
+            )
+        )
+    }
+
+    canAccessTalusPeeks() {
+        return this.canAccessSymmetryPast() && (
+            this.canGoBackToPresent()
+            && this.hasBracelet()
+        )
+    }
+
+    canAccessRestorationWall() {
+        return this.canAccessTalusPeeks() && (
+            (
+                this.hasFlippers()
+                || this.canJump3Wide(true)
+            ) || this.canSwitchPastAndPresent()
+        )
+    }
+
+    canGoToPatch() {
+        return this.canAccessRestorationWall() && (
+            this.hasSword()
+            || (
+                this.hasMediumLogic()
+                && (
+                    this.hasShield()
+                    || this.hasBoomerang()
+                    || this.hasSwitchHook()
+                )
+            ) || (
+                this.hasHardLogic()
+                && (
+                    this.hasScentSeeds()
+                    || this.hasShovel()
+                )
+            )
+        )
+    }
+
+    canAccessRollingRidgeWestPastBase(needsPresent = false) {
+        return needsPresent ? this.canAccessRollingRidgeWestPastBase() && (
+            this.canOpenPortal()
+            && this.hasBracelet()
+        ) : this.canAccessLynnaCity() && (
+            (
+                this.canSwitchPastAndPresent()
+                || this.hasFeather()
+            ) && this.hasSwitchHook()
+        )
+    }
+
+    canGoToGoronElder() {
+        return this.canAccessRollingRidgeWestPastBase() && this.hasItem("Bomb Flower")
+    }
+
+    hasAccessToSyrupsShop() {
+        return this.dungeonsReachable["Spirit's Grave"]() && (
+            this.hasFlippers() 
+            || this.canJump2Wide(true) 
+            || this.hasLongHook()
+        )
+    }
+
     /**
      * Checks if the player can use the seeds.
      * @returns {boolean} True if the player can use the seeds. If not, then it's false.
@@ -1156,7 +1273,7 @@ class AgesGameLogic {
 
     canAccessChevalsGrave() {
         return this.canUseEmberSeeds(false) && (
-            this.canKillNormalEnemy(true) || this.canJump3Wide()
+            this.canKillNormalEnemy(true) || this.canJump3Wide(false, true)
         )
     }
 
@@ -1169,6 +1286,25 @@ class AgesGameLogic {
                 this.hasHardLogic()
                 && this.hasSwitchHook()
             )
+        )
+    }
+
+    canEnterNuun() {
+        return this.canEnterFairiesWoods() && (
+            (
+                this.canUseEmberSeeds(false)
+                && this.hasSeedShooter()
+            ) || this.canGoBackToPresent()
+        )
+    }
+
+    canAccessDekuForestCaveWest() {
+        return this.canEnterDekuForest() && (
+            this.hasFeather()
+            || this.hasSwitchHook()
+            || this.canUseEmberSeeds()       
+            || this.canWarpUsingGaleSeeds()   
+            || this.canSwitchPastAndPresent()          
         )
     }
 
@@ -1308,6 +1444,12 @@ class AgesGameLogic {
                     && this.canGoBackToPresent()
                 ) : this.hasAccessToRaftonsRaft()
             )
+        )
+    }
+
+    canAccessCresentIslandEast(needsPresentIsland = true) {
+        return this.canAccessCresentIsland(needsPresentIsland) && (
+            this.canBreakBush() || this.canGoBackToPresent()
         )
     }
 

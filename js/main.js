@@ -119,10 +119,7 @@ function goToMap() {
     mapCanvas.appendChild(image);
 
     // Add clickable markers to the map canvas
-    let locationsArray = Object.keys(locations).filter(i => {
-        locations[i].checkLocation = i;
-        return connected2archipelago ? locations[i].APID : true
-    });
+    let locationsArray = Object.keys(locations).filter(i => connected2archipelago ? locations[i].APID : true);
     for (const i of locationsArray) {
         if (locations[i].region_id != "advance shop") continue;
         locations[i].hidden = !gameLogic.settings.open_advance_shop;
@@ -155,8 +152,11 @@ function goToMap() {
             const htmls = [];
             for (let i = 0; i < position.array.length; i++) {
                 const v = position.array[i];
-                htmls.push(`<img src="./items/chest_${currentMap.endsWith("past") ? 'past' : 'present'
-                    }${v.checked ? '_open' : ''}.png" ${!connected2archipelago ? 'onclick="checkLocation(this)"' : ''
+                htmls.push(`<img src="./items/${
+                    v.region_id.endsWith("tree") ? `tree${v.checked ? '_gray' : ''}` : `chest_${
+                        currentMap.endsWith("past") ? 'past' : 'present'
+                    }${v.checked ? '_open' : ''}`
+                }.png" ${!connected2archipelago ? 'onclick="checkLocation(this)"' : ''
                     } style="cursor: pointer;" data-region="${v.region_id}" data-index="${v.providedStartName ? (() => {
                         if (gameLogic.counts[v.region_id] != undefined) gameLogic.counts[v.region_id]++;
                         gameLogic.counts[v.region_id] ||= 0;
@@ -236,6 +236,7 @@ function checkLocation(e) {
     const info = gameLogic.findLocationInfoByRegionName(e.getAttribute("data-region"))[e.getAttribute("data-index")];
     info.checked = !info.checked;
     gameLogic.popovers[e.getAttribute('data-popoverProperty')].dispose();
+    console.log(info)
     goToMap();
 }
 

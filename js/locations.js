@@ -56,7 +56,7 @@ const locations = {
         "bit_mask": 0x20,
         "scouting_byte": 0xc75e,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         'vanilaPrice': 30,
         /* 
         I will have to work on including a rupee count as part of the logic as well for all shops, not just this one. 
@@ -72,7 +72,7 @@ const locations = {
         "bit_mask": 0x40,
         "scouting_byte": 0xc75e,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         'vanilaPrice': 20,
         "symbolic_name": "lynnaShop2",
     },
@@ -85,7 +85,7 @@ const locations = {
         "bit_mask": 0x80,
         "scouting_byte": 0xc75e,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         'vanilaPrice': 150,
         "symbolic_name": "lynnaShop3",
     },
@@ -98,7 +98,7 @@ const locations = {
         "scouting_byte": 0xc77e,
         "scouting_mask": 0x10,
         'vanilaPrice': 300,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent(),
         "symbolic_name": "hiddenShop1",
     },
     "Lynna City: Hidden Shop Item #2": {
@@ -110,7 +110,7 @@ const locations = {
         "scouting_byte": 0xc77e,
         "scouting_mask": 0x10,
         'vanilaPrice': 500,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent(),
         "symbolic_name": "hiddenShop2",
     },
     "Lynna City: Hidden Shop Item #3": {
@@ -121,7 +121,7 @@ const locations = {
         "bit_mask": 0x08,
         "scouting_byte": 0xc77e,
         "scouting_mask": 0x10,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canGoBackToPresent(),
         "symbolic_name": "hiddenShop3",
     },
     "Lynna City: Mayor Plen's House": {
@@ -149,7 +149,7 @@ const locations = {
         "map_tile": 0x38,
         "reachable": () => (
             (
-                gameLogic.dungeonsReachable['Maku Path']() && gameLogic.hasSmallKeys(0)
+                gameLogic.dungeonsReachable['Maku Path']() && gameLogic.hasSmallKeys(0) && gameLogic.canKillNormalEnemy()
             ) || gameLogic.canBeatVernanFirstStage()
         ),
         "symbolic_name": "makuTreeGift",
@@ -187,7 +187,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         "symbolic_name": "advanceShop1",
     },
     "Lynna Village: Advance Shop Item #2": {
@@ -199,7 +199,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         "symbolic_name": "advanceShop2",
     },
     "Lynna Village: Advance Shop Item #3": {
@@ -211,7 +211,7 @@ const locations = {
         "scouting_byte": 0xc8fe,
         "scouting_mask": 0x10,
         "vanilaPrice": 100,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity(),
         "symbolic_name": "advanceShop3",
     },
     "Lynna Village: Baseball": {
@@ -291,7 +291,7 @@ const locations = {
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc8af,
         "room": 0x03af,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canEnterDekuForest() && gameLogic.hasFeather(),
         "symbolic_name": "restorationWallHP",
     },
 
@@ -355,7 +355,7 @@ const locations = {
         "bit_mask": 0x80,
         "scouting_byte": 0xc8ed,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.dungeonsReachable["Spirit's Grave"]() && (gameLogic.hasFlippers() || gameLogic.canJump2Wide(true) || gameLogic.hasLongHook()),
+        "reachable": () => gameLogic.hasAccessToSyrupsShop(),
         "symbolic_name": "syrupShop1",
     },
     "Yoll Graveyard: Syrup Shop Item #2": {
@@ -366,7 +366,7 @@ const locations = {
         "bit_mask": 0x20,
         "scouting_byte": 0xc8ed,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.dungeonsReachable["Spirit's Grave"]() && (gameLogic.hasFlippers() || gameLogic.canJump2Wide(true) || gameLogic.hasLongHook()),
+        "reachable": () => gameLogic.hasAccessToSyrupsShop(),
         "symbolic_name": "syrupShop2",
     },
     "Yoll Graveyard: Syrup Shop Item #3": {
@@ -377,7 +377,7 @@ const locations = {
         "bit_mask": 0x40,
         "scouting_byte": 0xc8ed,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.dungeonsReachable["Spirit's Grave"]() && (gameLogic.hasFlippers() || gameLogic.canJump2Wide(true) || gameLogic.hasLongHook()),
+        "reachable": () => gameLogic.hasAccessToSyrupsShop(),
         "symbolic_name": "syrupShop3",
     },
     "Yoll Graveyard: Poe's Gift": {
@@ -404,7 +404,7 @@ const locations = {
         "flag_byte": 0xc784,
         "room": 0x0084,
         "reachable": () => gameLogic.canEnterFairiesWoods() && (
-            gameLogic.hasFeather() || gameLogic.hasSwitchHook() || gameLogic.canGoBackToPresent()
+            gameLogic.canJump1Wide(false, true) || gameLogic.hasSwitchHook() || gameLogic.canGoBackToPresent()
         )
     },
     "Deku Forest: Chest in Central Cave": {
@@ -414,8 +414,8 @@ const locations = {
         "room": 0x05b3,
         "map_tile": 0x172,
         "reachable": () => gameLogic.canEnterDekuForest() && (
-            gameLogic.hasBracelet() || gameLogic.hasFeather()
-        ) && ((gameLogic.hasMediumLogic() && gameLogic.canPushEnemy()) || gameLogic.canKillNormalEnemy(true, true)),
+            gameLogic.hasBracelet() || gameLogic.canSwitchPastAndPresent()
+        ),
     },
     "Deku Forest: Chest in Path to Seed Tree": {
         "region_id": "deku forest cave west",
@@ -423,11 +423,7 @@ const locations = {
         "flag_byte": 0xcab5,
         "room": 0x05b5,
         "map_tile": 0x171,
-        "reachable": () => gameLogic.canEnterDekuForest() && (
-            gameLogic.hasSwitchHook() || gameLogic.hasFeather() || (
-                gameLogic.canUseEmberSeeds(false) && gameLogic.hasBracelet()
-            )
-        ),
+        "reachable": () => gameLogic.canAccessDekuForestCaveWest() && gameLogic.hasBracelet(),
     },
     "Deku Forest: Soldier's Reward": {
         "region_id": "deku forest soldier",
@@ -435,7 +431,7 @@ const locations = {
         "flag_byte": 0xc6d9,
         "bit_mask": 0x04,
         "room": 0x0172,
-        "reachable": () => gameLogic.canEnterDekuForest() && gameLogic.canUseSeeds() && gameLogic.hasMysterySeeds(),
+        "reachable": () => gameLogic.canEnterDekuForest() && gameLogic.hasMysterySeeds(),
         "symbolic_name": "dekuForestSoldier",
     },
     "Deku Forest: Terrace in Cave Under Tree": {
@@ -470,7 +466,7 @@ const locations = {
         "flag_byte": 0xcae9,
         "room": 0x05e9,
         "map_tile": 0x1d9,
-        "reachable": () => gameLogic.canAccessCresentIsland(false),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasSirenSuit(),
         "symbolic_name": "hiddenTokayCave",
     },
     "Crescent Island (Past): Crystal Cave Chest": {
@@ -479,7 +475,12 @@ const locations = {
         "flag_byte": 0xcaca,
         "room": 0x05ca,
         "map_tile": 0x1bb,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.canBreakCrystal() && gameLogic.hasFeather(),
+        "reachable": () => gameLogic.canAccessCresentIsland(false) && (
+            (
+                gameLogic.hasShovel()
+                || gameLogic.canBreakCrystal()                   
+            ) && gameLogic.hasFeather()
+        ),
     },
     "Crescent Island (Past): Bomb Cave Chest": {
         "region_id": "tokay bomb cave",
@@ -487,7 +488,7 @@ const locations = {
         "flag_byte": 0xc7ce,
         "room": 0x02ce,
         "map_tile": 0x1cd,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasBracelet() && gameLogic.gameLogic.hasBombs(),
+        "reachable": () => gameLogic.canAccessCresentIslandEast(false) && gameLogic.hasBracelet() && gameLogic.gameLogic.hasBombs(),
     },
     "Crescent Island (Past): Tokay Chicken House": {
         "region_id": "tokay chicken house",
@@ -497,7 +498,7 @@ const locations = {
         tokay chicken house. I know that the tracker does not need this property, but the randomizer does. */
         "room": 0x02e3,
         "map_tile": 0x1dc,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasBracelet(),
+        "reachable": () => gameLogic.canAccessCresentIslandEast(false) && gameLogic.hasBracelet(),
         "symbolic_name": "tokayChickenHouse",
     },
     "Crescent Island (Past): Wild Tokay Prize": {
@@ -506,7 +507,7 @@ const locations = {
         "flag_byte": 0xc7de,
         "room": 0x02de,
         "map_tile": 0x1bd,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasBombs() && gameLogic.hasBracelet(),
+        "reachable": () => gameLogic.canAccessCresentIslandEast(false) && gameLogic.hasBombs() && gameLogic.hasBracelet(),
         "symbolic_name": "wildTokayGame",
     },
     "Crescent Island (Past): Market Item #1": {
@@ -517,7 +518,7 @@ const locations = {
         "bit_mask": 0x40,
         "scouting_byte": 0xc7e4,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasMysterySeeds(),
+        "reachable": () => gameLogic.canAccessCresentIslandEast(false) && gameLogic.hasMysterySeeds(),
         "symbolic_name": "tokayMarket1",
     },
     "Crescent Island (Past): Market Item #2": {
@@ -528,7 +529,7 @@ const locations = {
         "bit_mask": 0x80,
         "scouting_byte": 0xc7e4,
         "scouting_mask": 0x10,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasScentSeeds(),
+        "reachable": () => gameLogic.canAccessCresentIslandEast(false) && gameLogic.hasScentSeeds(),
         "symbolic_name": "tokayMarket2",
     },
     "Crescent Island (Past): Pot Cave": {
@@ -537,7 +538,7 @@ const locations = {
         "flag_byte": 0xcaf7,
         "room": 0x05f7,
         "map_tile": 0x1dd,
-        "reachable": () => gameLogic.canAccessCresentIsland(false) && gameLogic.hasLongHook(),
+        "reachable": () => gameLogic.canAccessCresentIslandEast(false) && gameLogic.hasLongHook(),
     },
 
     // Nuun Highlands Items
@@ -547,7 +548,15 @@ const locations = {
         "flag_byte": [0xc7ec, 0xcab8, 0xc7f4],
         "room": [0x02ec, 0x05b8, 0x02f4],
         "map_tile": 0x37, 
-        "reachable": () => false,
+        "reachable": () => gameLogic.canEnterNuun() && (
+            gameLogic.canSummonDimitri() || gameLogic.canSummonRicky() || (
+                gameLogic.settings.animal_companion == "moosh" && (
+                    gameLogic.canSummonMoosh() || (
+                        gameLogic.canBreakBush() && gameLogic.canJump3Wide(false, true)
+                    )
+                )
+            ) || gameLogic.canGoBackToPresent()
+        ),
     },
     "Nuun Highlands: Happy Mask Salesman Trade": {
         "region_id": "happy mask salesman trade",
@@ -565,7 +574,7 @@ const locations = {
         "flag_byte": [0xc86e, 0xc86f],
         "room": [0x036e, 0x036f],
         "map_tile": 0x104,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessSymmetryPast(),
         "symbolic_name": "symmetryCityBrother",
     },
     "Symmetry Village: Skinny Guy Trade": {
@@ -573,7 +582,7 @@ const locations = {
         "vanilla_item": "Cheesy Mustache",
         "flag_byte": 0xc7e8,
         "room": 0x02e8,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessSymmetryPast() && gameLogic.hasItem("Dumbbell"),
         "symbolic_name": "middleMan",
     },
 
@@ -584,7 +593,7 @@ const locations = {
         "flag_byte": 0xc6d3,
         "bit_mask": 0x10,
         "room": 0x0050,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessTalusPeeks() && gameLogic.hasBombs(),
         "symbolic_name": "bombFairy",
     },
     "Talus Peaks (Present): Southeastern Chest": {
@@ -599,7 +608,7 @@ const locations = {
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc711,
         "room": 0x0011,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessSymmetryPast() && gameLogic.canGoBackToPresent(),
         "symbolic_name": "symmetryCityHP",
     },
     "Talus Peaks (Past): Tokkey's Composition": {
@@ -608,7 +617,7 @@ const locations = {
         "flag_byte": 0xc88f,
         "room": 0x038f,
         "map_tile": 0x101,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessSymmetryPast() && gameLogic.hasFlippers(),
         "symbolic_name": "tokkeyComposition",
     },
     "Talus Peaks (Past): Tuni Nut Restoration": {
@@ -617,7 +626,7 @@ const locations = {
         "flag_byte": 0xc6d3,
         "room": 0x03be,
         "bit_mask": 0x40,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canGoToPatch() && gameLogic.hasItem("Tuni Nut"),
         "symbolic_name": "patchTuni",
     },
     "Talus Peaks (Past): Broken Sword Restoration": {
@@ -626,7 +635,7 @@ const locations = {
         "flag_byte": 0xc6d5,
         "room": 0x03be,
         "bit_mask": 0x20,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canGoToPatch() && gameLogic.hasItem("Broken Sword"),
         "symbolic_name": "patchSword",
     },
 
@@ -672,7 +681,7 @@ const locations = {
         "flag_byte": 0xcac3,
         "room": 0x05c3,
         "map_tile": 0x128,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canGoToGoronElder(),
         "symbolic_name": "goronElder",
     },
     "Rolling Ridge Base (Past): Goron Dance With Letter": {
@@ -800,7 +809,7 @@ const locations = {
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xcac1,
         "room": 0x05c1,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessRollingRidgeWestPastBase(true) && gameLogic.hasBombs(),
         "symbolic_name": "ridgeWestHP",
     },
     "Rolling Ridge (Present): Far Northeast Heart Piece": {
@@ -982,7 +991,18 @@ const locations = {
         "vanilla_item": "Broken Sword",
         "flag_byte": 0xc7f5,
         "room": 0x02f5, 
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessLynnaCity() && (
+            (
+                gameLogic.canSwitchPastAndPresent()
+                || (
+                    gameLogic.hasFeather()
+                    && (
+                        gameLogic.hasSwitchHook()
+                        || gameLogic.hasSirenSuit()
+                    )
+                )
+            ) && gameLogic.hasItem("Sea Ukulele")
+        ),
         "symbolic_name": "oldZora",
     },
 
@@ -1983,15 +2003,9 @@ const locations = {
         "local": true,
         "flag_byte": 0xc880,
         "room": 0x0180,
-        "reachable": () => gameLogic.canEnterDekuForest() && (
+        "reachable": () => gameLogic.canAccessDekuForestCaveWest() && (
             gameLogic.canHarvestTree(false)
-            && (
-                gameLogic.hasFeather()
-                || gameLogic.hasSwitchHook()
-                || gameLogic.canUseEmberSeeds(false)        
-                || gameLogic.canWrapUsingGaleSeeds()   
-                || gameLogic.canSwitchPastAndPresent()         
-            )
+            && gameLogic.canAccessDekuForestCaveWest()
         ),
         "symbolic_name": "forestTree",
     },
@@ -2024,7 +2038,7 @@ const locations = {
         "local": true,
         "flag_byte": 0xc713,
         "room": 0x0013,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canGoToSymmetryPresent() && gameLogic.canHarvestTree(false),
         "symbolic_name": "symmetryTree",
     },
     "Rolling Ridge West: Seed Tree": {

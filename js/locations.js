@@ -149,7 +149,7 @@ const locations = {
         "map_tile": 0x38,
         "reachable": () => (
             (
-                gameLogic.dungeonsReachable['Maku Path']() && gameLogic.hasSmallKeys(0) && gameLogic.canKillNormalEnemy()
+                gameLogic.dungeonsReachable[(gameLogic.getDungeonDataFromEntrance('d0')).randomized]() && gameLogic.hasSmallKeys(0) && gameLogic.canKillNormalEnemy()
             ) || gameLogic.canBeatVernanFirstStage()
         ),
         "symbolic_name": "makuTreeGift",
@@ -646,7 +646,7 @@ const locations = {
         "flag_byte": 0xcab9,
         "room": 0x05b9,
         "map_tile": 0x28,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessRollingRidgeWestPastBase(true),
     },
     "Rolling Ridge Base (Present): First Goron Dance": {
         "region_id": "first goron dance",
@@ -725,7 +725,7 @@ const locations = {
         "flag_byte": 0xcac0,
         "room": 0x05c0,
         "map_tile": 0x18,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessRollingRidgeWestPastBase(true),
     },
     "Rolling Ridge (Present): Cave Under Moblin Keep": {
         "region_id": "under moblin keep",
@@ -749,7 +749,7 @@ const locations = {
         "flag_byte": 0xcabd,
         "room": 0x05bd,
         "map_tile": 0x28,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessRollingRidgeWestPastBase(true) && gameLogic.hasBombs(),
     },
     "Rolling Ridge (Present): Bush Cave Chest": {
         "region_id": "ridge bush cave",
@@ -961,20 +961,21 @@ const locations = {
         "symbolic_name": "seaofstorm",
     },
     /*
-    NOTE: You normally can't get to this location in the vanilla game without glitches. However, you can reach it by performing a Veran Wrap Glitch (really hard)
-    to get to the location. 
-    I am not sure if the developers inplmented this location as a check yet for hard logic, but if it was and I missed it, I included it here anyway.
-    More infomation can be found on https://www.youtube.com/watch?v=vXteEbydr-8
+    NOTE: You normally can't get to this location in the vanilla game without being in a linked game. However, you can still reach it by performing a 
+    Veran Wrap Glitch (really hard) without being in a linked game. Here is a link for the Veran Wrap glitch if you're curious. I am thinking about adding
+    this location into my archipelago randomizer fork in the future. https://www.youtube.com/watch?v=vXteEbydr-8
     */
     "Sea of Storms (Present): Underwater Cave": {
         "region_id": "sea of storms present",
         "vanilla_item": "Gacha Seed",
         /*
         "flag_byte": 0xc8ff,
-        "room": 0x03ff,
+        "room": 0x03e8,
         "map_tile": 0x1c7,
         */
-        "reachable": () => false,
+        "reachable": () => gameLogic.hasHardLogic() && gameLogic.canAccessLynnaCity() && gameLogic.hasSirenSuit() && gameLogic.hasSeedShooter() && (
+            gameLogic.hasMysterySeeds() && gameLogic.hasPegasusSeeds()
+        ) && gameLogic.canSwitchPastAndPresent(),
         "symbolic_name": "seaofstormpresent",
     },
 
@@ -1024,7 +1025,7 @@ const locations = {
         "flag_byte": 0xc906,
         "room": 0x0406,
         "reachable": () => (
-            gameLogic.dungeonsReachable['Maku Path']() && gameLogic.hasSmallKeys(0)
+            gameLogic.dungeonsReachable[(gameLogic.getDungeonDataFromEntrance('d0')).randomized]() && gameLogic.hasSmallKeys(0)
         ) || gameLogic.canBeatVernanFirstStage(),
         "symbolic_name": "makuPathHP",
     },
@@ -1037,7 +1038,7 @@ const locations = {
         "map_tile": 0x148,
         "reachable": () => (
             gameLogic.hasSmallKeys(0) && gameLogic.canBeatVernanFirstStage()
-        ) || gameLogic.dungeonsReachable['Maku Path'](),
+        ) || gameLogic.dungeonsReachable[(gameLogic.getDungeonDataFromEntrance('d0')).randomized](),
     },
     "Maku Path: Basement": {
         "region_id": "d0 basement",
@@ -1046,7 +1047,7 @@ const locations = {
         "flag_byte": 0xc905,
         "room": 0x0605,
         "reachable": () => (
-            gameLogic.dungeonsReachable['Maku Path']() && gameLogic.hasSmallKeys(0)
+            gameLogic.dungeonsReachable[(gameLogic.getDungeonDataFromEntrance('d0')).randomized]() && gameLogic.hasSmallKeys(0)
         ) || gameLogic.canBeatVernanFirstStage(),
         "symbolic_name": "d0Basement",
     },

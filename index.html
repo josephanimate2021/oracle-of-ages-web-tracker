@@ -606,7 +606,7 @@
     </div>
 </form>
 <div class="modal" id="settingsMenu" tabindex="-1" aria-labelledby="settingsMenuLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="settingsMenuLabel">Settings</h1>
@@ -614,13 +614,14 @@
             </div>
             <form class="modal-body" id="trackerSettings" onchange="trackerSettingsChange(this)"></form>
             <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="settingsResetBtn" onclick="localStorage.clear(); initTracker()">Reset Settings</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 <div class="modal" id="dungeonEntrancesModal" tabindex="-1" aria-labelledby="dungeonEntrancesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="dungeonEntrancesModalLabel">Customize Dungeon Entrances</h1>

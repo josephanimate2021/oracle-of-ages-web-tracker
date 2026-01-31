@@ -130,14 +130,12 @@ function goToMap() {
     };
     for (const position of gameLogic.maps[mapImage].layouts[layoutType]) {
         if (position.dungeonEntrance) position.array = (() => {
-            const dungeonEntrances = gameLogic.settings.dungeon_entrances;
-            for (const i in dungeonEntrances) {
-                if (i.startsWith(position.dungeonEntrance)) {
-                    let entranceLeadsTo = dungeonEntrances[i].substring(7);
-                    if (entranceLeadsTo.includes("6")) entranceLeadsTo = 6;
-                    return gameLogic.findLocationInfoWithStartName(gameLogic.dungeons[entranceLeadsTo]);
-                }
-            }
+            const dungeonData = gameLogic.getDungeonDataFromEntrance(position.dungeonEntrance);
+            console.log(dungeonData)
+            return [
+                ...gameLogic.findLocationInfoWithStartName(dungeonData.randomized),
+                ...dungeonData.vanilla.startsWith("Mermaid's Cave (Present)") ? gameLogic.findLocationInfoByRegionName("pool in d6 entrance") : []
+            ]
         })();
         console.log(position)
         const info = position.array[0];
@@ -154,8 +152,9 @@ function goToMap() {
             const htmls = [];
             for (let i = 0; i < position.array.length; i++) {
                 const v = position.array[i];
+                if (v.notACheck) continue;
                 htmls.push(`<img src="./items/${
-                    v.region_id.endsWith("tree") ? `tree${v.checked ? '_gray' : ''}` : `chest_${
+                    (v.checkLocation.endsWith("Seed Tree") && v.region_id.endsWith("tree")) ? `tree${v.checked ? '_gray' : ''}` : `chest_${
                         currentMap.endsWith("past") ? 'past' : 'present'
                     }${v.checked ? '_open' : ''}`
                 }.png" ${!connected2archipelago ? 'onclick="checkLocation(this)"' : ''
@@ -238,7 +237,6 @@ function checkLocation(e) {
     const info = gameLogic.findLocationInfoByRegionName(e.getAttribute("data-region"))[e.getAttribute("data-index")];
     info.checked = !info.checked;
     gameLogic.popovers[e.getAttribute('data-popoverProperty')].dispose();
-    console.log(info)
     goToMap();
 }
 
@@ -410,6 +408,7 @@ function archipelagoConnector(obj) {
                                     document.getElementById(`${labelToId}_label`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
                                     document.getElementById(`${labelToId}`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
                                 }
+                                document.getElementById('settingsResetBtn')[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
                             }
                             hideNotSafeSettingOptions()
                             document.getElementById("stageView").style.display = "none";

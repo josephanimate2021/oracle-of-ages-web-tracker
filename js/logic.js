@@ -17,9 +17,9 @@ class AgesGameLogic {
             "symmetry_city_present": {
                 layouts: {
                     default: [
-                        { x: 395, y: 185, array: this.customItemRequirementsForRegion("symmetry city tree", [!this.hasItem("Tuni Nut", 2)]) },
+                        { x: 395, y: 185, array: !this.hasItem("Tuni Nut", 2) ? this.findLocationInfoByRegionName("symmetry city tree") : [{hidden: true}]},
                         { x: 395, y: 340, dungeonEntrance: "d4" },
-                        { x: 395, y: 473, array: this.customItemRequirementsForRegion("symmetry city tree", [this.hasItem("Tuni Nut", 2)]) }
+                        { x: 395, y: 473, array: this.hasItem("Tuni Nut", 2) ? this.findLocationInfoByRegionName("symmetry city tree") : [{hidden: true}]}
                     ]
                 },
                 roomCondtionals: [
@@ -58,7 +58,7 @@ class AgesGameLogic {
                         { x: 345.5, y: 272, array: this.findLocationInfoByRegionName("nuun highlands cave") }
                     ],
                     ricky: [
-                        { x: 402, y: 209, array: this.findLocationInfoByRegionName("nuun highlands cave") }
+                        { x: 403, y: 209, array: this.findLocationInfoByRegionName("nuun highlands cave") }
                     ],
                     moosh: [
                         { x: 370, y: 305, array: this.findLocationInfoByRegionName("nuun highlands cave") }
@@ -89,28 +89,88 @@ class AgesGameLogic {
             "overworld_present": {
                 layouts: {
                     default: [
-                        { x: 165, y: 10, dungeonEntrance: "d4" },
-                        { x: 165, y: 53, array: this.customItemRequirementsForRegion("symmetry city tree", [this.hasItem("Tuni Nut", 2)]) },
-                        { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
-                        { x: 420, y: 240, array: this.findLocationInfoByRegionName("lynna shop") },
-                        { x: 410, y: 240, array: this.findLocationInfoByRegionName("hidden shop") },
-                        { x: 360, y: 200, array: this.findLocationInfoByRegionName("mayor plen's house") },
+
+                        /** ALL OVEROWRLD PRESENT LOCATIONS **/
+
+                        // Forest of Time Locations
                         { x: 462, y: 125, array: this.findLocationInfoByRegionName("starting item") },
                         { x: 495, y: 120, array: this.findLocationInfoByRegionName("nayru's house") },
                         { x: 446, y: 281, array: [
                             ...this.findLocationInfoByRegionName("balloon guy's gift"), 
                             ...this.findLocationInfoByRegionName("balloon guy's upgrade") 
                         ] },
+
+                        // Yoll: Graveyard Locations
+                        { x: 632, y: 335, array: this.findLocationInfoByRegionName("grave under tree") },
+                        { x: 541.5, y: 325, array: this.findLocationInfoByRegionName("yoll graveyard heartpiece") },
+                        { x: 541.5, y: 200, array: this.findLocationInfoWithStartName("Yoll Graveyard: Cheval") },
+                        { x: 607, y: 285, array: this.findLocationInfoByRegionName("graveyard poe trade") },
+                        { x: 663, y: 200, array: this.findLocationInfoByRegionName("syrup shop") },
+
+                        // South Shore Locations
+                        { x: 404, y: 359, array: this.findLocationInfoByRegionName("south shore dirt") },
+
+                        // Lynna City Locations
+                        { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
+                        { x: 420, y: 240, array: this.findLocationInfoByRegionName("lynna shop") },
+                        { x: 438, y: 177, array: this.findLocationInfoByRegionName("lynna city chest") },
+                        { x: 410, y: 140, array: this.findLocationInfoByRegionName("maku tree") },
+                        { x: 410, y: 210, array: this.findLocationInfoByRegionName("vasu's gift") },
+                        { x: 410, y: 240, array: this.findLocationInfoByRegionName("hidden shop") },
+                        { x: 360, y: 200, array: this.findLocationInfoByRegionName("mayor plen's house") },
+
+                        // Fairies Woods Locations
+                        { x: 223, y: 325, array: this.findLocationInfoByRegionName("fairies' woods chest") },
+                        { x: 150, y: 212.5, array: this.findLocationInfoByRegionName("happy mask salesman trade") },
+
+                        // Talus Peeks Locations
+                        { x: 63, y: 62.5, array: this.findLocationInfoByRegionName("symmetry city heartpiece") },
+                        { x: 27, y: 212.5, array: this.findLocationInfoByRegionName("bomb fairy") },
+
+                        // Crescent Island Locations
+                        { x: 597, y: 373, array: this.findLocationInfoByRegionName("under crescent island") },
+
+                        /** ALL ENTRANCES **/
+
+                        // Dungeon Entrances
+                        { x: 165, y: 10, dungeonEntrance: "d4" },
+                        { x: 507, y: 446, dungeonEntrance: "d3" },
+                        { x: 658, y: 316, dungeonEntrance: 'd1' },
+                        { x: 599.2, y: 125, dungeonEntrance: 'd6 present' },
+
+                        /** ALL TREES **/
+
+                        // Seed Trees
+                        { x: 165, y: 53, array: this.hasItem("Tuni Nut", 2) ? this.findLocationInfoByRegionName("symmetry city tree") : [{hidden: true}]},
+                        { x: 407, y: 286, array: this.findLocationInfoByRegionName("south lynna tree") },
+                        { x: 597, y: 403, array: this.findLocationInfoByRegionName("crescent island tree") },
+                        { x: 413, y: 85, array: [
+                            ...this.findLocationInfoByRegionName("ridge west cave"),
+                            ...this.findLocationInfoByRegionName("goron's hiding place"),
+                            ...this.findLocationInfoByRegionName("ridge west heartpiece")
+                        ] },
+
+                        // Planned Locations for the future with the tracker/randomizer (hopefully)
+                        // { x: 540, y: 490, array: this.findLocationInfoByRegionName("tokay gacha nut west") },
+                        // { x: 656, y: 400, array: this.findLocationInfoByRegionName("tokay gacha nut east") },
+                        { x: 385, y: 442, array: this.findLocationInfoByRegionName("sea of storms present") },
+
                     ],
                     ingame: [
+
+                        // Forest of Time Locations
+                        { x: 195, y: 83, array: this.findLocationInfoByRegionName("starting item") },
+                        { x: 211, y: 83, array: this.findLocationInfoByRegionName("nayru's house") },
+
+                        // Lynna City Locations
                         { x: 163, y: 115, array: this.findLocationInfoByRegionName("mayor plen's house") },
                         { x: 147, y: 115, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
                         { x: 179, y: 115, array: this.findLocationInfoByRegionName("vasu's gift") },
-
-                        // { x: 179, y: 99, array: this.findLocationInfoWithStartName("Hero's Cave") },
                         { x: 195, y: 99, array: this.findLocationInfoByRegionName("lynna city chest") },
-                        { x: 195, y: 83, array: this.findLocationInfoByRegionName("starting item") },
-                        { x: 211, y: 83, array: this.findLocationInfoByRegionName("nayru's house") },
+                        
+                        // Planned Locations for the future with the tracker/randomizer (hopefully)
+                        // { x: 179, y: 99, array: this.findLocationInfoWithStartName("Hero's Cave") },
+
                     ]
                 },
                 roomCondtionals: [
@@ -126,25 +186,80 @@ class AgesGameLogic {
             "overworld_past": {
                 layouts: {
                     default: [
-                        { x: 602, y: 195, dungeonEntrance: "d8" },
-                        { x: 103.5, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
-                        { x: 225, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
-                        { x: 164.5, y: 60, array: this.findLocationInfoByRegionName("symmetry middle man trade") },
-                        { x: 393, y: 162, dungeonEntrance: "d0" },
-                        { x: 311, y: 4, array: (
-                            this.findLocationInfoWithStartName("Ambi's Palace")
-                        ).filter(i => !i.checkLocation.endsWith("Seed Tree")) },
-                        { x: 267, y: 92, array: this.findLocationInfoByRegionName("ambi's palace tree") },
+
+                        /** ALL OVEROWRLD PAST LOCATIONS **/
+
+                        // Lynna Village Locations
                         { x: 366, y: 205, array: this.findLocationInfoByRegionName("postman trade") },
                         { x: 395, y: 205, array: this.findLocationInfoByRegionName("lynna shooting gallery") },
                         { x: 410, y: 205, array: this.findLocationInfoByRegionName("advance shop") },
                         { x: 322.5, y: 200, array: this.findLocationInfoByRegionName("sad boi trade") },
                         { x: 247.5, y: 209, array: this.findLocationInfoByRegionName("toilet hand trade") },
                         { x: 249, y: 177, array: this.findLocationInfoByRegionName("gasha farmer") },
-                        // { x: 249, y: 177, array: this.findLocationInfoByRegionName("gasha farmer") },
+                        { x: 355, y: 393, array: this.findLocationInfoByRegionName("rafton trade") },
+
+                        // Black Tower Locations
                         { x: 310, y: 288, array: this.findLocationInfoByRegionName("black tower worker") },
                         { x: 325, y: 316, array: this.findLocationInfoByRegionName("black tower heartpiece") },
-                        // { x: 247.5, y: 199, array: this.findLocationInfoByStartName("Gasha Nut") },
+
+                        // Deku Forest Locations
+                        { x: 182, y: 172, array: this.findLocationInfoByRegionName("restoration wall heartpiece") },
+                        { x: 100, y: 290, array: this.findLocationInfoByRegionName("deku forest soldier") },
+                        /* The soldier would move to another spot at some point in the game, but I am not precicely sure when that will happen, 
+                        so I'll have to figure that out. */
+                        // { x: 150, y: 276, array: this.findLocationInfoByRegionName("deku forest soldier") },
+                        { x: 115, y: 276, array: this.findLocationInfoByRegionName("deku forest cave east") },
+                        { x: 55, y: 281.5, array: this.findLocationInfoByRegionName("deku forest cave west") },
+                        { x: 54, y: 355, array: this.findLocationInfoByRegionName("deku forest heartpiece") },
+
+                        // Crescent Island Locations
+                        { x: 473.5, y: 522, array: this.findLocationInfoByRegionName("hidden tokay cave") },
+                        { x: 648, y: 477, array: this.findLocationInfoByRegionName("tokay chicken house") },
+                        { x: 633, y: 517, array: this.findLocationInfoByRegionName("tokay pot cave") },
+                        { x: 633, y: 427, array: this.findLocationInfoByRegionName("wild tokay game") },
+                        { x: 533, y: 425, array: this.findLocationInfoByRegionName("tokay crystal cave") },
+                        { x: 568, y: 463, array: this.findLocationInfoByRegionName("tokay bomb cave") },
+                        { x: 653, y: 390, array: this.findLocationInfoWithStartName("Crescent Island (Past): Market") },
+
+                        // Symmetry City Locations
+                        { x: 103.5, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
+                        { x: 225, y: 5, array: this.findLocationInfoByRegionName("symmetry city brother") },
+                        { x: 164.5, y: 60, array: this.findLocationInfoByRegionName("symmetry middle man trade") },
+                        
+                        // Restoration Wall Locations
+                        { x: 82, y: 4, array: this.findLocationInfoByRegionName("tokkey's composition") },
+                        { x: 164.5, y: 75, array: [
+                            { providedStartName: "Restoration Wall", notACheck: true, reachable: () => false },
+                            ...this.findLocationInfoByRegionName("patch tuni nut ceremony"),
+                            ...this.findLocationInfoByRegionName("patch broken sword ceremony")
+                        ] },
+
+                        // Sea of Storms locations
+                        { x: 366, y: 490, array: this.findLocationInfoByRegionName("sea of storms past") },
+
+                        // Ambi's Palace Locations
+                        { x: 311, y: 4, array: (this.findLocationInfoWithStartName("Ambi's Palace")).filter(i => !i.checkLocation.endsWith("Seed Tree")) },
+
+                        // Outside D8 Entrance Locations
+                        { x: 640, y: 248, array: this.findLocationInfoByRegionName("sea of no return") },
+
+                        /** ALL ENTRANCES **/
+
+                        // Dungeon Entrances
+                        { x: 393, y: 162, dungeonEntrance: "d0" },
+                        { x: 167.5, y: 316, dungeonEntrance: 'd2' },
+                        { x: 602, y: 195, dungeonEntrance: "d8" },
+
+                        /** ALL TREES **/
+
+                        // Seed Trees
+                        { x: 407, y: 286, array: this.findLocationInfoByRegionName("south lynna tree") },
+                        { x: 267, y: 92, array: this.findLocationInfoByRegionName("ambi's palace tree") },
+                        { x: 19, y: 321, array: this.findLocationInfoByRegionName("deku forest tree") },
+
+                        // Planned Locations for the future with the tracker/randomizer (hopefully)
+                        // { x: 247.5, y: 199, array: this.findLocationInfoByRegionName("lynna village gacha nut") },
+
                     ],
                     ingame: [
                         { x: 179, y: 99, dungeonEntrance: "d0" },
@@ -413,7 +528,7 @@ class AgesGameLogic {
                 this.hasItem("Tuni Nut", 2) && this.canOpenPortal()
             ),
             "Crown Dungeon": () => false,
-            "Mermaid's Cave": () => false,
+            "Mermaid's Cave": (isPresent) => false,
             "Jabu Jabu's Belly": () => false,
             "Ancient Tomb": () => false
         }
@@ -483,21 +598,25 @@ class AgesGameLogic {
     }
 
     /**
-     * Finds info of a location using a given region name and then takes custom requirements into the array.
-     * @param {object} region - The region name from the locations variable.
-     * @param {string} requirements - Custom requirements for the returned array
-     * @returns {object} The array full of any info that was found during the locations variable loop.
+     * Gets dungeon data from the randomized entrances.
+     * @param {string} dungeonNumber - Starting with d, you would put in a number right after it. For example, d0 (which is Maku Path) is a dungeon that I am trying to get data for.
+     * @returns {object} The dungeon data from the randomized entrance.
      */
-    customItemRequirementsForRegion(region, requirements) {
-        const array = [];
-        for (const info of this.findLocationInfoByRegionName(region)) {
-            const info2push = {
-                reachable: () => (requirements.filter(i => i).length == requirements.length) && info.reachable()
+    getDungeonDataFromEntrance(dungeonNumber) {
+        for (const i in this.settings.dungeon_entrances) {
+            if (i.startsWith(dungeonNumber)) {
+                let entranceLeadsTo = this.settings.dungeon_entrances[i].substring(7);
+                const vanilaDungeonNumber = (i.slice(0, i.includes("past") ? -14 : i.includes("present") ? -17 : -9)).substring(1);
+                return {
+                    vanilla: vanilaDungeonNumber != 6 ? this.dungeons[vanilaDungeonNumber] : `Mermaid's Cave (${
+                        i.includes("past") ? 'Past' : 'Present'
+                    })`,
+                    randomized: entranceLeadsTo.includes("6") ? `Mermaid's Cave (${
+                        upperCaseFirstLetterInWord(entranceLeadsTo.substring(2))
+                    })` : this.dungeons[entranceLeadsTo]
+                };
             }
-            for (const i in info) info2push[i] ||= info[i];
-            array.unshift(info2push);
         }
-        return array;
     }
 
     /**

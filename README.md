@@ -1,5 +1,4 @@
-# The Legend of Zelda: Oracle of Ages Tracker 
-# (designed for GitHub Pages)
+<h1>The Legend of Zelda: Oracle of Ages Tracker<br>(designed for GitHub Pages)</h1>
 This is a tracker built entirely from vanila JavaScript that helps you track your progression as you play the game. As of right now, I am focusing on making this tracker work with the randomizer version of Ages 
 as that's something that will priortize a tracker the most unlike just playing the normal game.
 

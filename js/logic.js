@@ -20,9 +20,9 @@ class AgesGameLogic {
             "Spirit's Grave": () => this.canUseEmberSeeds(false) && this.hasItem("Graveyard Key"),
             "Wing Dungeon": () => (
                 this.canEnterDekuForest() && this.hasBombs()
-            ) || ( // For Present D2 (Randomizer Usage Only)
+            ) /*|| ( // For Present D2 (Randomizer Usage Only)
                 this.isRandomizer() && this.canEnterFairiesWoods() && this.canGoBackToPresent()
-            ),
+            )*/,
             "Moonlit Grotto": () => this.canAccessCresentIsland(),
             "Skull Dungeon": () => this.canGoToSymmetryPresent() && (
                 this.hasItem("Tuni Nut", 2) && this.canOpenPortal()

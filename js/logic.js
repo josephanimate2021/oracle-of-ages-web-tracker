@@ -350,9 +350,9 @@ class AgesGameLogic {
             "d0_past": {
                 layouts: {
                     default: [
-                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("maku path heartpiece") },
-                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 key chest") },
-                        { x: 66, y: 50, array: this.findLocationInfoByRegionName("d0 basement") },
+                        { x: 67, y: 50, array: this.findLocationInfoByRegionName("maku path heartpiece") },
+                        { x: 594.4, y: 84, array: this.findLocationInfoByRegionName("d0 key chest") },
+                        { x: 163, y: 194, array: this.findLocationInfoByRegionName("d0 basement") },
                     ]
                 },
                 roomCondtionals: [
@@ -389,7 +389,9 @@ class AgesGameLogic {
                     default: [ 
                         { x: 310.5, y: 210, array: this.findLocationInfoByRegionName("d1 one-button chest") },
                         { x: 405, y: 178, array: this.findLocationInfoByRegionName("d1 two-button chest") },
-                        { x: 303, y: 380, array: this.findLocationInfoByRegionName("d1 crystal room") }
+                        { x: 303, y: 380, array: this.findLocationInfoByRegionName("d1 crystal room") },
+                        { x: 39, y: 653, array: this.findLocationInfoByRegionName("d1 basement") },
+                        { x: 23, y: 483, array: this.findLocationInfoByRegionName("d1 west terrace") }
                     ]
                 },
                 roomCondtionals: [

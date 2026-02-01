@@ -1184,7 +1184,7 @@ class AgesGameLogic {
             this.hasBombs(),
         ].every(Boolean);
         return (
-            this.isUsingMediumLogic() &&
+            this.hasMediumLogic() &&
             this.hasFeather() &&
             this.canUsePegasusSeeds()
         ) || (canUseAnimalCompanion && this.canSummonMoosh());
@@ -1305,7 +1305,7 @@ class AgesGameLogic {
         return this.canUseSeeds() &&
             (this.hasEmberSeeds(acceptMysterySeeds) ||
                 (acceptMysterySeeds &&
-                    this.isUsingMediumLogic() &&
+                    this.hasMediumLogic() &&
                     this.hasMysterySeeds()));
     }
 
@@ -1358,7 +1358,7 @@ class AgesGameLogic {
      */
     canUseGaleSeedsOffensively(ranged = false) {
         // If we don't have gale seeds or aren't at least in medium logic, don't even try
-        if (!this.hasGaleSeeds() || !this.isUsingMediumLogic()) {
+        if (!this.hasGaleSeeds() || !this.hasMediumLogic()) {
             return false;
         }
 

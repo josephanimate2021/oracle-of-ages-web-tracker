@@ -452,7 +452,7 @@ const locations = {
         "flag_byte": 0xc8fd,
         "room": 0x03fd,
         "map_tile": 0xba,
-        "reachable": () => gameLogic.canAccessCresentIsland(),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasSirenSuit(),
     },
     "Crescent Island (Present): Tokay Chef Trade": {
         "region_id": "tokay chef trade",
@@ -490,7 +490,7 @@ const locations = {
         "flag_byte": 0xc7ce,
         "room": 0x02ce,
         "map_tile": 0x1cd,
-        "reachable": () => gameLogic.canAccessCresentIslandEast(false) && gameLogic.hasBracelet() && gameLogic.gameLogic.hasBombs(),
+        "reachable": () => gameLogic.canAccessCresentIslandEast(false) && gameLogic.hasBracelet() && gameLogic.hasBombs(),
     },
     "Crescent Island (Past): Tokay Chicken House": {
         "region_id": "tokay chicken house",

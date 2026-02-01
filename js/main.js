@@ -505,7 +505,7 @@ function initTracker() {
         for (const i in gameLogic.gameSettingOptions) settings[i] = gameLogic.gameSettingOptions[i].default;
         return JSON.stringify(settings);
     })();
-    gameLogic.settings = parseEverything(localStorage.OoAWebTrackerSettings);
+    gameLogic.settings ||= parseEverything(localStorage.OoAWebTrackerSettings);
     document.getElementById("trackerSettings").innerHTML = Object.keys(gameLogic.gameSettingOptions).map(i => {
         const setting = gameLogic.gameSettingOptions[i];
         const defaultSetting = gameLogic.settings[i]

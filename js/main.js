@@ -79,7 +79,9 @@ function changeItemViewPreference(info) {
 function triggerItem(itemInfo, times = 1, dontCallItemsDrawFunction = false, dontDrawMap = false) {
     for (var i = 0; i < times; i++) {
         itemInfo.count ||= 0;
-        if (((!itemInfo.limit && itemInfo.count == 1) || itemInfo.count > itemInfo.limit) && !itemInfo.unlimited) itemInfo.count = 0;
+        if (((!itemInfo.limit && itemInfo.count == 1) || itemInfo.count > itemInfo.limit) && !itemInfo.unlimited) {
+            if (!connected2archipelago) itemInfo.count = 0;
+        }
         else itemInfo.count++
     }
     if (!dontCallItemsDrawFunction) drawItems()

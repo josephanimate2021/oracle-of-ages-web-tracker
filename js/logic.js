@@ -80,6 +80,9 @@ class AgesGameLogic {
 
     };
 
+    /**
+     * Loads the maps for the game
+     */
     initMaps() {
 
         // The maps in Ages.
@@ -88,7 +91,7 @@ class AgesGameLogic {
                 layouts: {
                     default: [
                         { x: 395, y: !this.hasItem("Tuni Nut", 2) ? 185 : 473, array: this.findLocationInfoByRegionName("symmetry city tree") },
-                        { x: 395, y: 340, dungeonEntrance: "d4" }
+                        { x: 394, y: 340, dungeonEntrance: "d4" }
                     ]
                 },
                 roomCondtionals: [
@@ -1257,14 +1260,18 @@ class AgesGameLogic {
     }
 
     canAccessRollingRidgeWestPastBase(needsPresent = false) {
-        return needsPresent ? this.canAccessRollingRidgeWestPastBase() && (
-            this.canOpenPortal()
-            && this.hasBracelet()
-        ) : this.canAccessLynnaCity() && (
-            (
-                this.canSwitchPastAndPresent()
-                || this.hasFeather()
-            ) && this.hasSwitchHook()
+        return needsPresent ? (
+            this.canAccessRollingRidgeWestPastBase() && (
+                this.canOpenPortal()
+                && this.hasBracelet()
+            )
+        ) : (
+            this.canAccessLynnaCity() && (
+                (
+                    this.canSwitchPastAndPresent()
+                    || this.hasFeather()
+                ) && this.hasSwitchHook()
+            )
         )
     }
 

@@ -58,9 +58,6 @@ const locations = {
         "scouting_mask": 0x10,
         "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasRupees(400),
         'vanilaPrice': 30,
-        /* 
-        I will have to work on including a rupee count as part of the logic as well for all shops, not just this one. 
-        */
         "symbolic_name": "lynnaShop1",
     },
     "Lynna City: Shop Item #2": {
@@ -130,7 +127,7 @@ const locations = {
         "flag_byte": 0xc8f9,
         "room": 0x03f9,
         "map_tile": 0x57,
-        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasLongHook() && gameLogic.hasRupees(400),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.hasLongHook(),
     },
     "Lynna City: Vasu's Gift": {
         "region_id":"vasu's gift",

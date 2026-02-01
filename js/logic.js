@@ -1290,7 +1290,7 @@ class AgesGameLogic {
     canAccessZoraVillage() {
         return this.canAccessLynnaCity && (
             this.hasSirenSuit()
-            && this.hasSirenSuit()
+            && this.hasSwitchHook()
             && this.canSwitchPastAndPresent()
         )
     }

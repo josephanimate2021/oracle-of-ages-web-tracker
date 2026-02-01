@@ -125,6 +125,7 @@ function goToMap() {
         if (locations[i].region_id != "advance shop") continue;
         locations[i].hidden = !gameLogic.settings.open_advance_shop;
     }
+    gameLogic.maps[mapImage] ||= {}
     gameLogic.maps[mapImage].layouts ||= {
         default: []
     };

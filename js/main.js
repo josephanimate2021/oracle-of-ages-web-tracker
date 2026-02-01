@@ -6,7 +6,7 @@ let defaultMapImages = {
     overworld: "overworld_present",
     dungeons: "d0_present",
     specialAreas: "d9_zeldaRescue"
-}, defaultStageView = "overworld", currentMap = `default/${defaultMapImages[defaultStageView]}`, mapImageData = '', connected2archipelago = false;
+}, defaultStageView = "overworld", currentMap = `default/${defaultMapImages[defaultStageView]}`, connected2archipelago = false;
 
 /**
  * Appends items to the sidebar
@@ -106,6 +106,9 @@ function goToMap() {
 
     // Draw map image to canvas
     let [layoutType, mapImage] = currentMap.split("/");
+    for (const layoutOptionElem of document.getElementById("overworld-view-select").getElementsByTagName("option")) {
+        layoutOptionElem[layoutOptionElem.value == layoutType ? 'setAttribute' : 'removeAttribute']("selected", true);
+    }
     const mapCanvas = document.getElementById("mapCanvas");
     mapCanvas.innerHTML = "";
     const image = document.createElement("img");
@@ -132,13 +135,11 @@ function goToMap() {
     for (const position of gameLogic.maps[mapImage].layouts[layoutType]) {
         if (position.dungeonEntrance) position.array = (() => {
             const dungeonData = gameLogic.getDungeonDataFromEntrance(position.dungeonEntrance);
-            console.log(dungeonData)
             return [
                 ...gameLogic.findLocationInfoWithStartName(dungeonData.randomized),
                 ...dungeonData.vanilla.startsWith("Mermaid's Cave (Present)") ? gameLogic.findLocationInfoByRegionName("pool in d6 entrance") : []
             ]
         })();
-        console.log(position)
         const info = position.array[0];
         if ((connected2archipelago && !info?.APID) || info?.hidden) continue;
         const marker = document.createElement("button");

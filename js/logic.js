@@ -580,6 +580,29 @@ class AgesGameLogic {
 
     };
 
+    canAccessD1East() {
+        return this.dungeonReachable(
+            (this.getDungeonDataFromEntrance('d1')).randomized
+        ) && this.canKillNormalEnemy(true)
+    }
+
+    dungeonReachable(dungeon) {
+        const d = dungeon.startsWith("Mermaid's Cave") ? "Mermaid's Cave" : dungeon;
+        return this.dungeonsReachable[d](d.includes("Present"))
+    }
+
+    canAccessD1WideRoom() {
+        return this.canAccessD1East() && this.hasSmallKeys(1, 2);
+    }
+
+    canAccessD1URoom() {
+        return this.canAccessD1WideRoom() && (
+            this.canBreakBush()
+            && this.genericBossAndMinibossKill()
+            && this.hasSmallKeys(1, 3)
+        )
+    }
+
     /**
      * Finds info of a location using a given region name
      * @param {string} region - The region name from the locations variable.

@@ -149,7 +149,9 @@ const locations = {
         "map_tile": 0x38,
         "reachable": () => (
             (
-                gameLogic.dungeonsReachable[(gameLogic.getDungeonDataFromEntrance('d0')).randomized]() && gameLogic.hasSmallKeys(0) && gameLogic.canKillNormalEnemy()
+                gameLogic.dungeonReachable(
+                    (gameLogic.getDungeonDataFromEntrance('d0')).randomized
+                ) && gameLogic.hasSmallKeys(0) && gameLogic.canKillNormalEnemy()
             ) || gameLogic.canBeatVernanFirstStage()
         ),
         "symbolic_name": "makuTreeGift",
@@ -1025,8 +1027,12 @@ const locations = {
         "flag_byte": 0xc906,
         "room": 0x0406,
         "reachable": () => (
-            gameLogic.dungeonsReachable[(gameLogic.getDungeonDataFromEntrance('d0')).randomized]() && gameLogic.hasSmallKeys(0)
-        ) || gameLogic.canBeatVernanFirstStage(),
+            (
+                gameLogic.dungeonReachable(
+                    (gameLogic.getDungeonDataFromEntrance('d0')).randomized
+                ) && gameLogic.hasSmallKeys(0)
+            ) || gameLogic.canBeatVernanFirstStage()
+        ) && gameLogic.canKillNormalEnemy(),
         "symbolic_name": "makuPathHP",
     },
     "Maku Path: Key Chest": {
@@ -1038,7 +1044,9 @@ const locations = {
         "map_tile": 0x148,
         "reachable": () => (
             gameLogic.hasSmallKeys(0) && gameLogic.canBeatVernanFirstStage()
-        ) || gameLogic.dungeonsReachable[(gameLogic.getDungeonDataFromEntrance('d0')).randomized](),
+        ) || gameLogic.dungeonReachable(
+            (gameLogic.getDungeonDataFromEntrance('d0')).randomized
+        ),
     },
     "Maku Path: Basement": {
         "region_id": "d0 basement",
@@ -1047,7 +1055,9 @@ const locations = {
         "flag_byte": 0xc905,
         "room": 0x0605,
         "reachable": () => (
-            gameLogic.dungeonsReachable[(gameLogic.getDungeonDataFromEntrance('d0')).randomized]() && gameLogic.hasSmallKeys(0)
+            gameLogic.dungeonReachable(
+                (gameLogic.getDungeonDataFromEntrance('d0')).randomized
+            ) && gameLogic.hasSmallKeys(0)
         ) || gameLogic.canBeatVernanFirstStage(),
         "symbolic_name": "d0Basement",
     },
@@ -1059,7 +1069,7 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc915,
         "room": 0x0415,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD1WideRoom(),
     },
     "Spirit's Grave: Two-Buttons Chest": {
     	"region_id": "d1 two-button chest",
@@ -1067,7 +1077,7 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc916,
         "room": 0x0416,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD1WideRoom(),
     },
     "Spirit's Grave: Wide Room": {
     	"region_id": "d1 wide room",
@@ -1075,7 +1085,7 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc91a,
         "room": 0x041a,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD1WideRoom(),
     },
     "Spirit's Grave: Crystal Room": {
     	"region_id": "d1 crystal room",
@@ -1083,7 +1093,7 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc91c,
         "room": 0x041c,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD1East() && gameLogic.canUseEmberSeeds(false) && gameLogic.canBreakCrystal(),
     },
     "Spirit's Grave: Crossroad": {
     	"region_id": "d1 crossroad",
@@ -1091,7 +1101,7 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc91d,
         "room": 0x041d,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD1East(),
     },
     "Spirit's Grave: West Terrace": {
     	"region_id": "d1 west terrace",
@@ -1099,7 +1109,9 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc91f,
         "room": 0x041f,
-        "reachable": () => false,
+        "reachable": () => gameLogic.dungeonReachable(
+            (gameLogic.getDungeonDataFromEntrance('d1')).randomized
+        ) && (gameLogic.canAccessD1URoom() || gameLogic.canBreakPot()),
     },
     "Spirit's Grave: Pot Chest": {
     	"region_id": "d1 pot chest",
@@ -1107,7 +1119,9 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc923,
         "room": 0x0423,
-        "reachable": () => false,
+        "reachable": () => gameLogic.dungeonReachable(
+            (gameLogic.getDungeonDataFromEntrance('d1')).randomized
+        ) && gameLogic.canBreakPot(),
     },
     "Spirit's Grave: East Terrace": {
     	"region_id": "d1 east terrace",
@@ -1115,7 +1129,7 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc925,
         "room": 0x0425,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD1East(),
     },
     "Spirit's Grave: Ghini Drop": {
     	"region_id": "d1 ghini drop",
@@ -1123,7 +1137,7 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc91e,
         "room": 0x041e,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD1East(),
         "symbolic_name": "d1GhiniDrop",
     },
     "Spirit's Grave: Basement": {
@@ -1132,7 +1146,11 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc910,
         "room": 0x0610,
-        "reachable": () => false,
+        "reachable": () => gameLogic.dungeonReachable(
+            (gameLogic.getDungeonDataFromEntrance('d1')).randomized
+        ) && (
+            gameLogic.canAccessD1URoom() || gameLogic.canBreakPot()
+        ) && gameLogic.canUseEmberSeeds(),
         "symbolic_name": "d1Basement",
     },
     "Spirit's Grave: Boss": {
@@ -1141,7 +1159,11 @@ const locations = {
     	"dungeon" : 1,
         "flag_byte": 0xc913,
         "room": 0x0413,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD1WideRoom() && (
+            gameLogic.hasBossKey(1)
+            && gameLogic.hasBracelet()
+            && gameLogic.genericBossAndMiniBossKill()
+        ),
         "symbolic_name": "d1Boss",
     },
 

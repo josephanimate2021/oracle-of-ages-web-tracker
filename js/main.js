@@ -148,7 +148,7 @@ function goToMap() {
             return position.array.filter(i => i.reachable()).length == position.array.length ? 'success' : 'danger';
         })()}`;
         marker.setAttribute("data-bs-toggle", "popover");
-        marker.setAttribute("title", info?.providedStartName || info?.providedRegion);
+        marker.setAttribute("title",  info?.providedRegion || info?.providedStartName);
         marker.setAttribute("data-bs-placement", "top")
         marker.setAttribute("data-bs-content", (() => {
             const htmls = [];

@@ -638,14 +638,14 @@ const locations = {
         "symbolic_name": "patchSword",
     },
 
-    // Rolling Ridge Items
+    // Rolling Ridge Items (hard for me to add the logic to without causing loops due to there being more than one posibility to accessing rolling ridge.)
     "Rolling Ridge Base (Present): Terrace Chest": {
         "region_id": "ridge base chest",
         "vanilla_item": "Rupees (50)",
         "flag_byte": 0xcab9,
         "room": 0x05b9,
         "map_tile": 0x28,
-        "reachable": () => gameLogic.canAccessRollingRidgeWestPastBase(true),
+        "reachable": () => false,
     },
     "Rolling Ridge Base (Present): First Goron Dance": {
         "region_id": "first goron dance",
@@ -680,7 +680,7 @@ const locations = {
         "flag_byte": 0xcac3,
         "room": 0x05c3,
         "map_tile": 0x128,
-        "reachable": () => gameLogic.canGoToGoronElder(),
+        "reachable": () => false,
         "symbolic_name": "goronElder",
     },
     "Rolling Ridge Base (Past): Goron Dance With Letter": {
@@ -724,7 +724,7 @@ const locations = {
         "flag_byte": 0xcac0,
         "room": 0x05c0,
         "map_tile": 0x18,
-        "reachable": () => gameLogic.canAccessRollingRidgeWestPastBase(true),
+        "reachable": () => false,
     },
     "Rolling Ridge (Present): Cave Under Moblin Keep": {
         "region_id": "under moblin keep",
@@ -748,7 +748,7 @@ const locations = {
         "flag_byte": 0xcabd,
         "room": 0x05bd,
         "map_tile": 0x28,
-        "reachable": () => gameLogic.canAccessRollingRidgeWestPastBase(true) && gameLogic.hasBombs(),
+        "reachable": () => false,
     },
     "Rolling Ridge (Present): Bush Cave Chest": {
         "region_id": "ridge bush cave",
@@ -808,7 +808,7 @@ const locations = {
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xcac1,
         "room": 0x05c1,
-        "reachable": () => gameLogic.canAccessRollingRidgeWestPastBase(true) && gameLogic.hasBombs(),
+        "reachable": () => false,
         "symbolic_name": "ridgeWestHP",
     },
     "Rolling Ridge (Present): Far Northeast Heart Piece": {
@@ -860,7 +860,7 @@ const locations = {
         "vanilla_item": "Gasha Seed",
         "flag_byte": 0xc7c0,
         "room": 0x02c0,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessZoraVillage(),
     },
     "Zora Village (Present): Zora Palace Chest": {
         "region_id": "zora palace chest",
@@ -868,7 +868,7 @@ const locations = {
         "flag_byte": 0xcaac,
         "room": 0x05ac,
         "map_tile": 0xa1,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessZoraVillage(),
     },
     "Zora Village (Present): Statues Cave": {
         "region_id": "zora NW cave",
@@ -876,14 +876,17 @@ const locations = {
         "flag_byte": 0xcac7,
         "room": 0x05c7,
         "map_tile": 0xa0,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessZoraVillage() && (
+            gameLogic.hasBombs()
+            && gameLogic.hasGlove()
+        ),
     },
     "Zora Village (Present): Fairies' Coast Chest": {
         "region_id": "fairies' coast chest",
         "vanilla_item": "Green Holy Ring",
         "flag_byte": 0xc791,
         "room": 0x0091,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessZoraVillage(),
     },
     "Zora Village (Present): Zora King Gift": {
         "region_id": "zora king gift",
@@ -891,7 +894,7 @@ const locations = {
         "flag_byte": 0xcaab,
         "room": 0x05ab,
         "map_tile": 0xa1,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canHealZoraKing(),
         "symbolic_name": "kingZora",
     },
     "Zora Village (Present): Zora's Reward": {
@@ -899,7 +902,7 @@ const locations = {
         "vanilla_item": "Zora Scale",
         "flag_byte": 0xc7a0,
         "room": 0x02a0,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessZoraVillage() && gameLogic.hasItem("Rolling Sea"),
         "symbolic_name": "zoraReward",
     },
 
@@ -937,7 +940,7 @@ const locations = {
         "flag_byte": 0xc74f,
         "room": 0x024f,
         "map_tile": 0x1c5,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessZoraVillage() && gameLogic.hasLongHook(),
     },
 
     // Sea of Storms Locations
@@ -947,7 +950,7 @@ const locations = {
         "flag_byte": 0xcaf8,
         "room": 0x05f8,
         "map_tile": 0x1d7,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canGoToPiratianCaptian(),
         "symbolic_name": "piratianCaptain",
     },
     "Sea of Storms (Past): Underwater Cave": {
@@ -956,7 +959,7 @@ const locations = {
         "flag_byte": 0xc8ff,
         "room": 0x03ff,
         "map_tile": 0x1c7,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canGoToPiratianCaptian(),
         "symbolic_name": "seaofstorm",
     },
     /*
@@ -984,7 +987,9 @@ const locations = {
         "vanilla_item": "Blue Ring",
         "flag_byte": 0xc86d,
         "room": 0x016d,
-        "reachable": () => false,
+        "reachable": () => gameLogic.dungeonsReachable[
+            'Ancient Tomb'
+        ]() && gameLogic.hasGlove(),
     },
     "Coast of No Return: Old Zora Trade": {
         "region_id": "old zora trade",

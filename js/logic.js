@@ -29,8 +29,29 @@ class AgesGameLogic {
             ),
             "Crown Dungeon": () => false,
             "Mermaid's Cave": (isPresent) => false,
-            "Jabu-Jabu's Belly": () => false,
-            "Ancient Tomb": () => false
+            "Jabu-Jabu's Belly": () => this.canHealZoraKing() && this.hasItem("Fairy Powder"),
+            "Ancient Tomb": () => (
+                this.hasItem("Tokay Eyeball")
+                && this.canBreakPot()
+                && this.hasSirenSuit()
+                && this.hasBombs()
+                && this.hasFeather()
+                && this.canKillNormalEnemy()
+                && (
+                    // Finding the road in the dark room
+                    this.hasCane()
+                    || (
+                        this.hasMediumLogic()
+                        && (
+                            this.canKillNormalEnemy()
+                            || this.canPushEnemy()
+                            || this.hasBoomerang()
+                            || this.hasSwitchHook()
+                            || this.canUsePegasusSeedsForStun()
+                        )
+                    )
+                )
+            )
         }
         this.dungeons = Object.keys(this.dungeonsReachable);
 
@@ -712,7 +733,7 @@ class AgesGameLogic {
         if (!this.hasSwitchHook()) neededItems++;
         if (!this.hasMysterySeeds()) neededItems++;
         if (this.settings.goal == "beat_ganon") {
-            if (!this.hasSeedShooter()) neededItems++;
+            if (!this.hasSeedShooter()) neededItems++;  
             if (!this.hasMediumLogic()) {
                 if (!this.hasNobleSword()) neededItems++
                 if (!this.hasEmberSeeds(false)) neededItems++;
@@ -1259,24 +1280,32 @@ class AgesGameLogic {
         )
     }
 
-    canAccessRollingRidgeWestPastBase(needsPresent = false) {
-        return needsPresent ? (
-            this.canAccessRollingRidgeWestPastBase() && (
-                this.canOpenPortal()
-                && this.hasBracelet()
-            )
-        ) : (
-            this.canAccessLynnaCity() && (
-                (
-                    this.canSwitchPastAndPresent()
-                    || this.hasFeather()
-                ) && this.hasSwitchHook()
-            )
+    canAccessZoraVillage() {
+        return this.canAccessLynnaCity && (
+            this.hasSirenSuit()
+            && this.hasSirenSuit()
+            && this.canSwitchPastAndPresent()
         )
     }
 
-    canGoToGoronElder() {
-        return this.canAccessRollingRidgeWestPastBase() && this.hasItem("Bomb Flower")
+    canHealZoraKing() {
+        return this.canAccessZoraVillage() && (
+            (
+                this.isRandomizer() 
+                && this.hasItem("King Zora's Potion")
+            ) || this.hasItem("Potion")
+        )
+    }
+
+    canAccessEyeglassLibrary() {
+        return this.canAccessZoraVillage() && this.hasItem("Library Key");
+    }
+
+    canGoToPiratianCaptian() {
+        return this.canAccessLynnaCity() && (
+            this.hasSirenSuit()
+            && this.hasItem("Zora Scale")
+        )
     }
 
     hasAccessToSyrupsShop() {

@@ -913,7 +913,7 @@ const locations = {
         "flag_byte": 0xcac8,
         "room": 0x05c8,
         "map_tile": 0xa5,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessEyeglassLibrary(),
         "symbolic_name": "libraryPresent",
     },
     "Eyeglass Island Library (Past): Old Man": {
@@ -922,7 +922,7 @@ const locations = {
         "flag_byte": 0xcae4,
         "room": 0x05e4,
         "map_tile": 0x1a5,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessEyeglassLibrary() && gameLogic.hasItem("Book of Seals"),
         "symbolic_name": "libraryPast",
     },
 
@@ -932,7 +932,7 @@ const locations = {
         "vanilla_item": "Whimsical Ring",
         "flag_byte": 0xc7d5,
         "room": 0x00d5,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessZoraVillage() && gameLogic.hasItem("Fairy Powder"),
     },
     "Zora Seas (Past): Fisherman's Island Cave": {
         "region_id": "fisher's island cave",
@@ -2012,7 +2012,7 @@ const locations = {
         "local": true,
         "flag_byte": [0xc778, 0xc878],
         "room": [0x0078, 0x0178],
-        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canHarvestTree(!currentMap.includes("past")),
+        "reachable": () => gameLogic.canAccessLynnaCity() && gameLogic.canHarvestTree(!currentMap.endsWith("past")),
         "symbolic_name": "lynnaTree",
     },
     "Ambi's Palace: Seed Tree": {
@@ -2087,7 +2087,7 @@ const locations = {
         "local": true,
         "flag_byte": [0xc7c1, 0xc8c1],
         "room": [0x00c1, 0x01c1],
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessZoraVillage() && gameLogic.canHarvestTree(false),
         "symbolic_name": "zoraTree",
     },
     // END LOCATION DATA

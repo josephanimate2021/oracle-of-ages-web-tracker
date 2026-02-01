@@ -214,6 +214,7 @@ class AgesGameLogic {
 
                         // Fairies Woods Locations
                         { x: 223, y: 325, array: this.findLocationInfoByRegionName("fairies' woods chest") },
+                        { x: 70, y: 364, array: this.findLocationInfoByRegionName("fairies' coast chest") },
                         { x: 150, y: 212.5, array: this.findLocationInfoByRegionName("happy mask salesman trade") },
 
                         // Nuun Highlands Locations (Ricky only)
@@ -226,6 +227,10 @@ class AgesGameLogic {
                         // Crescent Island Locations
                         { x: 597, y: 373, array: this.findLocationInfoByRegionName("under crescent island") },
                         { x: 652, y: 510, array: this.findLocationInfoByRegionName("tokay chef trade") },
+
+                        // Zora Village Locations
+                        { x: 15, y: 471, array: this.findLocationInfoByRegionName("zora village present") },
+                        { x: 15, y: 386, array: this.findLocationInfoByRegionName("zora NW cave") },
 
                         /** ALL ENTRANCES **/
 
@@ -241,16 +246,17 @@ class AgesGameLogic {
                         { x: 165, y: 53, array: this.hasItem("Tuni Nut", 2) ? this.findLocationInfoByRegionName("symmetry city tree") : [{hidden: true}]},
                         { x: 407, y: 286, array: this.findLocationInfoByRegionName("south lynna tree") },
                         { x: 597, y: 403, array: this.findLocationInfoByRegionName("crescent island tree") },
-                        { x: 413, y: 85, array: [
+                        /*{ x: 413, y: 85, array: [
                             ...this.findLocationInfoByRegionName("ridge west cave"),
                             ...this.findLocationInfoByRegionName("goron's hiding place"),
                             ...this.findLocationInfoByRegionName("ridge west heartpiece")
-                        ] },
+                        ] },*/
+                        { x: 597, y: 403, array: this.findLocationInfoByRegionName("crescent island tree") },
 
                         // Planned Locations for the future with the tracker/randomizer (hopefully)
                         // { x: 540, y: 490, array: this.findLocationInfoByRegionName("tokay gacha nut west") },
                         // { x: 656, y: 400, array: this.findLocationInfoByRegionName("tokay gacha nut east") },
-                        { x: 385, y: 442, array: this.findLocationInfoByRegionName("sea of storms present") },
+                        { x: 72, y: 476, array: this.findLocationInfoByRegionName("zora village tree") },
 
                     ],
                     ingame: [
@@ -353,6 +359,7 @@ class AgesGameLogic {
                         { x: 407, y: 286, array: this.findLocationInfoByRegionName("south lynna tree") },
                         { x: 267, y: 92, array: this.findLocationInfoByRegionName("ambi's palace tree") },
                         { x: 19, y: 321, array: this.findLocationInfoByRegionName("deku forest tree") },
+                        { x: 72, y: 476, array: this.findLocationInfoByRegionName("zora village tree") },
 
                         // Planned Locations for the future with the tracker/randomizer (hopefully)
                         // { x: 247.5, y: 199, array: this.findLocationInfoByRegionName("lynna village gacha nut") },

@@ -353,17 +353,24 @@ function archipelagoConnector(obj) {
                             break;
                         } case "Connected": {
                             jQuery(obj).bind("archipelagoDisconnect", () => {
+                                $("#statusKindof").html(
+                                    '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span><span role="status">Disconnecting from Archipelago...</span>'
+                                )
+                                $(obj).find('button[type="submit"]').attr("disabled", "");
+                                $(obj).find('button[type="submit"]').html(
+                                    '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span><span role="status">Disconnecting from Archipelago...</span>'
+                                );
                                 $(obj).find('button[type="submit"]').attr("data-connected", false);
                                 socket.close();
-                                $(obj).find('button[type="submit"]').text(originalText);
-                                $("#statusKindof").html(originalText2);
-                                document.getElementById("stageView").style.display = "block";
                                 connected2archipelago = false;
                                 delete gameLogic.settings;
-                                initTracker()
-                                for (const elem of document.getElementsByClassName("mapSwitcher")) elem.removeAttribute("disabled");
+                                initTracker();
+                                $(obj).find('button[type="submit"]').text(originalText);
+                                $(obj).find('button[type="submit"]').removeAttr("disabled");
+                                $("#statusKindof").html(originalText2);
                                 connectionSuccessful = false;
-                                hideNotSafeSettingOptions(false)
+                                hideNotSafeSettingOptions(false);
+                                document.getElementById("stageView").style.display = "block";
                                 $(obj).find("p").text('Successfully disconnected from the Archipelago Server');
                             })
                             for (const i in info2.slot_data) {
@@ -387,30 +394,31 @@ function archipelagoConnector(obj) {
                                 }
                             }
                             initTracker();
-                            for (const elem of document.getElementsByClassName("mapSwitcher")) elem.setAttribute("disabled", "");
                             function hideNotSafeSettingOptions(disabled = true) {
+                                const mofifyAttribute = disabled ? 'setAttribute' : 'removeAttribute'
                                 for (const i in gameLogic.gameSettingOptions) {
                                     const setting = gameLogic.gameSettingOptions[i];
                                     if (setting.canBeSafelyChangedDuringServerConnection) continue;
-                                    document.getElementById(`${i}_label`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
+                                    document.getElementById(`${i}_label`)[mofifyAttribute]("disabled", disabled)
                                     switch (typeof setting.default) {
                                         case "boolean":
                                         case "string": {
-                                            document.getElementById(`${i}`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
+                                            document.getElementById(`${i}`)[mofifyAttribute]("disabled", disabled)
                                             break;
                                         } case "number": {
-                                            document.getElementById(`${i}_range`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
-                                            document.getElementById(`${i}_rangeValue`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
+                                            document.getElementById(`${i}_range`)[mofifyAttribute]("disabled", disabled)
+                                            document.getElementById(`${i}_rangeValue`)[mofifyAttribute]("disabled", disabled)
                                             break;
                                         }
                                     }
                                 }
                                 for (const i in gameLogic.settings.dungeon_entrances) {
                                     const labelToId = i.split(" ").join("_");
-                                    document.getElementById(`${labelToId}_label`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
-                                    document.getElementById(`${labelToId}`)[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
+                                    document.getElementById(`${labelToId}_label`)[mofifyAttribute]("disabled", disabled)
+                                    document.getElementById(`${labelToId}`)[mofifyAttribute]("disabled", disabled)
                                 }
-                                document.getElementById('settingsResetBtn')[disabled ? 'setAttribute' : 'removeAttribute']("disabled", disabled)
+                                document.getElementById('settingsResetBtn')[mofifyAttribute]("disabled", disabled)
+                                for (const elem of document.getElementsByClassName("mapSwitcher")) elem[mofifyAttribute]("disabled", disabled);
                             }
                             hideNotSafeSettingOptions()
                             document.getElementById("stageView").style.display = "none";
@@ -543,6 +551,7 @@ function initTracker() {
         return html;
     }).join('<br>')
     resetAllItems();
+    resetAllLocations();
     drawItems();
     goToMap();
     mapSwitchButtonsHandler();
@@ -553,17 +562,45 @@ function initTracker() {
  * @param {object} itemInfo - The item to reset.
  */
 function resetItem(itemInfo, callDrawItemsFunction = true) {
-    if (!itemInfo?.count) return;
-    itemInfo.count--
-    if (itemInfo.count && itemInfo.count > 0) resetItem(itemInfo);
-    else if (!callDrawItemsFunction) drawItems()
+    delete itemInfo.count;
+    if (!itemInfo.count) {
+        if (callDrawItemsFunction) drawItems();
+        return;
+    }
+    resetItem(itemInfo, callgoToMapFunction)
+}
+
+/**
+ * Resets a location
+ * @param {object} locInfo - The location to reset.
+ */
+function resetLocation(locInfo, callgoToMapFunction = true) {
+    delete locInfo.checked;
+    if (!locInfo.checked) {
+        if (callgoToMapFunction) goToMap();
+        return;
+    }
+    resetLocation(locInfo, callgoToMapFunction)
 }
 
 /**
  * Resets all items at once.
  */
 function resetAllItems() {
-    for (const i in items) resetItem(items[i]);
+    const array = Object.keys(items);
+    if (array.length == array.filter(i => !items[i].count).length) return;
+    for (const i of array) resetItem(items[i], false);
+    drawItems()
+}
+
+/**
+ * Resets all locations at once.
+ */
+function resetAllLocations() {
+    const array = Object.keys(locations);
+    if (array.length == array.filter(i => !locations[i].checked).length) return;
+    for (const i of array) resetLocation(locations[i], false);
+    goToMap()
 }
 
 /**

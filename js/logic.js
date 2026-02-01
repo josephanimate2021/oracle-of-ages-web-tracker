@@ -129,13 +129,14 @@ class AgesGameLogic {
 
                         // Crescent Island Locations
                         { x: 597, y: 373, array: this.findLocationInfoByRegionName("under crescent island") },
+                        { x: 652, y: 510, array: this.findLocationInfoByRegionName("tokay chef trade") },
 
                         /** ALL ENTRANCES **/
 
                         // Dungeon Entrances
-                        { x: 165, y: 10, dungeonEntrance: "d4" },
-                        { x: 507, y: 446, dungeonEntrance: "d3" },
                         { x: 658, y: 316, dungeonEntrance: 'd1' },
+                        { x: 507, y: 446, dungeonEntrance: "d3" },
+                        { x: 165, y: 10, dungeonEntrance: "d4" },
                         { x: 599.2, y: 125, dungeonEntrance: 'd6 present' },
 
                         /** ALL TREES **/

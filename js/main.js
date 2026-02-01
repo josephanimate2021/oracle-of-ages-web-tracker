@@ -150,6 +150,7 @@ function goToMap() {
         marker.className = `btn btn-${position.array.filter(i => i.checked).length == position.array.length ? 'secondary' : (() => {
             return position.array.filter(i => i.reachable()).length == position.array.length ? 'success' : 'danger';
         })()}`;
+        if (position.array.filter(i => i.reachable()).length > 0 && marker.className.endsWith("danger")) marker.style = "background: linear-gradient(to top, green 50%, red 50%);"
         marker.setAttribute("data-bs-toggle", "popover");
         marker.setAttribute("title",  info?.providedRegion || info?.providedStartName);
         marker.setAttribute("data-bs-placement", "top")

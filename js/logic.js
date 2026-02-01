@@ -231,6 +231,12 @@ class AgesGameLogic {
                         // Zora Village Locations
                         { x: 15, y: 471, array: this.findLocationInfoByRegionName("zora village present") },
                         { x: 15, y: 386, array: this.findLocationInfoByRegionName("zora NW cave") },
+                        { x: 73, y: 410, array: [
+                            ...this.findLocationInfoByRegionName("zora king gift"),
+                            ...this.findLocationInfoByRegionName("zora palace chest")
+                        ] },
+                        { x: 15, y: 416, array: this.findLocationInfoByRegionName("zora's reward") },
+                        { x: 15, y: 406, dungeonEntrance: 'd7' },
 
                         /** ALL ENTRANCES **/
 

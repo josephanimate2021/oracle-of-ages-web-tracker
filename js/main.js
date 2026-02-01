@@ -104,6 +104,9 @@ function goToMap() {
     gameLogic.popovers = {};
     gameLogic.counts = {};
 
+    // load the maps
+    gameLogic.initMaps()
+
     // Draw map image to canvas
     let [layoutType, mapImage] = currentMap.split("/");
     for (const layoutOptionElem of document.getElementById("overworld-view-select").getElementsByTagName("option")) {
@@ -368,7 +371,6 @@ function archipelagoConnector(obj) {
                                 $(obj).find('button[type="submit"]').text(originalText);
                                 $(obj).find('button[type="submit"]').removeAttr("disabled");
                                 $("#statusKindof").html(originalText2);
-                                connectionSuccessful = false;
                                 hideNotSafeSettingOptions(false);
                                 document.getElementById("stageView").style.display = "block";
                                 $(obj).find("p").text('Successfully disconnected from the Archipelago Server');

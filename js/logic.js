@@ -10,16 +10,85 @@ class AgesGameLogic {
     constructor() {
 
         // Show progression items by default.
-        this.showItemsWithClassification = "progression"
+        this.showItemsWithClassification = "progression";
+
+        // All dungeons in Ages.
+        this.dungeonsReachable = {
+            "Maku Path": () => this.canAccessLynnaCity() && (
+                this.hasShovel() || this.canBeatVernanFirstStage()
+            ),
+            "Spirit's Grave": () => this.canUseEmberSeeds(false) && this.hasItem("Graveyard Key"),
+            "Wing Dungeon": () => (
+                this.canEnterDekuForest() && this.hasBombs()
+            ) || ( // For Present D2 (Randomizer Usage Only)
+                this.isRandomizer() && this.canEnterFairiesWoods() && this.canGoBackToPresent()
+            ),
+            "Moonlit Grotto": () => this.canAccessCresentIsland(),
+            "Skull Dungeon": () => this.canGoToSymmetryPresent() && (
+                this.hasItem("Tuni Nut", 2) && this.canOpenPortal()
+            ),
+            "Crown Dungeon": () => false,
+            "Mermaid's Cave": (isPresent) => false,
+            "Jabu-Jabu's Belly": () => false,
+            "Ancient Tomb": () => false
+        }
+        this.dungeons = Object.keys(this.dungeonsReachable);
+
+        // Logic Settings and other stuff.
+        this.gameSettingOptions = {
+            logic_difficulty: {
+                options: ["basic", "medium", "hard"],
+                default: "basic"
+            },
+            required_essences_for_maku_seed: {
+                default: 8,
+                lowestValue: 0,
+                highestValue: 8
+            },
+            required_slates_for_ancient_tomb_second_basement: {
+                default: 4,
+                lowestValue: 0,
+                highestValue: 4
+            },
+            randomizer_mode: {
+                default: true // true by default since most people usually proitize a tracker for a randomizer. This can still be changed anytime.
+            },
+            goal: {
+                default: "beat_vernan",
+                options: ['beat_vernan', 'beat_ganon']
+            },
+            animal_companion: {
+                default: "ricky",
+                options: ["ricky", "dimitri", "moosh"]
+            },
+            open_advance_shop: {
+                default: false
+            }
+        }
+        this.vanilaDungeonEntrances = {
+            "d0 entrance": "enter d0",
+            "d1 entrance": "enter d1",
+            "d2 past entrance": "enter d2",
+            "d3 entrance": "enter d3",
+            "d4 entrance": "enter d4",
+            "d5 entrance": "enter d5",
+            "d6 past entrance": "enter d6 past",
+            "d6 present entrance": "enter d6 present",
+            "d7 entrance": "enter d7",
+            "d8 entrance": "enter d8"
+        }
+
+    };
+
+    initMaps() {
 
         // The maps in Ages.
         this.maps = {
             "symmetry_city_present": {
                 layouts: {
                     default: [
-                        { x: 395, y: 185, array: !this.hasItem("Tuni Nut", 2) ? this.findLocationInfoByRegionName("symmetry city tree") : [{hidden: true}]},
-                        { x: 395, y: 340, dungeonEntrance: "d4" },
-                        { x: 395, y: 473, array: this.hasItem("Tuni Nut", 2) ? this.findLocationInfoByRegionName("symmetry city tree") : [{hidden: true}]}
+                        { x: 395, y: !this.hasItem("Tuni Nut", 2) ? 185 : 473, array: this.findLocationInfoByRegionName("symmetry city tree") },
+                        { x: 395, y: 340, dungeonEntrance: "d4" }
                     ]
                 },
                 roomCondtionals: [
@@ -58,7 +127,7 @@ class AgesGameLogic {
                         { x: 345.5, y: 272, array: this.findLocationInfoByRegionName("nuun highlands cave") }
                     ],
                     ricky: [
-                        { x: 403, y: 209, array: this.findLocationInfoByRegionName("nuun highlands cave") }
+                        { x: 402, y: 209, array: this.findLocationInfoByRegionName("nuun highlands cave") }
                     ],
                     moosh: [
                         { x: 370, y: 305, array: this.findLocationInfoByRegionName("nuun highlands cave") }
@@ -122,6 +191,9 @@ class AgesGameLogic {
                         // Fairies Woods Locations
                         { x: 223, y: 325, array: this.findLocationInfoByRegionName("fairies' woods chest") },
                         { x: 150, y: 212.5, array: this.findLocationInfoByRegionName("happy mask salesman trade") },
+
+                        // Nuun Highlands Locations (Ricky only)
+                        { x: 359, y: 100, array: this.settings.animal_companion == "ricky" ? this.findLocationInfoByRegionName("nuun highlands cave") : [{hidden: true}]},
 
                         // Talus Peeks Locations
                         { x: 63, y: 62.5, array: this.findLocationInfoByRegionName("symmetry city heartpiece") },
@@ -515,73 +587,7 @@ class AgesGameLogic {
             }
         }
 
-        // All dungeons in Ages.
-        this.dungeonsReachable = {
-            "Maku Path": () => this.canAccessLynnaCity() && (
-                this.hasShovel() || this.canBeatVernanFirstStage()
-            ),
-            "Spirit's Grave": () => this.canUseEmberSeeds(false) && this.hasItem("Graveyard Key"),
-            "Wing Dungeon": () => (
-                this.canEnterDekuForest() && this.hasBombs()
-            ) || ( // For Present D2 (Randomizer Usage Only)
-                this.isRandomizer() && this.canEnterFairiesWoods() && this.canGoBackToPresent()
-            ),
-            "Moonlit Grotto": () => this.canAccessCresentIsland(),
-            "Skull Dungeon": () => this.canGoToSymmetryPresent() && (
-                this.hasItem("Tuni Nut", 2) && this.canOpenPortal()
-            ),
-            "Crown Dungeon": () => false,
-            "Mermaid's Cave": (isPresent) => false,
-            "Jabu-Jabu's Belly": () => false,
-            "Ancient Tomb": () => false
-        }
-        this.dungeons = Object.keys(this.dungeonsReachable);
-
-        // Logic Settings and other stuff.
-        this.gameSettingOptions = {
-            logic_difficulty: {
-                options: ["basic", "medium", "hard"],
-                default: "basic"
-            },
-            required_essences_for_maku_seed: {
-                default: 8,
-                lowestValue: 0,
-                highestValue: 8
-            },
-            required_slates_for_ancient_tomb_second_basement: {
-                default: 4,
-                lowestValue: 0,
-                highestValue: 4
-            },
-            randomizer_mode: {
-                default: true // true by default since most people usually proitize a tracker for a randomizer. This can still be changed anytime.
-            },
-            goal: {
-                default: "beat_vernan",
-                options: ['beat_vernan', 'beat_ganon']
-            },
-            animal_companion: {
-                default: "ricky",
-                options: ["ricky", "dimitri", "moosh"]
-            },
-            open_advance_shop: {
-                default: false
-            }
-        }
-        this.vanilaDungeonEntrances = {
-            "d0 entrance": "enter d0",
-            "d1 entrance": "enter d1",
-            "d2 past entrance": "enter d2",
-            "d3 entrance": "enter d3",
-            "d4 entrance": "enter d4",
-            "d5 entrance": "enter d5",
-            "d6 past entrance": "enter d6 past",
-            "d6 present entrance": "enter d6 present",
-            "d7 entrance": "enter d7",
-            "d8 entrance": "enter d8"
-        }
-
-    };
+    }
 
     canAccessD1East() {
         return this.dungeonReachable(

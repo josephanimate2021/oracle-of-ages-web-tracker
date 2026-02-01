@@ -531,7 +531,7 @@ class AgesGameLogic {
             ),
             "Crown Dungeon": () => false,
             "Mermaid's Cave": (isPresent) => false,
-            "Jabu Jabu's Belly": () => false,
+            "Jabu-Jabu's Belly": () => false,
             "Ancient Tomb": () => false
         }
         this.dungeons = Object.keys(this.dungeonsReachable);

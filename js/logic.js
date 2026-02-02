@@ -186,6 +186,7 @@ class AgesGameLogic {
                         /** ALL OVEROWRLD PRESENT LOCATIONS **/
 
                         // Forest of Time Locations
+                        { x: 0, y: 0, array: this.findLocationInfoByRegionName("maple trade") },
                         { x: 462, y: 125, array: this.findLocationInfoByRegionName("starting item") },
                         { x: 495, y: 120, array: this.findLocationInfoByRegionName("nayru's house") },
                         { x: 446, y: 281, array: [
@@ -206,6 +207,7 @@ class AgesGameLogic {
                         // Lynna City Locations
                         { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
                         { x: 420, y: 240, array: this.findLocationInfoByRegionName("lynna shop") },
+                        { x: 308.5, y: 252, array: this.findLocationInfoByRegionName("mamamu yan trade") },
                         { x: 438, y: 177, array: this.findLocationInfoByRegionName("lynna city chest") },
                         { x: 410, y: 140, array: this.findLocationInfoByRegionName("maku tree") },
                         { x: 410, y: 210, array: this.findLocationInfoByRegionName("vasu's gift") },
@@ -223,6 +225,7 @@ class AgesGameLogic {
                         // Talus Peeks Locations
                         { x: 63, y: 62.5, array: this.findLocationInfoByRegionName("symmetry city heartpiece") },
                         { x: 27, y: 212.5, array: this.findLocationInfoByRegionName("bomb fairy") },
+                        { x: 152, y: 237, array: this.findLocationInfoByRegionName("talus peeks chest") },
 
                         // Crescent Island Locations
                         { x: 597, y: 373, array: this.findLocationInfoByRegionName("under crescent island") },
@@ -236,7 +239,12 @@ class AgesGameLogic {
                             ...this.findLocationInfoByRegionName("zora palace chest")
                         ] },
                         { x: 15, y: 416, array: this.findLocationInfoByRegionName("zora's reward") },
-                        { x: 15, y: 406, dungeonEntrance: 'd7' },
+
+                        // Eyeglass Isle Library Locations
+                        { x: 396, y: 252, array: this.findLocationInfoByRegionName("library present") },
+
+                        // Zora Seas Locations
+                        { x: 264, y: 513, array: this.findLocationInfoByRegionName("zora seas chest") },
 
                         /** ALL ENTRANCES **/
 
@@ -245,6 +253,7 @@ class AgesGameLogic {
                         { x: 507, y: 446, dungeonEntrance: "d3" },
                         { x: 165, y: 10, dungeonEntrance: "d4" },
                         { x: 599.2, y: 125, dungeonEntrance: 'd6 present' },
+                        { x: 15, y: 406, dungeonEntrance: 'd7' },
 
                         /** ALL TREES **/
 
@@ -257,12 +266,12 @@ class AgesGameLogic {
                             ...this.findLocationInfoByRegionName("goron's hiding place"),
                             ...this.findLocationInfoByRegionName("ridge west heartpiece")
                         ] },*/
-                        { x: 597, y: 403, array: this.findLocationInfoByRegionName("crescent island tree") },
+                        { x: 72, y: 476, array: this.findLocationInfoByRegionName("zora village tree") },
 
                         // Planned Locations for the future with the tracker/randomizer (hopefully)
                         // { x: 540, y: 490, array: this.findLocationInfoByRegionName("tokay gacha nut west") },
                         // { x: 656, y: 400, array: this.findLocationInfoByRegionName("tokay gacha nut east") },
-                        { x: 72, y: 476, array: this.findLocationInfoByRegionName("zora village tree") },
+                        { x: 385, y: 442, array: this.findLocationInfoByRegionName("sea of storms present") },
 
                     ],
                     ingame: [
@@ -327,7 +336,7 @@ class AgesGameLogic {
                         { x: 633, y: 517, array: this.findLocationInfoByRegionName("tokay pot cave") },
                         { x: 633, y: 427, array: this.findLocationInfoByRegionName("wild tokay game") },
                         { x: 533, y: 425, array: this.findLocationInfoByRegionName("tokay crystal cave") },
-                        { x: 568, y: 463, array: this.findLocationInfoByRegionName("tokay bomb cave") },
+                        { x: 633, y: 470, array: this.findLocationInfoByRegionName("tokay bomb cave") },
                         { x: 653, y: 390, array: this.findLocationInfoWithStartName("Crescent Island (Past): Market") },
 
                         // Symmetry City Locations
@@ -345,9 +354,14 @@ class AgesGameLogic {
 
                         // Sea of Storms locations
                         { x: 366, y: 490, array: this.findLocationInfoByRegionName("sea of storms past") },
+                        { x: 310, y: 490, array: this.findLocationInfoByRegionName("piratian captain") },
+                        { x: 266, y: 490, array: this.findLocationInfoByRegionName("fisher's island cave") },
 
                         // Ambi's Palace Locations
                         { x: 311, y: 4, array: (this.findLocationInfoWithStartName("Ambi's Palace")).filter(i => !i.checkLocation.endsWith("Seed Tree")) },
+
+                        // Eyeglass Isle Library Locations
+                        { x: 396, y: 252, array: this.findLocationInfoByRegionName("library past") },
 
                         // Outside D8 Entrance Locations
                         { x: 640, y: 248, array: this.findLocationInfoByRegionName("sea of no return") },

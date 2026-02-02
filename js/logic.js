@@ -1478,6 +1478,7 @@ class AgesGameLogic {
      * @returns {boolean} True if a user has that item. If not, then it's false.
      */
     hasItem(itemName, count = 1) {
+        if (!items[itemName]) console.log(itemName)
         return items[itemName].count >= count;
     }
 
@@ -1674,7 +1675,7 @@ class AgesGameLogic {
         return [
             // hasRod(),
             this.hasShield(),
-            this.hasItem("Rod Of Seasons")
+            //this.hasItem("Rod Of Seasons")
         ].some(Boolean);
     }
 

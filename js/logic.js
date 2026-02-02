@@ -402,7 +402,17 @@ class AgesGameLogic {
             },
             "underwater_present": {
                 layouts: {
-                    default: []
+                    default: [
+                        { x: 780, y: 320, array: this.findLocationInfoByRegionName("sea of storms present") },
+                        { x: 1089, y: 298, array: this.findLocationInfoByRegionName("under crescent island") },
+                        { x: 154.5, y: 224, array: [
+                            ...this.findLocationInfoByRegionName("zora king gift"),
+                            ...this.findLocationInfoByRegionName("zora palace chest")
+                        ] },
+                        { x: 42, y: 384, array: this.findLocationInfoByRegionName("zora village present") },
+                        { x: 47, y: 222, array: this.findLocationInfoByRegionName("zora's reward") },
+                        { x: 47, y: 155, dungeonEntrance: 'd7' },
+                    ]
                 },
                 roomCondtionals: [
                     {
@@ -429,7 +439,10 @@ class AgesGameLogic {
             },
             "underwater_past": {
                 layouts: {
-                    default: []
+                    default: [
+                        { x: 515, y: 460, array: this.findLocationInfoByRegionName("sea of storms past") },
+                        { x: 372, y: 466, array: this.findLocationInfoByRegionName("fisher's island cave") },
+                    ]
                 },
                 roomCondtionals: [
                     {

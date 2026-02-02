@@ -347,7 +347,6 @@ class AgesGameLogic {
                         // Restoration Wall Locations
                         { x: 82, y: 4, array: this.findLocationInfoByRegionName("tokkey's composition") },
                         { x: 164.5, y: 75, array: [
-                            { providedStartName: "Restoration Wall", notACheck: true, reachable: () => false },
                             ...this.findLocationInfoByRegionName("patch tuni nut ceremony"),
                             ...this.findLocationInfoByRegionName("patch broken sword ceremony")
                         ] },
@@ -1269,7 +1268,7 @@ class AgesGameLogic {
     }
 
     canGoToSymmetryPresent() {
-        return this.canEnterNuun() || (
+        return this.canEnterNuun() && (
             this.canGoBackToPresent()
             || this.hasFlute()
             || (
@@ -1284,7 +1283,7 @@ class AgesGameLogic {
     canAccessSymmetryPast() {
         return this.canGoToSymmetryPresent() && (
             this.canSwitchPastAndPresent()
-            && (
+            || (
                 this.canOpenPortal()
                 || this.canBreakBush(false)
             )

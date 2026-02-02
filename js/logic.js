@@ -660,14 +660,18 @@ class AgesGameLogic {
     }
 
     canAccessD1East() {
-        return this.dungeonReachable(
-            (this.getDungeonDataFromEntrance('d1')).randomized
-        ) && this.canKillNormalEnemy(true)
+        return this.dungeonReachable("Spirit's Grave") && this.canKillNormalEnemy(true)
     }
 
     dungeonReachable(dungeon) {
-        const d = dungeon.startsWith("Mermaid's Cave") ? "Mermaid's Cave" : dungeon;
-        return this.dungeonsReachable[d](d.includes("Present"))
+        for (let i = 0; i < 9; i++) {
+            const dungeonData = this.getDungeonDataFromEntrance(`d${i}`);
+            if (dungeonData.randomized == dungeon) {
+                const dungeon = dungeonData.vanilla;
+                const d = dungeon.startsWith("Mermaid's Cave") ? "Mermaid's Cave" : dungeon;
+                return this.dungeonsReachable[d](d.includes("Present"))
+            }
+        }
     }
 
     canAccessD1WideRoom() {
@@ -709,7 +713,7 @@ class AgesGameLogic {
             if (i.startsWith(dungeonNumber)) {
                 let entranceLeadsTo = this.settings.dungeon_entrances[i].substring(7);
                 const vanilaDungeonNumber = (i.slice(0, i.includes("past") ? -14 : i.includes("present") ? -17 : -9)).substring(1);
-                return {
+                const info = {
                     vanilla: vanilaDungeonNumber != 6 ? this.dungeons[vanilaDungeonNumber] : `Mermaid's Cave (${
                         i.includes("past") ? 'Past' : 'Present'
                     })`,
@@ -717,6 +721,8 @@ class AgesGameLogic {
                         upperCaseFirstLetterInWord(entranceLeadsTo.substring(2))
                     })` : this.dungeons[entranceLeadsTo]
                 };
+                info.reachable = () => this.dungeonReachable(info.randomized);
+                return info;
             }
         }
     }

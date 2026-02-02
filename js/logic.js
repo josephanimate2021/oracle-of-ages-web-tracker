@@ -517,7 +517,7 @@ class AgesGameLogic {
                     },
                     {
                         min: 0x4C1,
-                        max: 0x4CE
+                        max: 0x4CF
                     }
                 ]
             },
@@ -528,7 +528,14 @@ class AgesGameLogic {
                         { x: 405, y: 178, array: this.findLocationInfoByRegionName("d1 two-button chest") },
                         { x: 303, y: 380, array: this.findLocationInfoByRegionName("d1 crystal room") },
                         { x: 39, y: 653, array: this.findLocationInfoByRegionName("d1 basement") },
-                        { x: 23, y: 483, array: this.findLocationInfoByRegionName("d1 west terrace") }
+                        { x: 23, y: 483, array: this.findLocationInfoByRegionName("d1 west terrace") },
+                        { x: 163, y: 524, array: this.findLocationInfoByRegionName("d1 pot chest") },
+                        { x: 365, y: 524, array: this.findLocationInfoByRegionName("d1 east terrace") },
+                        { x: 373, y: 382, array: this.findLocationInfoByRegionName("d1 crossroad") },
+                        { x: 490, y: 382, array: this.findLocationInfoByRegionName("d1 ghini drop") },
+                        { x: 444, y: 272, array: this.findLocationInfoByRegionName("d1 wide room") },
+                        { x: 287, y: 120, array: this.findLocationInfoByRegionName("d1 boss").filter(i => !i.checkLocation.endsWith("Essence")) },
+                        { x: 287, y: 20, array: this.findLocationInfoByRegionName("d1 boss").filter(i => i.checkLocation.endsWith("Essence")) }
                     ]
                 },
                 roomCondtionals: [

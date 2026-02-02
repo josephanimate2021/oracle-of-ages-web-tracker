@@ -225,7 +225,7 @@ class AgesGameLogic {
                         // Talus Peeks Locations
                         { x: 63, y: 62.5, array: this.findLocationInfoByRegionName("symmetry city heartpiece") },
                         { x: 27, y: 212.5, array: this.findLocationInfoByRegionName("bomb fairy") },
-                        { x: 152, y: 237, array: this.findLocationInfoByRegionName("talus peeks chest") },
+                        { x: 152, y: 237, array: this.findLocationInfoByRegionName("talus peaks chest") },
 
                         // Crescent Island Locations
                         { x: 597, y: 373, array: this.findLocationInfoByRegionName("under crescent island") },
@@ -1895,6 +1895,30 @@ class AgesGameLogic {
         ].some(condition => condition);
     }
 
+    canAccessD2StatuePuzzle() {
+        return this.canAccessD2MoblinPlatform() && (
+            this.hasBracelet()
+            || this.hasCane()
+            || (
+                // push moblin into doorway, stand on button, use switch hook
+                this.hasHardLogic()
+                && this.canPushEnemy()
+                && this.hasSwitchHook()
+            )
+        )
+    }
+
+    canAccessD2ColorRoom() {
+        return this.canAccessD2StatuePuzzle() && this.hasSmallKeys(2, 5);
+    }
+
+    canAccessD2MoblinPlatform() {
+        return this.canAccessD2Basement() && (
+            this.hasFeather()
+            && this.hasSmallKeys(2, 3)
+        )
+    }
+
     /**
      * Checks if the player can trigger levers from minecart
      * @returns {boolean} - True if the player can trigger levers from minecart
@@ -1935,6 +1959,22 @@ class AgesGameLogic {
             // Instant kill using Gale Seeds
             this.canUseGaleSeedsOffensively()
         );
+    }
+
+    canAccessD2MinibossArena() {
+        return (
+            (
+                this.hasSmallKeys(2, 2)
+                && this.canKillNormalEnemy(true, true)
+            ) || (
+                this.canJump2Wide(),
+                this.can_kill_spiked_beetle()
+            )
+        )
+    }
+
+    canAccessD2Basement() {
+        return this.dungeonReachable("Wing Dungeon") && this.canAccessD2MinibossArena() && this.genericBossAndMinibossKill()
     }
 
     /**

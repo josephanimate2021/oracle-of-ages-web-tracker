@@ -1162,7 +1162,7 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc93e,
         "room": 0x043e,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD2ColorRoom(),
     },
     "Wing Dungeon (1F): Bombed Terrace": {
     	"region_id": "d2 bombed terrace",
@@ -1170,7 +1170,13 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc940,
         "room": 0x0440,
-        "reachable": () => false,
+        "reachable": () => gameLogic.dungeonReachable("Wing Dungeon") && (
+            (
+                (
+                    gameLogic.canAccessD2MinibossArena() && gameLogic.canJump2Wide()
+                ) || gameLogic.can_kill_spiked_beetle()
+            ) && gameLogic.hasBombs()
+        ),
     },
     "Wing Dungeon (1F): Moblin Platform": {
     	"region_id": "d2 moblin platform",
@@ -1178,7 +1184,7 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc941,
         "room": 0x0441,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD2MoblinPlatform(),
     },
     "Wing Dungeon (1F): Rope Room": {
     	"region_id": "d2 rope room",
@@ -1186,7 +1192,10 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc945,
         "room": 0x0445,
-        "reachable": () => false,
+        "reachable": () => gameLogic.dungeonReachable("Wing Dungeon") && (
+            gameLogic.canKillNormalEnemy(true, true)
+            && gameLogic.hasSmallKeys(2, 4)
+        ),
     },
     "Wing Dungeon (1F): Ladder Chest": {
     	"region_id": "d2 ladder chest",
@@ -1194,7 +1203,11 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc948,
         "room": 0x0448,
-        "reachable": () => false,
+        "reachable": () => gameLogic.dungeonReachable("Wing Dungeon") && (
+            gameLogic.canKillNormalEnemy(true, true)
+            && gameLogic.hasSmallKeys(2, 4)
+            && gameLogic.hasBombs()
+        ),
     },
     "Wing Dungeon (1F): Moblin Drop": {
     	"region_id": "d2 moblin drop",
@@ -1202,7 +1215,13 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc939,
         "room": 0x0439,
-        "reachable": () => false,
+        "reachable": () => gameLogic.dungeonReachable("Wing Dungeon") && (
+            (
+                (
+                    gameLogic.canAccessD2MinibossArena() && gameLogic.canJump2Wide()
+                ) || gameLogic.can_kill_spiked_beetle()
+            ) && gameLogic.canKillNormalEnemy()
+        ),
         "symbolic_name": "d2MoblinDrop",
     },
     "Wing Dungeon (1F): Statue Puzzle": {
@@ -1211,7 +1230,7 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc942,
         "room": 0x0442,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD2StatuePuzzle(),
         "symbolic_name": "d2StatuePuzzle",
     },
     "Wing Dungeon (B1F): Thwomp Shelf": {
@@ -1220,7 +1239,17 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc927,
         "room": 0x0627,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD2Basement() && (
+            gameLogic.hasFeather()
+            || (
+                gameLogic.hasHardLogic()
+                && gameLogic.hasCane()
+                && (
+                    gameLogic.hasBombs()
+                    || gameLogic.canUsePegasusSeeds()
+                )
+            )
+        ),
         "symbolic_name": "d2ThwompShelf",
     },
     "Wing Dungeon (B1F): Thwomp Tunnel": {
@@ -1229,7 +1258,7 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc928,
         "room": 0x0628,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD2Basement(),
         "symbolic_name": "d2ThwompTunnel",
     },
     "Wing Dungeon (B1F): Basement Chest": {
@@ -1238,7 +1267,12 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc930,
         "room": 0x0430,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD2Basement() && (
+            gameLogic.hasFeather()
+            && gameLogic.canTriggerLeverFromMinecart()
+            && gameLogic.hasBombs()
+            && gameLogic.canKillNormalEnemy()
+        ),
     },
     "Wing Dungeon (B1F): Basement Drop": {
     	"region_id": "d2 basement drop",
@@ -1246,7 +1280,7 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc92e,
         "room": 0x042e,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD2Basement() && gameLogic.hasFeather(),
         "symbolic_name": "d2BasementDrop",
     },
     "Wing Dungeon (1F): Boss": {
@@ -1255,7 +1289,13 @@ const locations = {
     	"dungeon" : 2,
         "flag_byte": 0xc92b,
         "room": 0x062b,
-        "reachable": () => false,
+        "reachable": () => gameLogic.canAccessD2ColorRoom() && (
+            gameLogic.hasBossKey(2)
+            && (
+                gameLogic.hasBombs()
+                || gameLogic.hasHardLogic()
+            )
+        ),
         "symbolic_name": "d2Boss",
     },
 

@@ -403,7 +403,9 @@ const locations = {
         "flag_byte": 0xc784,
         "room": 0x0084,
         "reachable": () => gameLogic.canEnterFairiesWoods() && (
-            gameLogic.canJump1Wide(false, true) || gameLogic.hasSwitchHook() || gameLogic.canGoBackToPresent()
+            gameLogic.canJump1Wide(false, true) || gameLogic.hasSwitchHook() || (
+                gameLogic.canEnterDekuForest() && gameLogic.canGoBackToPresent()
+            ) || gameLogic.canSwitchPastAndPresent()
         )
     },
     "Deku Forest: Chest in Central Cave": {
@@ -554,7 +556,7 @@ const locations = {
                         gameLogic.canBreakBush() && gameLogic.canJump3Wide(false, true)
                     )
                 )
-            ) || gameLogic.canGoBackToPresent()
+            ) || (gameLogic.settings.animal_companion != "dimitri" && gameLogic.canGoBackToPresent())
         ),
     },
     "Nuun Highlands: Happy Mask Salesman Trade": {

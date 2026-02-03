@@ -19,7 +19,7 @@ function drawItems() {
         const info = items[item];
         if (info.onChange) info.onChange(info, triggerItem, resetItem);
         if (info.invisible) continue;
-        if (!allItemClassifications.find(i => i == info.classification)) allItemClassifications.push(info.classification);
+        if (info.classification && !allItemClassifications.find(i => i == info.classification)) allItemClassifications.push(info.classification);
         const li = document.createElement("li");
         li.setAttribute("data-classification", info.classification);
         if (info.classification != gameLogic.showItemsWithClassification) li.style.display = 'none';

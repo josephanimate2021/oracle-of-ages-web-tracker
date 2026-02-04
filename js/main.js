@@ -197,10 +197,7 @@ function goToMap() {
 
     // Add location logic to the locations table
     locationsArray = locationsArray.filter(i => connected2archipelago ? locations[i].APID : !locations[i].hidden);
-    const reachableLocations = locationsArray.filter(i => {
-        console.log(locations[i])
-        return locations[i].reachable() && !locations[i].checked
-    })
+    const reachableLocations = locationsArray.filter(i => locations[i].reachable() && !locations[i].checked)
     document.getElementById('locations-count').innerText = `${locationsArray.filter(i => locations[i].checked).length}/${locationsArray.length}`;
     document.getElementById('reachable-count').innerText = reachableLocations.length;
     document.getElementById("itemsUserCanGet").innerHTML = reachableLocations.map(d => `<tr><td>${

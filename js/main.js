@@ -127,7 +127,7 @@ function goToMap() {
     mapCanvas.appendChild(image);
 
     // Add clickable markers to the map canvas
-    let locationsArray = Object.keys(locations).filter(i => connected2archipelago ? locations[i].APID : true);
+    let locationsArray = Object.keys(locations).filter(i => typeof locations[i] != "function" && (connected2archipelago ? locations[i].APID : true));
     for (const i of locationsArray) {
         locations[i].checkLocation = i;
         if (locations[i].region_id != "advance shop") continue;
@@ -198,6 +198,7 @@ function goToMap() {
     // Add location logic to the locations table
     locationsArray = locationsArray.filter(i => connected2archipelago ? locations[i].APID : !locations[i].hidden);
     const reachableLocations = locationsArray.filter(i => {
+        console.log(locations[i])
         return locations[i].reachable() && !locations[i].checked
     })
     document.getElementById('locations-count').innerText = `${locationsArray.filter(i => locations[i].checked).length}/${locationsArray.length}`;

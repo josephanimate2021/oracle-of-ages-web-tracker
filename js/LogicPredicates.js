@@ -103,7 +103,9 @@ class LogicPredicates {
 
         if (dungeonId === 6) return gameLogic.hasItem("Boss Key (Mermaid's Cave)") || gameLogic.hasItem(`Master Key (${dungeonName})`);
 
-        return gameLogic.hasItem(`Boss Key (${dungeonName})`) || gameLogic.hasItem(`Master Key (${dungeonName})`);
+        return gameLogic.hasItem(`Boss Key (${dungeonName})`) || (
+            gameLogic.settings.master_keys == "all_dungeon_keys" && gameLogic.hasItem(`Master Key (${dungeonName})`)
+        )
     }
 
     

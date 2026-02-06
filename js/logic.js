@@ -234,6 +234,30 @@ class AgesGameLogic {
                         { x: 597, y: 373, array: this.findLocationInfoByRegionName("under crescent island") },
                         { x: 652, y: 510, array: this.findLocationInfoByRegionName("tokay chef trade") },
 
+                        // Rolling Ridge Locations
+                        { x: 413, y: 85, array: this.findLocationInfoByRegionName("ridge base chest") },
+                        { x: 662, y: 123, array: [
+                            ...this.findLocationInfoByRegionName("first goron dance"),
+                            ...this.findLocationInfoByRegionName("trade rock brisket")
+                        ] },
+                        { x: 393, y: 42, array: [
+                            ...this.findLocationInfoByRegionName("ridge west cave"),
+                            ...this.findLocationInfoByRegionName("goron's hiding place"),
+                            ...this.findLocationInfoByRegionName("ridge west heartpiece")
+                        ] },
+                        { x: 463, y: 16, array: this.findLocationInfoByRegionName("defeat great moblin") },
+                        { x: 453, y: 16, array: this.findLocationInfoByRegionName("under moblin keep") },
+                        { x: 663, y: 11, array: this.findLocationInfoByRegionName("ridge upper heartpiece") },
+                        { x: 635, y: 15, array: this.findLocationInfoByRegionName("ridge NE cave present") },
+                        { x: 642, y: 40, array: [
+                            ...this.findLocationInfoByRegionName("target carts 1"),
+                            ...this.findLocationInfoByRegionName("target carts 2")
+                        ] },
+                        { x: 597, y: 57, array: [
+                            ...this.findLocationInfoByRegionName("big bang game"),
+                            ...this.findLocationInfoByRegionName("goron diamond cave")
+                        ] },
+
                         // Zora Village Locations
                         { x: 15, y: 471, array: this.findLocationInfoByRegionName("zora village present") },
                         { x: 15, y: 386, array: this.findLocationInfoByRegionName("zora NW cave") },
@@ -255,6 +279,7 @@ class AgesGameLogic {
                         { x: 658, y: 316, dungeonEntrance: 'd1' },
                         { x: 507, y: 446, dungeonEntrance: "d3" },
                         { x: 165, y: 10, dungeonEntrance: "d4" },
+                        { x: 517, y: 3, dungeonEntrance: 'd5' },
                         { x: 599.2, y: 125, dungeonEntrance: 'd6 present' },
                         { x: 15, y: 406, dungeonEntrance: 'd7' },
 
@@ -264,11 +289,6 @@ class AgesGameLogic {
                         { x: 165, y: 53, array: this.hasItem("Tuni Nut", 2) ? this.findLocationInfoByRegionName("symmetry city tree") : [{hidden: true}]},
                         { x: 407, y: 286, array: this.findLocationInfoByRegionName("south lynna tree") },
                         { x: 597, y: 403, array: this.findLocationInfoByRegionName("crescent island tree") },
-                        /*{ x: 413, y: 85, array: [
-                            ...this.findLocationInfoByRegionName("ridge west cave"),
-                            ...this.findLocationInfoByRegionName("goron's hiding place"),
-                            ...this.findLocationInfoByRegionName("ridge west heartpiece")
-                        ] },*/
                         { x: 72, y: 476, array: this.findLocationInfoByRegionName("zora village tree") },
 
                         // Planned Locations for the future with the tracker/randomizer (hopefully)
@@ -349,6 +369,25 @@ class AgesGameLogic {
                             ...this.findLocationInfoByRegionName("patch broken sword ceremony")
                         ] },
 
+                        // Rolling Ridge Locations
+                        { x: 413, y: 85, array: this.findLocationInfoByRegionName("goron elder") },
+                        { x: 547, y: 85, array: [
+                            ...this.findLocationInfoByRegionName("ridge base bomb past"),
+                            ...this.findLocationInfoByRegionName("ridge diamonds past")
+                        ] },
+                        { x: 662, y: 123, array: [
+                            ...this.findLocationInfoByRegionName("first goron dance"),
+                            ...this.findLocationInfoByRegionName("goron dance, with letter"),
+                            ...this.findLocationInfoByRegionName("trade goron vase")
+                        ] },
+                        { x: 597, y: 57, array: [
+                            ...this.findLocationInfoByRegionName("trade lava juice"),
+                            ...this.findLocationInfoByRegionName("ridge bush cave")
+                        ] },
+                        { x: 638, y: 18, array: this.findLocationInfoByRegionName("bomb goron head") },
+                        { x: 565, y: 5, array: this.findLocationInfoByRegionName("treasure hunting goron") },
+                        { x: 642, y: 40, array: this.findLocationInfoByRegionName("goron shooting gallery price") },
+
                         // Sea of Storms locations
                         { x: 366, y: 490, array: this.findLocationInfoByRegionName("sea of storms past") },
                         { x: 310, y: 490, array: this.findLocationInfoByRegionName("piratian captain") },
@@ -368,6 +407,7 @@ class AgesGameLogic {
                         // Dungeon Entrances
                         { x: 393, y: 162, dungeonEntrance: "d0" },
                         { x: 167.5, y: 316, dungeonEntrance: 'd2' },
+                        { x: 599.2, y: 125, dungeonEntrance: 'd6 past' },
                         { x: 602, y: 195, dungeonEntrance: "d8" },
 
                         /** ALL TREES **/
@@ -376,6 +416,8 @@ class AgesGameLogic {
                         { x: 407, y: 286, array: this.findLocationInfoByRegionName("south lynna tree") },
                         { x: 267, y: 92, array: this.findLocationInfoByRegionName("ambi's palace tree") },
                         { x: 19, y: 321, array: this.findLocationInfoByRegionName("deku forest tree") },
+                        { x: 400, y: 10, array: this.findLocationInfoByRegionName("ridge west tree") },
+                        { x: 660, y: 96, array: this.findLocationInfoByRegionName("ridge east tree") },
                         { x: 72, y: 476, array: this.findLocationInfoByRegionName("zora village tree") },
 
                         // Planned Locations for the future with the tracker/randomizer (hopefully)

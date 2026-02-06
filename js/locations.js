@@ -674,7 +674,7 @@ const locations = {
         "symbolic_name": "patchSword",
     },
 
-    // Rolling Ridge Items (hard for me to add the logic to without causing loops due to there being more than one posibility to accessing rolling ridge.)
+    // Rolling Ridge Items
     "Rolling Ridge Base (Present): Terrace Chest": {
         "region_id": "ridge base chest",
         "vanilla_item": "Rupees (50)",

@@ -676,23 +676,26 @@ class AgesGameLogic {
             const essence = Object.keys(items).find(k => items[k].imageName == `essences/d${i}`);
             if (essence && !this.hasItem(essence)) neededItems++
         }
-        if (!LogicPredicates.has_sword(!LogicPredicates.option_medium_logic()) && !LogicPredicates.can_punch()) neededItems++;
         if (!LogicPredicates.has_bombs()) neededItems++;
         if (!LogicPredicates.has_switch_hook()) neededItems++;
         if (!LogicPredicates.has_mystery_seeds()) neededItems++;
         if (this.settings.goal == "beat_ganon") {
-            if (!LogicPredicates.has_seed_shooter()) neededItems++;  
+            if (!LogicPredicates.has_seedshooter()) neededItems++;  
             if (!LogicPredicates.option_medium_logic()) {
                 if (!LogicPredicates.has_noble_sword()) neededItems++
                 if (!LogicPredicates.has_ember_seeds(false)) neededItems++;
             } else {
+                if (!LogicPredicates.has_sword(false)) neededItems++;
                 if (LogicPredicates.option_hard_logic() && (
                     LogicPredicates.has_ember_seeds()
                     || LogicPredicates.has_scent_seeds()
                     || LogicPredicates.has_gale_seeds()
                 )) neededItems++
             }
-        }
+        } else if (
+            !LogicPredicates.has_sword() 
+            && !LogicPredicates.can_punch()
+        ) neededItems++;
         return neededItems;
     }
 

@@ -1260,7 +1260,7 @@ const locations = {
         "reachable": () => ([
             LogicPredicates.has_feather(),
             LogicPredicates.has_small_keys(2, 3),
-            locations['d2 basement']
+            locations['d2 basement']()
         ]).every(Boolean),
     },
     "Wing Dungeon (1F): Rope Room": {

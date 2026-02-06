@@ -1,6 +1,6 @@
 /**
  * This is the code behind the logic for The Legend of Zelda: Oracle of Ages (built in JavaScript).
- * It defines the map layout and the requirements to access certain locations.
+ * It defines the map layout, settings, dungeon entrance layout, and it's reachibility requirements.
  */
 class AgesGameLogic {
 
@@ -145,14 +145,8 @@ class AgesGameLogic {
                     ]
                 },
                 roomCondtionals: [
-                    {
-                        min: 0x012,
-                        max: 0x014
-                    },
-                    {
-                        min: 0x002,
-                        max: 0x004
-                    }
+                    { min: 0x012, max: 0x014 },
+                    { min: 0x002, max: 0x004 }
                 ]
             },
             "symmetry_city_past": {
@@ -164,14 +158,8 @@ class AgesGameLogic {
                     ]
                 },
                 roomCondtionals: [
-                    {
-                        min: 0x112,
-                        max: 0x114
-                    },
-                    {
-                        min: 0x102,
-                        max: 0x104
-                    }
+                    { min: 0x112, max: 0x114 },
+                    { min: 0x102, max: 0x104 }
                 ]
             },
             "animal_companion_regions": {
@@ -187,25 +175,11 @@ class AgesGameLogic {
                     ]
                 },
                 roomCondtionals: [
-                    {
-                        equals_to: 0x035
-                    },
-                    {
-                        min: 0x036,
-                        max: 0x037
-                    },
-                    {
-                        min: 0x026,
-                        max: 0x027
-                    },
-                    {
-                        min: 0x016,
-                        max: 0x017
-                    },
-                    {
-                        min: 0x006,
-                        max: 0x007
-                    }
+                    { equals_to: 0x035 },
+                    { min: 0x036, max: 0x037 },
+                    { min: 0x026, max: 0x027 },
+                    { min: 0x016, max: 0x017 },
+                    { min: 0x006, max: 0x007 }
                 ]
             },
             "overworld_present": {
@@ -321,13 +295,8 @@ class AgesGameLogic {
                     ]
                 },
                 roomCondtionals: [
-                    {
-                        equals_to: 0x10E
-                    },
-                    {
-                        min: 0x000,
-                        max: 0x0FF
-                    }
+                    { equals_to: 0x10E },
+                    { min: 0x000, max: 0x0FF }
                 ]
             },
             "overworld_past": {
@@ -418,14 +387,8 @@ class AgesGameLogic {
                     ]
                 },
                 roomCondtionals: [
-                    {
-                        min: 0x110,
-                        max: 0x1FF
-                    },
-                    {
-                        min: 0x100,
-                        max: 0x10D
-                    }
+                    { min: 0x110, max: 0x1FF },
+                    { min: 0x100, max: 0x10D }
                 ]
             },
             "underwater_present": {
@@ -443,26 +406,11 @@ class AgesGameLogic {
                     ]
                 },
                 roomCondtionals: [
-                    {
-                        min: 0x2D0,
-                        max: 0x2DD
-                    },
-                    {
-                        min: 0x2C0,
-                        max: 0x2CD
-                    },
-                    {
-                        min: 0x2B0,
-                        max: 0x2BD
-                    },
-                    {
-                        min: 0x2A0,
-                        max: 0x2AD
-                    },
-                    {
-                        min: 0x290,
-                        max: 0x29D
-                    }
+                    { min: 0x2D0, max: 0x2DD },
+                    { min: 0x2C0, max: 0x2CD },
+                    { min: 0x2B0, max: 0x2BD },
+                    { min: 0x2A0, max: 0x2AD },
+                    { min: 0x290, max: 0x29D }
                 ]
             },
             "underwater_past": {
@@ -473,43 +421,16 @@ class AgesGameLogic {
                     ]
                 },
                 roomCondtionals: [
-                    {
-                        equals_to: 0x37A
-                    },
-                    {
-                        equals_to: 0x36A
-                    },
-                    {
-                        equals_to: 0x35A
-                    },
-                    {
-                        min: 0x3D0,
-                        max: 0x3DD
-                    },
-                    {
-                        min: 0x3C0,
-                        max: 0x3CD
-                    },
-                    {
-                        min: 0x3B0,
-                        max: 0x3BD
-                    },
-                    {
-                        min: 0x3A0,
-                        max: 0x3AD
-                    },
-                    {
-                        min: 0x390,
-                        max: 0x39D
-                    },
-                    {
-                        min: 0x388,
-                        max: 0x38D
-                    },
-                    {
-                        min: 0x34A,
-                        max: 0x34D
-                    }
+                    { equals_to: 0x37A },
+                    { equals_to: 0x36A },
+                    { equals_to: 0x35A },
+                    { min: 0x3D0, max: 0x3DD },
+                    { min: 0x3C0, max: 0x3CD },
+                    { min: 0x3B0, max: 0x3BD },
+                    { min: 0x3A0, max: 0x3AD },
+                    { min: 0x390, max: 0x39D },
+                    { min: 0x388, max: 0x38D },
+                    { min: 0x34A, max: 0x34D }
                 ]
             },
             "d0_past": {
@@ -521,32 +442,17 @@ class AgesGameLogic {
                     ]
                 },
                 roomCondtionals: [
-                    {
-                        equals_to: 0x605
-                    },
-                    {
-                        min: 0x406,
-                        max: 0x40D
-                    }
+                    { equals_to: 0x605 },
+                    { min: 0x406, max: 0x40D }
                 ]
             },
             "d0_present": {
-                roomCondtionals: [
-                    {
-                        min: 0x401,
-                        max: 0x404
-                    }
-                ]
+                roomCondtionals: [ { min: 0x401, max: 0x404 } ]
             },
             "d0_hero": {
                 roomCondtionals: [
-                    {
-                        equal_to: 0x6C0
-                    },
-                    {
-                        min: 0x4C1,
-                        max: 0x4CF
-                    }
+                    { equal_to: 0x6C0 },
+                    { min: 0x4C1, max: 0x4CF }
                 ]
             },
             "d1": {
@@ -567,122 +473,79 @@ class AgesGameLogic {
                     ]
                 },
                 roomCondtionals: [
-                    {
-                        equals_to: 0x610
-                    },
-                    {
-                        min: 0x411,
-                        max: 0x425
-                    }
+                    { equals_to: 0x610 },
+                    { min: 0x411, max: 0x425 }
                 ]
             },
             "d2": {
+                layouts: {
+                    default: [ 
+                        { x: 310.5, y: 180, array: this.findLocationInfoByRegionName("d2 bombed terrace") },
+                        { x: 412, y: 160, array: this.findLocationInfoByRegionName("d2 moblin platform") },
+                        { x: 40, y: 95, array: this.findLocationInfoByRegionName("d2 moblin drop") },
+                        { x: 110, y: 683, array: this.findLocationInfoByRegionName("d2 thwomp tunnel") },
+                        { x: 10, y: 640, array: this.findLocationInfoByRegionName("d2 thwomp shelf") },
+                        { x: 588, y: 95, array: this.findLocationInfoByRegionName("d2 color room") },
+                        { x: 490, y: 160, array: this.findLocationInfoByRegionName("d2 statue puzzle") },
+                        { x: 298, y: 507, array: this.findLocationInfoByRegionName("d2 basement drop") },
+                        { x: 435, y: 204, array: this.findLocationInfoByRegionName("d2 rope room") },
+                        { x: 492, y: 360, array: this.findLocationInfoByRegionName("d2 ladder chest") },
+                        { x: 492, y: 517, array: this.findLocationInfoByRegionName("d2 basement chest") },
+                        { x: 239, y: 437, array: this.findLocationInfoByRegionName("d2 boss").filter(i => !i.checkLocation.endsWith("Essence")) },
+                        { x: 671, y: 16, array: this.findLocationInfoByRegionName("d2 boss").filter(i => i.checkLocation.endsWith("Essence")) }
+                    ]
+                },
                 locatedInPast: true,
                 roomCondtionals: [
-                    {
-                        min: 0x627,
-                        max: 0x62B
-                    },
-                    {
-                        min: 0x42C,
-                        max: 0x448
-                    }
+                    { min: 0x627, max: 0x62B },
+                    { min: 0x42C, max: 0x448 }
                 ]
             },
             "d3": {
-                roomCondtionals: [
-                    {
-                        min: 0x449,
-                        max: 0x466
-                    }
-                ]
+                roomCondtionals: [ { min: 0x449, max: 0x466 } ]
             },
             "d4": {
                 roomCondtionals: [
-                    {
-                        equals_to: 0x668
+                    { equals_to: 0x668
                     },
-                    {
-                        min: 0x469,
-                        max: 0x492
-                    }
+                    { min: 0x469, max: 0x492 }
                 ]
             },
             "d5": {
                 roomCondtionals: [
-                    {
-                        min: 0x693,
-                        max: 0x698
-                    },
-                    {
-                        min: 0x499,
-                        max: 0x4BF
-                    }
+                    { min: 0x693, max: 0x698 },
+                    { min: 0x499, max: 0x4BF }
                 ]
             },
             "d9_turret": {
-                roomCondtionals: [
-                    {
-                        min: 0x4D0,
-                        max: 0x4FF
-                    }
-                ]
+                roomCondtionals: [ { min: 0x4D0, max: 0x4FF } ]
             },
             "d6_present": {
                 roomCondtionals: [
-                    {
-                        min: 0x710,
-                        max: 0x711
-                    },
-                    {
-                        min: 0x512,
-                        max: 0x528
-                    }
+                    { min: 0x710, max: 0x711 },
+                    { min: 0x512, max: 0x528 }
                 ]
             },
             "d6_past": {
                 roomCondtionals: [
-                    {
-                        min: 0x729,
-                        max: 0x72A
-                    },
-                    {
-                        min: 0x52B,
-                        max: 0x546
-                    },
+                    { min: 0x729, max: 0x72A },
+                    { min: 0x52B, max: 0x546 },
                 ]
             },
             "d7": {
                 roomCondtionals: [
-                    {
-                        min: 0x747,
-                        max: 0x74A
-                    },
-                    {
-                        min: 0x54B,
-                        max: 0x572
-                    }
+                    { min: 0x747, max: 0x74A },
+                    { min: 0x54B, max: 0x572 }
                 ]
             },
             "d8": {
                 roomCondtionals: [
-                    {
-                        min: 0x773,
-                        max: 0x776
-                    },
-                    {
-                        min: 0x577,
-                        max: 0x5AA
-                    }
+                    { min: 0x773, max: 0x776 },
+                    { min: 0x577, max: 0x5AA }
                 ]
             },
             "roomOfRites": {
-                roomCondtionals: [
-                    {
-                        min: 0x5F0,
-                        max: 0x5F5
-                    }
-                ]
+                roomCondtionals: [ { min: 0x5F0, max: 0x5F5 } ]
             }
         }
 

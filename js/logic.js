@@ -370,6 +370,7 @@ class AgesGameLogic {
                         ] },
 
                         // Rolling Ridge Locations
+                        { x: 490, y: 205, array: this.findLocationInfoByRegionName("old zora trade") },
                         { x: 413, y: 85, array: this.findLocationInfoByRegionName("goron elder") },
                         { x: 547, y: 85, array: [
                             ...this.findLocationInfoByRegionName("ridge base bomb past"),

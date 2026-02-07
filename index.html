@@ -12,6 +12,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="./assets/js/color-modes.js"></script>
     <script src="./js/items.js"></script>
+    <script src="./js/entrances.js"></script>
     <script src="./js/locations.js"></script>
     <script src="./js/logic.js"></script>
     <script src="./js/LogicPredicates.js"></script>
@@ -478,12 +479,28 @@
                                 </a>
                             </li>
                             <script>
+                                function info(m) {
+                                    console.info(m);
+                                    feedbackBlock('info', 'Info', m);
+                                }
+                                function warn(m) {
+                                    console.warn(m);
+                                    feedbackBlock('warning', 'Warning', m);
+                                }
+                                function error(m) {
+                                    console.error(m);
+                                    feedbackBlock('danger', 'Error', m);
+                                }
+                                function success(m) {
+                                    console.log(m);
+                                    feedbackBlock('success', 'Success', m);
+                                }
                                 /**
                                  * Handles the file upload event for a spoiler log.
                                  * @param {Event} evt - The file upload event.
                                  */
                                 function handleSpoilerLogUpload(evt) {
-                                    console.info("[Event] file chooser");
+                                    info("Uploading spoiler log file...");
 
                                     let fl_files = evt.target.files; // JS FileList object
 
@@ -492,10 +509,37 @@
 
                                     let reader = new FileReader(); // built in API
 
-                                    let display_file = (e) => { // set the contents of the <textarea>
+                                    let display_file = (e) => { // decode spoiler log contents for the tracker to read.
+                                        success("Spoiler log upload is complete!");
                                         console.info('. . got: ', e.target.result.length, e);
-                                        document.getElementById('spoilerLogUploadButton').style.display = 'none';
-                                        feedbackBlock('success', 'Spoiler Log Uploaded', 'The spoiler log has been successfully uploaded! The tracker will now update to reflect the contents of the log.');
+                                        const spoilerLogBtn = document.getElementById('spoilerLogUploadButton');
+                                        const contents = e.target.result.split(/\r?\n\r?\n\r?\n/);
+                                        spoilerLogBtn.setAttribute('data-spoiler-log-info', encodeURIComponent(contents[0]));
+                                        switch (contents[0].split(/\r?\n/)[4]) {
+                                            case "difficulty: normal": {
+                                                gameLogic.settings.logic_difficulty = 'basic';
+                                                break;
+                                            } case "difficulty: hard": {
+                                                gameLogic.settings.logic_difficulty = 'hard';
+                                                break;
+                                            }
+                                        }
+                                        const foundLocations = [];
+                                        for (let i = 1; i < contents.length; i++) {
+                                            const section = contents[i];
+                                            const line = section.split(/\r?\n/);
+                                            for (let j = 1; j < line.length; j++) {
+                                                if (!line[j] || line[j].startsWith("sphere")) continue;
+                                                const regionId = line[j].split("  ")[0];
+                                                if (section.split(/\r?\n/)[0] === "-- entrances --") {
+
+                                                } else for (const i in locations) if (locations[i].region_id == regionId) foundLocations.push(i);    
+                                            }
+                                        }
+                                        for (const i in locations) {
+                                            if (!foundLocations.includes(i)) locations[i].hidden = true;
+                                        }
+                                        initTracker();
                                     };
 
                                     let on_reader_load = (fl) => {

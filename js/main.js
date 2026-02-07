@@ -6,7 +6,7 @@ let defaultMapImages = {
     overworld: "overworld_present",
     dungeons: "d0_present",
     specialAreas: "d9_zeldaRescue"
-}, defaultStageView = "overworld", currentMap = `default/${defaultMapImages[defaultStageView]}`, connected2archipelago = false;
+}, defaultStageView = "overworld", currentMap = `default/${defaultMapImages[defaultStageView]}`, connected2archipelago = false, connected2lua = false;
 
 /**
  * Appends items to the sidebar
@@ -29,7 +29,7 @@ function drawItems() {
             for (const i in info.position) li.style[i] = info.position[i];
         }
         const a = document.createElement("a");
-        a.className = `nav-link d-flex align-items-center${(info.unclickable || connected2archipelago) ? ' disabled' : ''}`;
+        a.className = `nav-link d-flex align-items-center${(info.unclickable || connected2archipelago || connected2lua) ? ' disabled' : ''}`;
         a.style.cursor = "pointer";
         a.title = item + (info.displayCount ? ` (Count: ${info.count || 0})` : '')
         a.addEventListener("click", e => {
@@ -80,7 +80,7 @@ function triggerItem(itemInfo, times = 1, dontCallItemsDrawFunction = false, don
     for (var i = 0; i < times; i++) {
         itemInfo.count ||= 0;
         if (((!itemInfo.limit && itemInfo.count == 1) || itemInfo.count > itemInfo.limit) && !itemInfo.unlimited) {
-            if (!connected2archipelago) itemInfo.count = 0;
+            if (!connected2archipelago && !connected2lua) itemInfo.count = 0;
         }
         else itemInfo.count++
     }
@@ -167,7 +167,7 @@ function goToMap() {
                     (v.checkLocation.endsWith("Seed Tree") && v.region_id.endsWith("tree")) ? `tree${v.checked ? '_gray' : ''}` : `chest_${
                         currentMap.endsWith("past") ? 'past' : 'present'
                     }${v.checked ? '_open' : ''}`
-                }.png" ${!connected2archipelago ? 'onclick="checkLocation(this)"' : ''
+                }.png" ${!connected2archipelago && !connected2lua ? 'onclick="checkLocation(this)"' : ''
                     } style="cursor: pointer;" data-region="${v.region_id}" data-index="${v.providedStartName ? (() => {
                         if (gameLogic.counts[v.region_id] != undefined) gameLogic.counts[v.region_id]++;
                         gameLogic.counts[v.region_id] ||= 0;
@@ -369,6 +369,7 @@ function archipelagoConnector(obj) {
                                 $(obj).find('button[type="submit"]').attr("data-connected", false);
                                 socket.close();
                                 connected2archipelago = false;
+                                $("#luaConnectorButton").removeAttr("disabled");
                                 delete gameLogic.settings;
                                 initTracker();
                                 $(obj).find('button[type="submit"]').text(originalText);
@@ -378,6 +379,7 @@ function archipelagoConnector(obj) {
                                 document.getElementById("stageView").style.display = "block";
                                 $(obj).find("p").text('Successfully disconnected from the Archipelago Server');
                             })
+                            $("#luaConnectorButton").attr("disabled", true);
                             for (const i in info2.slot_data) {
                                 switch (i) {
                                     case "advance_shop": {
@@ -691,6 +693,45 @@ function changeStageView(value) {
         divElement.style.display = divElement.getAttribute("data-view") === value ? "block" : "none";
     }
     currentMap = array.join("/");
+}
+/**
+ * Connects to a Lua Server.
+ * @param {HTMLFormElement} obj - The form that handles connection for lua.
+ */
+function luaConnector(obj) {
+    $(obj).find("p").text('')
+    if (connected2lua) { // disconnects from the lua server when the user clicks on the Disconnect From lua button.
+        if ($(obj).find('button[type="submit"]').data("connected")) jQuery(obj).trigger("luaDisconnect");
+        else $(obj).find("p").css("color", "red").text('Please wait for the lua server to be fully connected before you disconnect.')
+    } else { // Starts the connection to the Lua server.
+        let connectionSuccessful = false;
+        connected2lua = true;
+        const originalText = $(obj).find('button[type="submit"]').text();
+        const originalText2 = $("#statusKindof_lua").text();
+        $("#statusKindof_lua").html('<span class="spinner-border spinner-border-sm" aria-hidden="true"></span><span role="status">Connecting To The Lua Server...</span>')
+        $(obj).find('button[type="submit"]').attr("disabled", "");
+        $(obj).find('button[type="submit"]').html('<span class="spinner-border spinner-border-sm" aria-hidden="true"></span><span role="status">Connecting To The Lua Server...</span>');
+        function handleError(e) { /// handles an error of one occurs during connection.
+            $("#statusKindof_lua").text(originalText2);
+            $(obj).find('button[type="submit"]').attr("disabled", false)
+            $(obj).find('button[type="submit"]').text(originalText);
+            connected2lua = false;
+            console.error(e);
+            $(obj).find("p").css("color", "red")
+            $(obj).find("p").html(`Failed to connect to the Lua server's websockets.<br>${e.toString()}`);
+        }
+        try {
+            const info = Object.fromEntries(new URLSearchParams($(obj).serialize()));
+            // Still trying to figure out what to do from here. I can't use TCP sockets in the browser so WebSockets is my only option.
+            setTimeout(() => { // added this in case lua tries to take forever to connect. You are better off having a fast internet connection.
+                if (!connectionSuccessful) {
+                    handleError("Timeout occured. Please try again later.")
+                }
+            }, 35042)
+        } catch (e) {
+            handleError(e);
+        }
+    }
 }
 
 document.getElementById("overworld-view-select").addEventListener("change", e => {

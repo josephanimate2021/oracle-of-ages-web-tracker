@@ -116,7 +116,6 @@
             position: absolute;
             top: -800px;
         }
-
     </style>
 </head>
 
@@ -284,7 +283,8 @@
                 </button>
             </li>
         </ul>
-        <button type="button" class="btn btn-secondary col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" onclick="toggleUniversalTrackerMode(this)">
+        <button type="button" class="btn btn-secondary col-md-3 col-lg-2 me-0 px-3 fs-6 text-white"
+            onclick="toggleUniversalTrackerMode(this)">
             Toggle Universal Tracker Mode<br>(Server Connection Recommended)
         </button>
     </header>
@@ -397,8 +397,8 @@
                             <li class="nav-item"
                                 title="If you are playing the a randomizer with Archipelago, please take advantage of this button.">
                                 <a class="nav-link d-flex align-items-center gap-2" data-bs-toggle="modal"
-                                    data-bs-target="#archipelagoConnector" href="#">
-                                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0" y="0"
+                                    data-bs-target="#archipelagoConnector" href="#" id="archipelagoConnectorButton">
+                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0" y="0"
                                         viewBox="0 0 30 36" style="enable-background:new 0 0 30 36" xml:space="preserve"
                                         class="bi">
                                         <path class="st0"
@@ -417,19 +417,105 @@
                                     <span id="statusKindof">Connect To Archipelago</span>
                                 </a>
                             </li>
+                            <li class="nav-item"
+                                title="If you are playing the a randomizer without Archipelago, please take advantage of this button.">
+                                <a class="nav-link d-flex align-items-center gap-2" data-bs-toggle="modal"
+                                    data-bs-target="#luaConnector" href="#" id="luaConnectorButton">
+                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" class="bi">
+                                        <path fill="none" stroke="#eed49f" stroke-linecap="round"
+                                            stroke-linejoin="round" d="M8.5 9.5h7v2h-7zm2 0v2m-2 2h7v2h-7zm2 0v2" />
+                                        <g fill="none" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="1.001">
+                                            <path stroke="#cad3f5"
+                                                d="M9 5.7a1.2 1.2 0 0 1-1.2 1.2a1.2 1.2 0 0 1-1.2-1.2a1.2 1.2 0 0 1 1.2-1.2A1.2 1.2 0 0 1 9 5.7" />
+                                            <path stroke="#8aadf4"
+                                                d="M6.2 2.1a5.2 5.2 0 1 0 0 10.4h.3m4.838-6a5.2 5.2 0 0 0-5.139-4.4M11.8.5c-1.6 0-1.6 2.4 0 2.4s1.6-2.4 0-2.4" />
+                                        </g>
+                                    </svg>
+                                    <span id="statusKindof_lua">Connect To a Lua Server</span>
+                                </a>
+                            </li>
                         </ul>
                         <hr class="my-3" />
                         <ul class="nav flex-column mb-auto">
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="#" data-bs-toggle="modal" data-bs-target="#dungeonEntrancesModal">
+                                <a class="nav-link d-flex align-items-center gap-2" href="#" data-bs-toggle="modal"
+                                    data-bs-target="#dungeonEntrancesModal">
                                     <svg class="bi" aria-hidden="true">
                                         <use xlink:href="#door-closed"></use>
                                     </svg>
                                     Customize Dungeon Entrances
                                 </a>
                             </li>
+                            <form enctype="multipart/form-data">
+                                <input id="spoilerLogContents" type="file" accept=".txt" name="files" size=30
+                                    style="display: none;">
+                            </form>
+                            <li class="nav-item"
+                                title="If you are playing a randomizer without Archipelago, please take advantage of this button."
+                                id="spoilerLogUploadButton">
+                                <a class="nav-link d-flex align-items-center gap-2"
+                                    href="javascript:document.getElementById('spoilerLogContents').click()">
+                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                        xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"
+                                        xml:space="preserve" class="bi">
+                                        <circle style="fill:#FAA85F;" cx="376" cy="400" r="112" />
+                                        <polygon style="fill:#FFFFFF;"
+                                            points="376,336 328,400 360,400 360,464 392,464 392,400 424,400 " />
+                                        <path style="fill:#00384E;" d="M256.352,480H56V32h192v128h128v96c11.008,0,21.696,1.36,32,3.712V137.376L270.624,0H24v512h261.696
+                    C274.384,502.864,264.464,492.096,256.352,480z M280,54.624L353.376,128H280V54.624z" />
+                                        <path style="fill:#72C6EF;" d="M232,400c0-68.384,47.968-125.68,112-140.288V160h-96V64H88v384h152.4
+                                    C235.056,432.96,232,416.848,232,400z" />
+                                        <g>
+                                            <rect x="136" y="240" style="fill:#00384D;" width="160" height="32" />
+                                            <path style="fill:#00384D;"
+                                                d="M268.976,304H136v32h111.2C253.008,324.336,260.352,313.6,268.976,304z" />
+                                            <path style="fill:#00384D;"
+                                                d="M136,368v32h96c0-11.008,1.36-21.696,3.712-32H136z" />
+                                        </g>
+                                    </svg>
+                                    <span id="uploadStatusStuff">Upload Spoiler Log</span>
+                                </a>
+                            </li>
+                            <script>
+                                /**
+                                 * Handles the file upload event for a spoiler log.
+                                 * @param {Event} evt - The file upload event.
+                                 */
+                                function handleSpoilerLogUpload(evt) {
+                                    console.info("[Event] file chooser");
+
+                                    let fl_files = evt.target.files; // JS FileList object
+
+                                    // use the 1st file from the list
+                                    let fl_file = fl_files[0];
+
+                                    let reader = new FileReader(); // built in API
+
+                                    let display_file = (e) => { // set the contents of the <textarea>
+                                        console.info('. . got: ', e.target.result.length, e);
+                                        document.getElementById('spoilerLogUploadButton').style.display = 'none';
+                                        feedbackBlock('success', 'Spoiler Log Uploaded', 'The spoiler log has been successfully uploaded! The tracker will now update to reflect the contents of the log.');
+                                    };
+
+                                    let on_reader_load = (fl) => {
+                                        console.info('. file reader load', fl);
+                                        return display_file; // a function
+                                    };
+
+                                    // Closure to capture the file information.
+                                    reader.onload = on_reader_load(fl_file);
+
+                                    // Read the file as text.
+                                    reader.readAsText(fl_file);
+                                }
+
+                                // add a function to call when the <input type=file> status changes, but don't "submit" the form
+                                document.getElementById('spoilerLogContents').addEventListener('change', handleSpoilerLogUpload, false);
+                            </script>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="#" data-bs-toggle="modal" data-bs-target="#settingsMenu">
+                                <a class="nav-link d-flex align-items-center gap-2" href="#" data-bs-toggle="modal"
+                                    data-bs-target="#settingsMenu">
                                     <svg class="bi" aria-hidden="true">
                                         <use xlink:href="#gear-wide-connected"></use>
                                     </svg>
@@ -478,7 +564,8 @@
                                     data-mapImage="symmetry_city_present">
                                     Symmetry City (Present)
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary mapSwitcher" data-mapImage="symmetry_city_past">
+                                <button type="button" class="btn btn-sm btn-outline-secondary mapSwitcher"
+                                    data-mapImage="symmetry_city_past">
                                     Symmetry City (Past)
                                 </button>
                             </div>
@@ -615,13 +702,15 @@
             </div>
             <form class="modal-body" id="trackerSettings" onchange="trackerSettingsChange(this)"></form>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" id="settingsResetBtn" onclick="localStorage.clear(); initTracker()">Reset Settings</button>
+                <button type="button" class="btn btn-danger" id="settingsResetBtn"
+                    onclick="localStorage.clear(); initTracker()">Reset Settings</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal" id="dungeonEntrancesModal" tabindex="-1" aria-labelledby="dungeonEntrancesModalLabel" aria-hidden="true">
+<div class="modal" id="dungeonEntrancesModal" tabindex="-1" aria-labelledby="dungeonEntrancesModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -635,7 +724,8 @@
         </div>
     </div>
 </div>
-<div class="modal" tabindex="-1" id="archipelagoConnector" aria-labelledby="archipelagoConnectorLabel" aria-hidden="true">
+<div class="modal" tabindex="-1" id="archipelagoConnector" aria-labelledby="archipelagoConnectorLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <form class="modal-content" onsubmit="archipelagoConnector(this)" action="javascript:;">
             <div class="modal-header">
@@ -644,14 +734,36 @@
             </div>
             <div class="modal-body">
                 <p></p>
-                <label for="host">Host</label>
+                <label for="host" class="form-label">Host</label>
                 <input class="form-control" type="text" id="host" name="host" required />
-                <label for="user">Username</label>
+                <label for="user" class="form-label">Username</label>
                 <input class="form-control" type="text" id="user" name="user" required />
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary" data-connected="false">Connect to Archipelago</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal" tabindex="-1" id="luaConnector" aria-labelledby="luaConnectorLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" onsubmit="luaConnector(this)" action="javascript:;">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5" id="luaConnectorLabel">Connect to a Lua Server</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p></p>
+                <label for="host" class="form-label">Host</label>
+                <input class="form-control" type="text" id="host" name="host" placeholder="127.0.0.1"/>
+                <label for="port" class="form-label">Port</label>
+                <input class="form-control" type="number" id="port" name="port" placeholder="43884" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" data-connected="false">Connect to Lua Server</button>
             </div>
         </form>
     </div>
@@ -669,4 +781,5 @@
         </div>
     </div>
 </div>
+
 </html>

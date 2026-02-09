@@ -1041,15 +1041,13 @@ const locations = {
     */
     "Sea of Storms (Present): Underwater Cave": {
         "region_id": "sea of storms present",
-        "vanilla_item": "Gacha Seed",
-        /*
-        "flag_byte": 0xc8ff,
+        "vanilla_item": "Gasha Seed",
+        "flag_byte": 0xc8e8,
         "room": 0x03e8,
-        "map_tile": 0x1c7,
-        */
-        "reachable": () => LogicPredicates.option_hard_logic() && locations['lynna city']() && LogicPredicates.can_dive() && LogicPredicates.has_seedshooter() && (
+        "reachable": () => (connected2archipelago && locations['Sea of Storms (Past): Underwater Cave'].reachable()) || !gameLogic.isRandomizer() && (
+            LogicPredicates.option_hard_logic() && locations['lynna city']() && LogicPredicates.can_dive() && LogicPredicates.has_seedshooter() && (
             LogicPredicates.has_mystery_seeds() && LogicPredicates.has_pegasus_seeds()
-        ) && LogicPredicates.can_switch_past_and_present(),
+        ) && LogicPredicates.can_switch_past_and_present()),
         "symbolic_name": "seaofstormpresent",
     },
 

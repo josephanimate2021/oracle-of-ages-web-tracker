@@ -350,7 +350,7 @@ class AgesGameLogic {
 
                         // Crescent Island Locations
                         { x: 473.5, y: 522, array: this.findLocationInfoByRegionName("hidden tokay cave") },
-                        { x: 648, y: 477, array: this.findLocationInfoByRegionName("tokay chicken house") },
+                        { x: 648, y: 477, array: this.findLocationInfoByRegionName("tokay chicken hut") },
                         { x: 633, y: 517, array: this.findLocationInfoByRegionName("tokay pot cave") },
                         { x: 633, y: 427, array: this.findLocationInfoByRegionName("wild tokay game") },
                         { x: 533, y: 425, array: this.findLocationInfoByRegionName("tokay crystal cave") },

@@ -537,7 +537,6 @@ const locations = {
         "flag_byte": 0xc2e3,
         "room": 0x02e3,
         "reachable": () => locations['crescent past east']() && LogicPredicates.has_bracelet(),
-        "collect": COLLECT_TOUCH,
         "symbolic_name": "tokayChickenHut",
     },
     "Crescent Island (Past): Wild Tokay Prize": {

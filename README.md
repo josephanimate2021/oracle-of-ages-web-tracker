@@ -3,8 +3,13 @@ This is a tracker built entirely from vanila JavaScript that helps you track you
 as that's something that will priortize a tracker the most unlike just playing the normal game.
 
 ## Why does this tracker exist? There is already a PopTracker pack out there that perfectly tracks my items just fine.
-Well, it does, but the PopTracker pack has so many critical bugs that affect it's usability for new players of the Oracle of Ages Randomizer.
-Refer to the video description of this [YouTube Video](https://youtu.be/aJCN1odTCIA) (made by me) so that you can see exactly what I mean. The map is on the bottom left corner of the video.
+I just wanted to do an experiment with creating a game tracker pack out of pure javascript instead of relying on Lua to do it for us. Here are the pros and cons of doing this method:
+
+### PROS
+This allows anybody who is very experienced with javascript to get into game tracker pack creation while also understanding the logic of the game. No need for downloading, just a website.
+
+### CONS
+You cannot use the web tracker with lua sripts. JavaScript just simply does not know how to load them normally without some crazy module.
 
 ## Connecting To A Server Outside of Archipelago [IN BETA]
 If you are playing an entrance randomizer or something similar in Ages but just can't find a tracker that's user friendly for you, well this one allows you to not only be able to check off items manually, but allows you to rely on a local server to track the game for you!

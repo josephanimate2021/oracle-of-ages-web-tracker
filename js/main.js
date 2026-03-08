@@ -4,8 +4,7 @@ const gameLogic = new AgesGameLogic();
 // Images that are default when things change.
 let defaultMapImages = {
     overworld: "overworld_present",
-    dungeons: "d0_present",
-    specialAreas: "d9_zeldaRescue"
+    dungeons: "d0_present"
 }, defaultStageView = "overworld", currentMap = `default/${defaultMapImages[defaultStageView]}`, connected2archipelago = false, connected2lua = false;
 
 /**
@@ -130,8 +129,10 @@ function goToMap() {
     let locationsArray = Object.keys(locations).filter(i => typeof locations[i] != "function" && (connected2archipelago ? locations[i].APID : true));
     for (const i of locationsArray) {
         locations[i].checkLocation = i;
-        if (locations[i].region_id != "advance shop") continue;
-        locations[i].hidden = !gameLogic.settings.open_advance_shop;
+        if (locations[i].region_id == "advance shop") locations[i].hidden = !gameLogic.settings.open_advance_shop;
+        if (locations[i].dungeon == 11) locations[i].hidden = !gameLogic.settings.linked_heros_cave;
+        if ("secret_location" in locations[i]) locations[i].hidden = !gameLogic.settings.secret_locations;
+        if (locations[i].region_id?.endsWith("old man")) locations[i].hidden = !gameLogic.settings.rolling_ridge_old_men_as_locations;
     }
     gameLogic.maps[mapImage] ||= {}
     gameLogic.maps[mapImage].layouts ||= {
@@ -146,7 +147,10 @@ function goToMap() {
             ]
         })();
         const info = position.array[0];
-        if ((connected2archipelago && !info?.APID) || info?.hidden) continue;
+        function locationHidden(info) {
+            return (connected2archipelago && !info?.APID) || info?.hidden
+        }
+        if (locationHidden(info)) continue;
         const marker = document.createElement("button");
         marker.type = "button";
         marker.className = `btn btn-${position.array.filter(i => i.checked).length == position.array.length ? 'secondary' : (() => {
@@ -162,7 +166,7 @@ function goToMap() {
             const htmls = [];
             for (let i = 0; i < position.array.length; i++) {
                 const v = position.array[i];
-                if (v.notACheck) continue;
+                if (v.notACheck || locationHidden(v)) continue;
                 htmls.push(`<img src="./items/${
                     (v.checkLocation.endsWith("Seed Tree") && v.region_id.endsWith("tree")) ? `tree${v.checked ? '_gray' : ''}` : `chest_${
                         currentMap.endsWith("past") ? 'past' : 'present'
@@ -350,7 +354,9 @@ function archipelagoConnector(obj) {
                                     version: roomInfo.version,
                                 });
                                 for (const location in games[game].location_name_to_id) {
-                                    if (locations[location]) locations[location].APID = games[game].location_name_to_id[location]
+                                    for (const i in locations) {
+                                        if (locations[i].alias == location || locations[i].region_id == location.toLocaleLowerCase() || i == location) locations[i].APID = games[game].location_name_to_id[location];
+                                    }
                                 }
                                 for (const item in games[game].item_name_to_id) {
                                     if (items[item]) items[item].APID = games[game].item_name_to_id[item]
@@ -385,6 +391,20 @@ function archipelagoConnector(obj) {
                                     case "advance_shop": {
                                         gameLogic.settings.open_advance_shop = info2.slot_data.advance_shop == 1;
                                         break;
+                                    } 
+                                    case "heros_cave":
+                                    case "linked_heros_cave": {
+                                        gameLogic.settings.linked_heros_cave = info2.slot_data.linked_heros_cave > 0 || info.slot_data.heros_cave;
+                                        switch (info2.slot_data.linked_heros_cave) {
+                                            case 2: {
+                                                gameLogic.linked_heros_cave_pos = {
+                                                    x: 167.5,
+                                                    y: 316
+                                                }
+                                                break;
+                                            }
+                                        }
+                                        break;
                                     } case "required_essences": {
                                         gameLogic.settings.required_essences_for_maku_seed = info2.slot_data.required_essences;
                                         break;
@@ -395,7 +415,7 @@ function archipelagoConnector(obj) {
                                         gameLogic.settings[i] = (() => {
                                             if (typeof info2.slot_data[i] == "string") return info2.slot_data[i].toLowerCase()
                                             if (gameLogic.gameSettingOptions[i]?.options) return gameLogic.gameSettingOptions[i].options[info2.slot_data[i]]
-                                            return info2.slot_data[i]
+                                            return typeof info2.slot_data[i] != "object" ? info2.slot_data[i] > 0 : info2.slot_data[i];
                                         })();
                                     }
                                 }
@@ -509,6 +529,43 @@ function upperCaseFirstLetterInWord(word) {
     return beg.toLocaleUpperCase() + end;
 }
 
+function changeSpecialAreasShowing() {
+    const requiredOptions = [gameLogic.settings.linked_heros_cave, gameLogic.settings.secret_locations, gameLogic.settings.goal == "beat_ganon"];
+    const specialAreasShow = requiredOptions.some(Boolean);
+    let specialAreasDefaultMapInited = false;
+    function initMapImage(specialAreaMap) {
+        if (!specialAreasDefaultMapInited) {
+            defaultMapImages.specialAreas = specialAreaMap;
+            specialAreasDefaultMapInited = true;
+        }
+        return "block";
+    }
+    jQuery("#stage-view-select").find('option[value="specialAreas"]')[specialAreasShow ? 'show' : 'hide']();
+    if (!specialAreasShow) {
+        changeStageView('overworld');
+        goToMap();
+        jQuery(".stageViewOption").find('div[data-view="specialAreas"]').hide();
+    } else for (const elem of document.getElementsByClassName("stageViewOption")) {
+        if (elem.getAttribute("data-view") == "specialAreas") {
+            const btns = document.getElementsByTagName("button");
+            for (const btn of btns) {
+                switch (btn.getAttribute("data-mapImage")) {
+                    case "d0_hero": {
+                        btn.style.display = gameLogic.settings.linked_heros_cave ? initMapImage("d0_hero") : "none";
+                        break;
+                    } case "d9_zeldaRescue": {
+                        btn.style.display = gameLogic.settings.secret_locations ? initMapImage("d9_zeldaRescue") : "none";
+                        break;
+                    } case "roomOfRites": {
+                        btn.style.display = gameLogic.settings.goal == "beat_ganon" ? initMapImage("roomOfRites") : "none";
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
 /**
  * Sets up the tracker each time the website is loaded.
  */
@@ -521,6 +578,10 @@ function initTracker() {
         return JSON.stringify(settings);
     })();
     gameLogic.settings ||= parseEverything(localStorage.OoAWebTrackerSettings);
+    if (gameLogic.settings.linked_heros_cave) {
+        gameLogic.settings.dungeon_entrances["d11 entrance"] ||= "enter d11";
+    } else if (gameLogic.settings.dungeon_entrances["d11 entrance"]) delete gameLogic.settings.dungeon_entrances["d11 entrance"]
+    changeSpecialAreasShowing();
     document.getElementById("trackerSettings").innerHTML = Object.keys(gameLogic.gameSettingOptions).map(i => {
         const setting = gameLogic.gameSettingOptions[i];
         const defaultSetting = gameLogic.settings[i]
@@ -624,6 +685,15 @@ function trackerSettingsChange(obj) {
  */
 function saveModifiedSettings() {
     localStorage.OoAWebTrackerSettings = JSON.stringify(gameLogic.settings);
+    for (const i of entrances) {
+        if (gameLogic.settings.randomize_entrances) gameLogic.settings.dungeon_entrances[
+            `${i.connectingRegion || i.region_id} entrance`
+        ] ||= `enter ${i.connectingRegion || i.entrance}`
+        else if (gameLogic.settings.dungeon_entrances[`${i.connectingRegion || i.region_id} entrance`]) delete gameLogic.settings.dungeon_entrances[
+            `${i.connectingRegion || i.region_id} entrance`
+        ]
+    }
+    changeSpecialAreasShowing();
     drawItems();
     goToMap();
 }

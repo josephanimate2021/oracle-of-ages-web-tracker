@@ -2,6 +2,7 @@ const locations = {
 
     // Forest of Time Items
     "Forest of Time: Impa's Gift": {
+        "alias": "Impa Gift",
         "region_id": "starting item",
         "vanilla_item": "Progressive Sword",
         "flag_byte": 0xc739,
@@ -21,6 +22,7 @@ const locations = {
         "symbolic_name": "nayruHouse",
     },
     "Forest of Time: Tingle Present": {
+        "alias": "Tingle Present",
         "region_id": "balloon guy's gift",
         "vanilla_item": "Island Chart",
         "flag_byte": 0xc6d0,
@@ -38,6 +40,7 @@ const locations = {
         "symbolic_name": "tingleGift",
     },
     "Forest of Time: Tingle Upgrade": {
+        "alias": "Tingle Upgrade",
         "region_id": "balloon guy's upgrade",
         "vanilla_item": "Seed Satchel",
         "flag_byte": 0xc6d8,
@@ -48,6 +51,19 @@ const locations = {
         ].reachable() && LogicPredicates.has_seed_kind_count(3),
         "symbolic_name": "tingleUpgrade",
     },
+    "Forest of Time: Tingle Secret": {
+        "alias": "Tingle Secret",
+        "region_id": "balloon guy's secret",
+        "vanilla_item": "Seed Satchel",
+        "flag_byte": 0xc6d8, // I am not sure of the room flag and bitmask for this check. I know that it dosen't matter to this tracker, but it does matter in the rando.
+        "bit_mask": 0x40,
+        "room": 0x0079,
+        "reachable": () => locations[
+            'Forest of Time: Tingle Present'
+        ].reachable() && LogicPredicates.has_seed_kind_count(3), // I'm pretty sure that you need to pass the tingle upgrade check first. I could be wrong.
+        "symbolic_name": "tingleSecret",
+        "secret_location": true
+    },
 
     // Lynna City (And Village) Items
     "Lynna City: Chest Past Burnt Tree": {
@@ -56,11 +72,12 @@ const locations = {
         "flag_byte": 0xc749,
         "room": 0x0049,
         "reachable": () => ([
-            locations['lynna city']() && LogicPredicates.can_break_bush(),
+            locations['lynna city']() && LogicPredicates.can_use_ember_seeds(false),
             locations['lynna village']() && LogicPredicates.can_go_back_to_present()
         ]).some(Boolean)
     },
     "Lynna City: Shop Item #1": {
+        "alias": "Lynna Shop #1",
         "region_id": "lynna shop",
         "vanilla_item": "Progressive Shield",
         "flag_byte": 0xc643,
@@ -74,6 +91,7 @@ const locations = {
         "symbolic_name": "lynnaShop1",
     },
     "Lynna City: Shop Item #2": {
+        "alias": "Lynna Shop #2",
         "region_id": "lynna shop",
         "vanilla_item": "Bombs (10)",
         "flag_byte": 0xc643,
@@ -87,6 +105,7 @@ const locations = {
         "symbolic_name": "lynnaShop2",
     },
     "Lynna City: Shop Item #3": {
+        "alias": "Lynna Shop #3",
         "region_id": "lynna shop",
         "vanilla_item": "Flute",
         "flag_byte": 0xc643,
@@ -100,6 +119,7 @@ const locations = {
         "symbolic_name": "lynnaShop3",
     },
     "Lynna City: Hidden Shop Item #1": {
+        "alias": "Hidden Shop #1",
         "region_id": "hidden shop",
         "vanilla_item": "Gasha Seed",
         "flag_byte": 0xc642,
@@ -112,6 +132,7 @@ const locations = {
         "symbolic_name": "hiddenShop1",
     },
     "Lynna City: Hidden Shop Item #2": {
+        "alias": "Hidden Shop #2",
         "region_id": "hidden shop",
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc642,
@@ -124,8 +145,9 @@ const locations = {
         "symbolic_name": "hiddenShop2",
     },
     "Lynna City: Hidden Shop Item #3": {
+        "alias": "Hidden Shop #3",
         "region_id": "hidden shop",
-        "vanilla_item": "Biggoron's Sword",
+        "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc642,
         "room": 0x027e,
         "bit_mask": 0x08,
@@ -142,6 +164,15 @@ const locations = {
         "map_tile": 0x57,
         "reachable": () => locations['lynna city']() && LogicPredicates.has_long_hook(),
     },
+    "Lynna City: Mayor Plen's Secret": {
+        "region_id": "mayor plen's secret",
+        "vanilla_item": "Green Luck Ring",
+        "flag_byte": 0xc8f8,
+        "room": 0x03f8,
+        "map_tile": 0x57,
+        "secret_location": true,
+        "reachable": () => locations['lynna city'](),
+    },
     "Lynna City: Vasu's Gift": {
         "region_id": "vasu's gift",
         "vanilla_item": "Friendship Ring",
@@ -151,7 +182,18 @@ const locations = {
         "reachable": () => locations['lynna city'](),
         "symbolic_name": "vasuGift",
     },
+    "Lynna City: Vasu's Secret Gift": {
+        "region_id": "vasu's secret gift",
+        "vanilla_item": "Friendship Ring", // I'll have to look again at what the vanila item is. I remember encountering this during testing the other day.
+        "flag_byte": 0xc615,
+        "bit_mask": 0x01,
+        "room": 0x02ee,
+        "secret_location": true,
+        "reachable": () => locations['lynna city'](),
+        "symbolic_name": "vasuSecretGift",
+    },
     "Lynna City: Maku Tree gift": {
+        "alias": "Maku Tree gift",
         "region_id": "maku tree",
         "vanilla_item": "Seed Satchel",
         "flag_byte": 0xc738,
@@ -172,6 +214,16 @@ const locations = {
         "reachable": () => locations['lynna city']() && gameLogic.hasItem("Doggie Mask"),
         "symbolic_name": "mamamuYan",
     },
+    // I am not sure if I should be using a bit mask and different flag byte for this check, but this tracker dosen't need it, only the rando does.
+    "Lynna City: Mamamu Yan Secret": {
+        "region_id": "mamamu yan secret",
+        "vanilla_item": "Snowshoe Ring",
+        "flag_byte": 0xc7e7,
+        "room": 0x02e7,
+        "secret_location": true,
+        "reachable": () => locations['lynna city']() && gameLogic.hasItem("Doggie Mask") && gameLogic.has_bracelet(),
+        "symbolic_name": "mamamuYanSecret",
+    },
     "Lynna City: Comedian Trade": {
         "region_id": "lynna city comedian trade",
         "vanilla_item": "Funny Joke",
@@ -181,6 +233,7 @@ const locations = {
         "symbolic_name": "comedian",
     },
     "Lynna Village: Gasha Farmer": {
+        "alias": "Gasha Farmer",
         "region_id": "gasha farmer",
         "vanilla_item": "Gasha Seed",
         "flag_byte": 0xc8fc,
@@ -189,6 +242,7 @@ const locations = {
         "symbolic_name": "gashaFarmer",
     },
     "Lynna Village: Advance Shop Item #1": {
+        "alias": "Advance Shop #1",
         "region_id": "advance shop",
         "vanilla_item": "Rupees (100)",
         "flag_byte": 0xc643,
@@ -201,6 +255,7 @@ const locations = {
         "symbolic_name": "advanceShop1",
     },
     "Lynna Village: Advance Shop Item #2": {
+        "alias": "Advance Shop #2",
         "region_id": "advance shop",
         "vanilla_item": "GBA Time Ring",
         "flag_byte": 0xc643,
@@ -213,6 +268,7 @@ const locations = {
         "symbolic_name": "advanceShop2",
     },
     "Lynna Village: Advance Shop Item #3": {
+        "alias": "Advance Shop #3",
         "region_id": "advance shop",
         "vanilla_item": "Rupees (100)",
         "flag_byte": 0xc643,
@@ -225,6 +281,7 @@ const locations = {
         "symbolic_name": "advanceShop3",
     },
     "Lynna Village: Baseball": {
+        "alias": "Lynna Village Shooting Gallery",
         "region_id": "lynna shooting gallery",
         "vanilla_item": "Red Ring",
         "flag_byte": 0xc6d9,
@@ -242,6 +299,7 @@ const locations = {
         "symbolic_name": "postman",
     },
     "Lynna Village: Toilet Hand Trade": {
+        "alias": "Lynna Village: The Toilet Hand Trade",
         "region_id": "toilet hand trade",
         "vanilla_item": "Stink Bag",
         "flag_byte": 0xc73e,
@@ -250,6 +308,7 @@ const locations = {
         "symbolic_name": "toiletHand",
     },
     "Lynna Village: Depressed Child Trade": {
+        "alias": "Lynna Village: Sad Boi Trade",
         "region_id": "sad boi trade",
         "vanilla_item": "Touching Book",
         "flag_byte": 0xc7f3,
@@ -258,8 +317,9 @@ const locations = {
         "symbolic_name": "sadBoi",
     },
 
-    // Black Tower (Past) Items
+    // Black Tower Items
     "Black Tower (Past): Supervisor": {
+        "alias": "Black Tower Worker",
         "region_id": "black tower worker",
         "vanilla_item": "Shovel",
         "flag_byte": 0xc9e1,
@@ -269,6 +329,7 @@ const locations = {
         "symbolic_name": "towerWorker",
     },
     "Black Tower (Past): Heart Piece": {
+        "alias": "Black Tower Heart Piece",
         "region_id": "black tower heartpiece",
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc886,
@@ -276,28 +337,35 @@ const locations = {
         "reachable": () => LogicPredicates.has_shovel() && locations['lynna village'](),
         "symbolic_name": "blackTowerHP",
     },
+    "Black Tower (Present): Princess Zelda Rescue": {
+        "alias": "Princess Zelda Rescue",
+        "region_id": "princess zelda rescue",
+        "vanilla_item": "Blue Joy Ring",
+        "flag_byte": 0xcae7,
+        "room": 0x7e7,
+        "secret_location": true,
+        "reachable": () => locations['lynna city']() && gameLogic.hasItem("Feather"),
+        "symbolic_name": "zeldaRescue",
+    },
 
     // Ambi's Palace Items
     "Ambi's Palace: East Wing Chest": {
+        "alias": "Ambi's Palace Chest",
         "region_id": "ambi's palace chest",
         "vanilla_item": "Gold Luck Ring",
         "flag_byte": 0xcacb,
         "room": 0x05cb,
         "map_tile": 0x107,
         "reachable": () => ([
-            ([
-                LogicPredicates.option_hard_logic(),
-                LogicPredicates.can_use_scent_seeds_for_smell(),
-                LogicPredicates.can_use_pegasus_seeds()
-            ]).every(Boolean),
+            gameLogic.dungeonReachable("Ambi's Palace"),
             ([
                 LogicPredicates.can_break_bush(),
                 LogicPredicates.can_dive()
-            ]).every(Boolean),
-            LogicPredicates.can_switch_past_and_present()
+            ]).every(Boolean)
         ]).some(Boolean),
     },
     "Ambi's Palace: Rescue Nayru": {
+        "alias": 'Rescue Nayru',
         "region_id": "rescue nayru",
         "vanilla_item": "Progressive Harp",
         "flag_byte": 0xc6d1,
@@ -315,6 +383,7 @@ const locations = {
     },
 
     "West Lynna: Cave Near Restoration Wall": {
+        "alias": "Restoration Wall Heart Piece",
         "region_id": "restoration wall heartpiece",
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc8af,
@@ -325,6 +394,7 @@ const locations = {
 
     // South Shore Locations
     "South Shore (Present): Dirt Pile": {
+        "alias": "Shore Dirt Spot",
         "region_id": "south shore dirt",
         "vanilla_item": "Ricky's Gloves",
         "flag_byte": 0xc798,
@@ -333,6 +403,7 @@ const locations = {
         "symbolic_name": "southShoreDirt",
     },
     "South Shore (Past): Rafton Trade": {
+        "alias": "Lynna Village: Rafton Trade",
         "region_id": "rafton trade",
         "vanilla_item": "Sea Ukulele",
         "flag_byte": 0xc71f,
@@ -367,6 +438,7 @@ const locations = {
         "symbolic_name": "chevalInvention",
     },
     "Yoll Graveyard: Grave Under The Tree": {
+        "alias": "Grave Under The Tree",
         "region_id": "grave under tree",
         "vanilla_item": "Graveyard Key",
         "flag_byte": 0xcaed,
@@ -376,6 +448,7 @@ const locations = {
         "symbolic_name": "graveUnderTree",
     },
     "Yoll Graveyard: Syrup Shop Item #1": {
+        "alias": "Syrup Shop #1",
         "region_id": "syrup shop",
         "vanilla_item": "King Zora's Potion",
         "flag_byte": 0xc642,
@@ -387,6 +460,7 @@ const locations = {
         "symbolic_name": "syrupShop1",
     },
     "Yoll Graveyard: Syrup Shop Item #2": {
+        "alias": "Syrup Shop #2",
         "region_id": "syrup shop",
         "vanilla_item": "Gasha Seed",
         "flag_byte": 0xc642,
@@ -398,6 +472,7 @@ const locations = {
         "symbolic_name": "syrupShop2",
     },
     "Yoll Graveyard: Syrup Shop Item #3": {
+        "alias": "Syrup Shop #3",
         "region_id": "syrup shop",
         "vanilla_item": "Gasha Seed",
         "flag_byte": 0xc642,
@@ -409,6 +484,7 @@ const locations = {
         "symbolic_name": "syrupShop3",
     },
     "Yoll Graveyard: Poe's Gift": {
+        "alias": "Yoll Graveyard: Graveyard Poe Trade",
         "region_id": "graveyard poe trade",
         "vanilla_item": "Poe Clock",
         "flag_byte": 0xc77c,
@@ -417,6 +493,7 @@ const locations = {
         "symbolic_name": "graveyardPoe",
     },
     "Yoll Graveyard: Heart Piece": {
+        "alias": "Yoll Graveyard Heart Piece",
         "region_id": "yoll graveyard heartpiece",
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc78b,
@@ -439,6 +516,14 @@ const locations = {
         ) || (
             locations['deku forest']() && LogicPredicates.can_go_back_to_present()
         )
+    },
+    "Fairies' Woods: Fairy Secret": {
+        "region_id": "fairies' woods secret",
+        "vanilla_item": "Heart Container",
+        "flag_byte": 0xc770,
+        "room": 0x0070,
+        "secret_location": true,
+        "reachable": () => locations["fairies' woods"]()
     },
     "Deku Forest: Chest in Central Cave": {
         "region_id": "deku forest cave east",
@@ -475,6 +560,7 @@ const locations = {
         "symbolic_name": "dekuForestSoldier",
     },
     "Deku Forest: Terrace in Cave Under Tree": {
+        "alias": "Deku Forest Heart Piece",
         "region_id": "deku forest heartpiece",
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xcab1,
@@ -548,7 +634,18 @@ const locations = {
         "reachable": () => locations['crescent past east']() && LogicPredicates.has_bombs() && LogicPredicates.has_bracelet(),
         "symbolic_name": "wildTokayGame",
     },
+    "Crescent Island (Present): Tokay Secret": {
+        "region_id": "tokay secret",
+        "vanilla_item": "Bombs (10)",
+        "flag_byte": 0xc7e5,
+        "room": 0x02e5,
+        "map_tile": 0x0bd,
+        "reachable": () => locations['crescent present east'](),
+        "secret_location": true,
+        "symbolic_name": "tokaySecret",
+    },
     "Crescent Island (Past): Market Item #1": {
+        "alias": "Tokay Market #1",
         "region_id": "tokay market 1",
         "vanilla_item": "Progressive Shield",
         "flag_byte": 0xc6d6,
@@ -560,6 +657,7 @@ const locations = {
         "symbolic_name": "tokayMarket1",
     },
     "Crescent Island (Past): Market Item #2": {
+        "alias": "Tokay Market #2",
         "region_id": "tokay market 2",
         "vanilla_item": "Gasha Seed",
         "flag_byte": 0xc6d6,
@@ -591,6 +689,7 @@ const locations = {
         ](),
     },
     "Nuun Highlands: Happy Mask Salesman Trade": {
+        "alias": "Nuun Highland: Happy Mask Salesman Trade",
         "region_id": "happy mask salesman trade",
         "vanilla_item": "Doggie Mask",
         "flag_byte": 0xc7e6,
@@ -601,6 +700,7 @@ const locations = {
 
     // Symmetry Village Items
     "Symmetry Village: Brothers": {
+        "alias": "Symmetry City Brothers",
         "region_id": "symmetry city brother",
         "vanilla_item": "Cracked Tuni Nut",
         "flag_byte": [0xc86e, 0xc86f],
@@ -609,7 +709,18 @@ const locations = {
         "reachable": () => locations['symmetry past'](),
         "symbolic_name": "symmetryCityBrother",
     },
+    "Symmetry Village: Girls Secret": {
+        "region_id": "symmetry city girls secret",
+        "vanilla_item": "Gasha Seed", // Vanila item is a ring box, but I'll just put this here as a placeholder.
+        "flag_byte": 0xc8f6,
+        "room": 0x5f6,
+        "map_tile": 0x104,
+        "reachable": () => locations['symmetry past'](),
+        "secret_location": true,
+        "symbolic_name": "symmetryCitySecret",
+    },
     "Symmetry Village: Skinny Guy Trade": {
+        "alias": "Symmetry City: Middle Man Trade",
         "region_id": "symmetry middle man trade",
         "vanilla_item": "Cheesy Mustache",
         "flag_byte": 0xc7e8,
@@ -636,6 +747,7 @@ const locations = {
         "reachable": () => locations['restoration wall'](),
     },
     "Talus Peaks (Present): Heart Piece": {
+        "alias": "Symmetry City Heart Piece",
         "region_id": "symmetry city heartpiece",
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc711,
@@ -673,6 +785,7 @@ const locations = {
 
     // Rolling Ridge Items
     "Rolling Ridge Base (Present): Terrace Chest": {
+        "alias": "Ridge Chest West Base On Terrace",
         "region_id": "ridge base chest",
         "vanilla_item": "Rupees (50)",
         "flag_byte": 0xcab9,
@@ -706,6 +819,24 @@ const locations = {
         "map_tile": 0x3d,
         "reachable": () => gameLogic.hasItem("Rock Brisket") && gameLogic.hasItem("Brother Emblem") && locations['ridge base present'](),
         "symbolic_name": "tradeRockBrisket",
+    },
+    "Rolling Ridge Base (Present): Old Man": {
+        "alias": "Rolling Ridge Present Old Man",
+        "region_id": "rolling ridge present old man",
+        "vanilla_item": "Bombchus (10)", // He originally took rupees from you. Adding this as a placeholder as a way to bring bombchus into the randomizer.
+        "flag_byte": 0xc74e,
+        "room": 0x24e,
+        "reachable": () => LogicPredicates.can_use_ember_seeds() && locations['ridge base present'](),
+        "symbolic_name": "ridgePresentOldMan",
+    },
+    "Rolling Ridge Base (Past): Old Man": {
+        "alias": "Rolling Ridge Past Old Man",
+        "region_id": "rolling ridge past old man",
+        "vanilla_item": "Rupees (200)",
+        "flag_byte": 0xc8e9,
+        "room": 0x3e9,
+        "reachable": () => LogicPredicates.can_use_ember_seeds() && locations['ridge base past east'](),
+        "symbolic_name": "ridgePastOldMan",
     },
     "Rolling Ridge Base (Past): Goron Elder": {
         "region_id": "goron elder",
@@ -752,6 +883,7 @@ const locations = {
         "reachable": () => LogicPredicates.has_switch_hook() && locations['ridge base past west'](),
     },
     "Rolling Ridge (Present): West Stairs Cave Chest": {
+        "alias": "Ridge West Surface Stair",
         "region_id": "ridge west cave",
         "vanilla_item": "Rupees (30)",
         "flag_byte": 0xcac0,
@@ -814,6 +946,19 @@ const locations = {
         ]).every(Boolean),
         "symbolic_name": "targetCart1",
     },
+    "Rolling Ridge (Present): Troy Secret": {
+        "region_id": "target carts troy secret",
+        "vanilla_item": "Bombchus (10)",
+        "flag_byte": 0xcad8,
+        "bit_mask": 0x60, // I am not sure if that's even the correct bitmask.
+        "room": 0x05d8,
+        "map_tile": 0x1d,
+        "secret_location": true,
+        "reachable": () => locations[
+            "Rolling Ridge (Present): Target Carts 1st Prize"
+        ].reachable(),
+        "symbolic_name": "troySecret",
+    },
     "Rolling Ridge (Present): Target Carts 2nd Prize": {
         "region_id": "target carts 2",
         "vanilla_item": "Boomerang",
@@ -855,6 +1000,7 @@ const locations = {
         ]).some(Boolean),
     },
     "Rolling Ridge (Present): Heart Piece in Westmost Cave": {
+        "alias": "Ridge West Heart Piece",
         "region_id": "ridge west heartpiece",
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xcac1,
@@ -866,6 +1012,7 @@ const locations = {
         "symbolic_name": "ridgeWestHP",
     },
     "Rolling Ridge (Present): Far Northeast Heart Piece": {
+        "alias": "Ridge Upper Heart Piece",
         "region_id": "ridge upper heartpiece",
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc70d,
@@ -907,6 +1054,17 @@ const locations = {
         "reachable": () => LogicPredicates.has_sword() && locations['goron shooting gallery'](),
         "symbolic_name": "goronShootingGallery",
     },
+    "Rolling Ridge (Past): Elder Secret": {
+        "region_id": "elder secret",
+        "vanilla_item": "Biggoron's Sword",
+        "flag_byte": 0xc8e7,
+        "room": 0x03e7,
+        // not sure about putting in a bitmask for this one.
+        "map_tile": 0x11d,
+        "reachable": () => locations['goron shooting gallery'](),
+        "symbolic_name": "elderSecret",
+        "secret_location": true,
+    },
     "Rolling Ridge (Past): Trade With Graceful Goron's Friend": {
         "region_id": "trade lava juice",
         "vanilla_item": "Letter of Introduction",
@@ -920,6 +1078,7 @@ const locations = {
 
     // Zora Village (Present) Items
     "Zora Village (Present): Western Pool Chest": {
+        "alias": "Zora Village Present Chest",
         "region_id": "zora village present",
         "vanilla_item": "Gasha Seed",
         "flag_byte": 0xc7c0,
@@ -965,6 +1124,17 @@ const locations = {
         ),
         "symbolic_name": "kingZora",
     },
+    "Zora Village (Present): Zora King Secret": {
+        "region_id": "zora king secret",
+        "vanilla_item": "Progressive Sword",
+        "flag_byte": 0xcaab,
+        "room": 0x05ab,
+        "map_tile": 0xa1,
+        // I am not sure about giving this check a bitmask.
+        "reachable": () => locations['Zora Village (Present): Zora King Gift'].reachable(),
+        "symbolic_name": "kingZoraSecret",
+        "secret_location": true
+    },
     "Zora Village (Present): Zora's Reward": {
         "region_id": "zora's reward",
         "vanilla_item": "Zora Scale",
@@ -992,6 +1162,16 @@ const locations = {
         "map_tile": 0x1a5,
         "reachable": () => locations['library past'](),
         "symbolic_name": "libraryPast",
+    },
+    "Eyeglass Island Library (Past): Old Man's Secret": {
+        "region_id": "library past secret",
+        "vanilla_item": "Progressive Shield",
+        "flag_byte": 0xcae4,
+        "room": 0x05e4, // Again, not sure what to do about the whole bitmask situlation.
+        "map_tile": 0x1a5,
+        "secret_location": true,
+        "reachable": () => locations['library past'](),
+        "symbolic_name": "libraryPastSecret",
     },
 
     // Zora Seas Items
@@ -1035,19 +1215,27 @@ const locations = {
         "symbolic_name": "seaofstorm",
     },
     /*
-    NOTE: You normally can't get to this location in the vanilla game without being in a linked game. However, you can still reach it by performing a 
-    Veran Wrap Glitch (really hard) without being in a linked game. Here is a link for the Veran Wrap glitch if you're curious. I am thinking about adding
-    this location into my archipelago randomizer fork in the future. https://www.youtube.com/watch?v=vXteEbydr-8
+    NOTE: You normally can't get to this location without being in a linked game. However, you can still reach it by performing a 
+    Veran Warp Glitch (really hard, and requires hell logic to be enabled) without being in a linked game. 
+    Here is a link for the Veran Warp glitch if you're curious. https://www.youtube.com/watch?v=vXteEbydr-8
+
+    Casual Logic users, you only need to be able to reach the piratian captian location in order to complete this check if secret locations are enabled.
     */
     "Sea of Storms (Present): Underwater Cave": {
         "region_id": "sea of storms present",
         "vanilla_item": "Gasha Seed",
         "flag_byte": 0xc8e8,
         "room": 0x03e8,
-        "reachable": () => (connected2archipelago && locations['Sea of Storms (Past): Underwater Cave'].reachable()) || !gameLogic.isRandomizer() && (
-            LogicPredicates.option_hard_logic() && locations['lynna city']() && LogicPredicates.can_dive() && LogicPredicates.has_seedshooter() && (
-            LogicPredicates.has_mystery_seeds() && LogicPredicates.has_pegasus_seeds()
-        ) && LogicPredicates.can_switch_past_and_present()),
+        "reachable": () => gameLogic.settings.secret_locations && (
+            (
+                locations['Sea of Storms (Past): Piratian Captain'].reachable()
+                && LogicPredicates.can_go_back_to_present()
+            ) || (
+                LogicPredicates.veran_warp()
+                && LogicPredicates.can_dive()
+            )
+        ),
+        "secret_location": true,
         "symbolic_name": "seaofstormpresent",
     },
 
@@ -1062,6 +1250,7 @@ const locations = {
         ]() && LogicPredicates.has_glove(),
     },
     "Coast of No Return: Old Zora Trade": {
+        "alias": "Rolling Ridge: Old Zora Trade",
         "region_id": "old zora trade",
         "vanilla_item": "Broken Sword",
         "flag_byte": 0xc7f5,
@@ -1088,12 +1277,13 @@ const locations = {
         "flag_byte": 0xc6d2,
         "room": 0x0300,
         "bit_mask": 0x80,
-        "reachable": () => LogicPredicates.can_kill_normal_enemy(true) && gameLogic.hasItem("Touching Book"),
+        "reachable": () => locations['Black Tower (Past): Heart Piece'].reachable() && LogicPredicates.can_kill_normal_enemy(true) && gameLogic.hasItem("Touching Book"),
         "symbolic_name": "mapleTrade",
     },
 
     // Maku Path Locations
     "Maku Path: Heart Piece": {
+        "alias": "Maku Path Heart Piece",
         "region_id": "maku path heartpiece",
         "vanilla_item": "Piece of Heart",
         "flag_byte": 0xc906,
@@ -2055,20 +2245,148 @@ const locations = {
         "symbolic_name": "d8Boss",
     },
 
+    // Hero's Cave (Linked)
+    "Hero's Cave (1F): Pots Puzzle": {
+        "region_id": "d11 pots puzzle 1",
+        "vanilla_item": "Small Key (Hero's Cave)",
+        "dungeon": 11,
+        "flag_byte": 0xc9ca,
+        "room": 0x4ca,
+        "reachable": () => false,
+        "symbolic_name": "herosCavePotsPuzzle",
+    },
+    "Hero's Cave (1F): Statue Puzzle #1": {
+        "region_id": "d11 statue 1 puzzle",
+        "vanilla_item": "Small Key (Hero's Cave)",
+        "dungeon": 11,
+        "flag_byte": 0xc9cb,
+        "room": 0x4cb,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveStatue1Puzzle",
+    },
+    "Hero's Cave (1F): Bridge Puzzle #1": {
+        "region_id": "d11 bridge puzzle 1",
+        "vanilla_item": "Small Key (Hero's Cave)",
+        "dungeon": 11,
+        "flag_byte": 0xc9c7,
+        "room": 0x4c7,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveBridgePuzzle",
+    },
+    "Hero's Cave (1F): Shoot Eyes": {
+        "region_id": "d11 shoot eyes",
+        "vanilla_item": "Gasha Seed",
+        "dungeon": 11,
+        "flag_byte": 0xc9c6,
+        "room": 0x4c6,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveShootEyes",
+    },
+    "Hero's Cave (1F): Statue Puzzle #2": {
+        "region_id": "d11 statue 2 puzzle",
+        "vanilla_item": "Small Key (Hero's Cave)",
+        "dungeon": 11,
+        "flag_byte": 0xc9cf,
+        "room": 0x4cf,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveStatue2Puzzle",
+    },
+    "Hero's Cave (1F): Pots Puzzle #2": {
+        "region_id": "d11 pots puzzle 2",
+        "vanilla_item": "Rupees (200)",
+        "dungeon": 11,
+        "flag_byte": 0xc9cc,
+        "room": 0x4cc,
+        "reachable": () => false,
+        "symbolic_name": "herosCavePots2Puzzle",
+    },
+    "Hero's Cave (1F): Statue Puzzle #3": {
+        "region_id": "d11 statue 3 puzzle",
+        "vanilla_item": "Small Key (Hero's Cave)",
+        "dungeon": 11,
+        "flag_byte": 0xc9cd,
+        "room": 0x4cd,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveStatue3Puzzle",
+    },
+    "Hero's Cave (1F): Bridge Puzzle #2": {
+        "region_id": "d11 bridge puzzle 2",
+        "vanilla_item": "Gasha Seed",
+        "dungeon": 11,
+        "flag_byte": 0xc9c9,
+        "room": 0x4c9,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveBridge2Puzzle",
+    },
+    "Hero's Cave (1F): Color Room": {
+        "region_id": "d11 color room",
+        "vanilla_item": "Small Key (Hero's Cave)",
+        "dungeon": 11,
+        "flag_byte": 0xc9c8,
+        "room": 0x4c8,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveColorRoom",
+    },
+    "Hero's Cave (1F): Water Puzzle": {
+        "region_id": "d11 water puzzle 1f",
+        "vanilla_item": "Small Key (Hero's Cave)",
+        "dungeon": 11,
+        "flag_byte": 0xc9c4,
+        "room": 0x4c4,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveFirstFloorWaterPuzzle",
+    },
+    "Hero's Cave (B1F): Water Puzzle": {
+        "region_id": "d11 water puzzle b1f",
+        "vanilla_item": "Small Key (Hero's Cave)",
+        "dungeon": 11,
+        "flag_byte": 0xc9c1,
+        "room": 0x4c1,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveBasementWaterPuzzle",
+    },
+    "Hero's Cave (B1F): Basement": {
+        "region_id": "d11 basement",
+        "vanilla_item": "Rupees (200)",
+        "dungeon": 11,
+        "flag_byte": 0xc9c0,
+        "room": 0x6c0,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveBasement",
+    },
+    "Hero's Cave (1F): Final Puzzle": {
+        "region_id": "d11 final puzzle",
+        "vanilla_item": "Gasha Seed",
+        "dungeon": 11,
+        "flag_byte": 0xc9c3,
+        "room": 0x4c3,
+        "reachable": () => false,
+        "symbolic_name": "herosCaveFinalPuzzle",
+    },
+    "Hero's Cave (1F): Completion Reward": {
+        "region_id": "d11 reward",
+        "vanilla_item": "Blue Luck Ring",
+        "dungeon": 11,
+        "flag_byte": 0xc9c5,
+        "room": 0x4c5,
+        "reachable": () => false,
+        "symbolic_name": "herosCavePresent",
+    },
+
     // Dungeon Essences
     "Spirit's Grave: Essence": {
         "region_id": "d1 boss",
         "flag_byte": 0xc911,
         "vanilla_item": "Eternal Spirit",
         "randomized": false,
-        "reachable": () => false,
+        "reachable": () => locations["Spirit's Grave: Boss"].reachable(),
     },
     "Wing Dungeon: Essence": {
         "region_id": "d2 boss",
         "flag_byte": 0xc938,
         "vanilla_item": "Ancient Wood",
         "randomized": false,
-        "reachable": () => false,
+        "reachable": () => locations['Wing Dungeon (1F): Boss'].reachable(),
     },
     "Moonlit Grotto: Essence": {
         "region_id": "d3 boss",
@@ -2269,32 +2587,32 @@ const locations = {
     ]).some(Boolean),
 
     // Crescent Island
-    "crescent past west": () => (
+    "crescent past west": (noLoop = false) => (
         locations['lynna village']() && LogicPredicates.can_swim_deepwater(false)
     ) || locations["rafton's raft"]() || (
-            LogicPredicates.can_go_back_to_present() && locations['crescent present west']()
-        ),
-    "crescent present west": () => (
+        LogicPredicates.can_go_back_to_present() && (noLoop || locations['crescent present west'](true))
+    ),
+    "crescent present west": (noLoop = false) => (
         locations['lynna city']() && LogicPredicates.can_swim_deepwater(true)
     ) || (
+        ([
+            LogicPredicates.can_go_back_to_present(),
             ([
-                LogicPredicates.can_go_back_to_present(),
-                ([
-                    LogicPredicates.has_shovel(),
-                    LogicPredicates.can_open_portal()
-                ]).every(Boolean)
-            ]).some(Boolean) && locations["crescent past west"]()
-        ),
-    "crescent past east": () => (
+                LogicPredicates.has_shovel(),
+                LogicPredicates.can_open_portal()
+            ]).every(Boolean)
+        ]).some(Boolean) && (noLoop || locations["crescent past west"](true))
+    ),
+    "crescent past east": (noLoop = false) => (
         LogicPredicates.can_break_bush() && locations['crescent past west']()
     ) || (
-            LogicPredicates.can_go_back_to_present() && locations['crescent present west']()
-        ),
-    "crescent present east": () => (
+        LogicPredicates.can_go_back_to_present() && (noLoop || locations['crescent present west'](true))
+    ),
+    "crescent present east": (noLoop = false) => (
         LogicPredicates.can_open_portal() && locations['crescent past east']()
     ) || (
-            LogicPredicates.can_go_back_to_present() && locations['crescent past west']()
-        ),
+        LogicPredicates.can_go_back_to_present() && (noLoop || locations['crescent past west'](true))
+    ),
 
     // Nuun Highlands
     "nuun": () => (
@@ -2371,11 +2689,7 @@ const locations = {
         ]).every(Boolean)
     ]).some(Boolean),
 
-    /* Rolling Ridge (I worry that this might be an area where most infinite looping in the code may occur. If that's the case, please report that to me on the issues panel of the source code on 
-    GitHub: https://github.com/josephanimate2021/oracle-of-ages-web-tracker/issues). Please also send me a screenshot of your error with DevTools open so that I can better visualize on what's going on. 
-    To open DevTools, press F12 (or Fn + F12) on your keyboard and then head to the Console Tab. This should be an area where most errors will be reported. 
-    Some errors may even take you to the Sources Tab where the code causing the error can be highlighted in red. Send me a screenshot of that part of the code as well If you can so that I can 
-    really look into your error better. */
+    // Rolling Ridge
     "ridge west past base": () => (
         locations['lynna village']() && ([
             ([
@@ -2388,34 +2702,37 @@ const locations = {
             ]).some(Boolean),
         ]).every(Boolean)
     ) || locations["ridge west past"](),
-    "ridge west past": () => (
+    "ridge west past": (noLoop = false) => (
         ([
             LogicPredicates.can_open_portal(),
             LogicPredicates.has_bracelet()
-        ]).every(Boolean) && locations['ridge west present']()
+        ]).every(Boolean) && (noLoop || locations['ridge west present'](true))
     ) || locations['Rolling Ridge Base (Past): Goron Elder'].reachable(),
-    "ridge west present": () => (
-        LogicPredicates.can_go_back_to_present() && locations['ridge west past']()
+    "ridge west present": (noLoop = false) => (
+        LogicPredicates.can_go_back_to_present() && (noLoop || locations['ridge west past'](true))
     ) || locations['ridge upper present'](),
-    "ridge upper present": () => (
+    "ridge upper present": (noLoop = false) => (
         LogicPredicates.can_jump_2_wide_pit(false) && locations['Rolling Ridge (Present): Defeat Great Moblin'].reachable()
     ) || (
-            LogicPredicates.can_go_back_to_present() && locations['ridge upper past']()
-        ) || (
-            LogicPredicates.can_jump_3_wide_pit(false) && locations['ridge base present']()
-        ),
-    "ridge upper past": () => (
+        LogicPredicates.can_go_back_to_present() && (noLoop || locations['ridge upper past'](true))
+    ) || (
+        LogicPredicates.can_jump_3_wide_pit(false) && locations['ridge base present']()
+    ),
+    "ridge upper past": (noLoop = false) => (
         LogicPredicates.has_switch_hook() && locations['ridge base past west']()
     ) || (
-            LogicPredicates.can_switch_past_and_present() && locations['ridge upper present']()
-        ),
-    "ridge base present": () => (
+        LogicPredicates.can_switch_past_and_present() && (noLoop || locations['ridge upper present'](true))
+    ),
+    "ridge base present": (noLoop = false) => (
+        // You can do a toilet warp to head to this area of rolling ridge, assuming you have a seed shooter and ember seeds to escape of course. Or you can just savewarp.
+        LogicPredicates.toilet_warp()
+    ) || LogicPredicates.goron_text_warp() || (
         LogicPredicates.can_go_back_to_present() && (
-            locations['ridge base past west']() || locations['ridge base past east']()
+            noLoop || (locations['ridge base past west'](true) || locations['ridge base past east']())
         )
     ) || locations['ridge upper present'](),
     "ridge base past east": () => LogicPredicates.can_swim(false) && locations['ridge base past west'](),
-    "ridge base past west": () => (
+    "ridge base past west": (noLoop = false) => (
         locations['lynna village']() && ([
             LogicPredicates.can_swim_deepwater(false),
             ([
@@ -2430,12 +2747,9 @@ const locations = {
                 LogicPredicates.can_open_portal(),
                 LogicPredicates.can_break_bush()
             ]).every(Boolean)
-        ]).some(Boolean) && locations['ridge base present']()
+        ]).some(Boolean) && (noLoop || locations['ridge base present'](true))
     ),
-    /* The rolling mid part I think should be better, I was mainly worried about most of the ridge west/base/upper locations 
-    since there are mutiple ways to enter them and javascript might not like that (Main I wish I was an expert at Python :( ).
-    */
-    "ridge mid present": () => (
+    "ridge mid present": (noLoop = false) => (
         ([
             gameLogic.hasItem("Brother Emblem"),
             ([
@@ -2444,15 +2758,15 @@ const locations = {
             ]).some(Boolean)
         ]).every(Boolean) && locations['ridge base present']()
     ) || (
-        LogicPredicates.can_go_back_to_present() && locations['ridge mid past']()
+        LogicPredicates.can_go_back_to_present() && (noLoop || locations['ridge mid past'](true))
     ),
-    "ridge mid past": () => (
-        LogicPredicates.can_switch_past_and_present() && locations['ridge mid present']()
+    "ridge mid past": (noLoop = false) => (
+        LogicPredicates.can_switch_past_and_present() && (noLoop || locations['ridge mid present'](true))
     ) || (
         ([
             gameLogic.hasItem("Brother Emblem"),
             LogicPredicates.can_jump_2_wide_pit(false),
-        ]).every(Boolean) && locations['ridge base past east']
+        ]).every(Boolean) && locations['ridge base past east']()
     ),
     "target carts": () => (
         LogicPredicates.has_switch_hook() && locations['ridge mid present']()

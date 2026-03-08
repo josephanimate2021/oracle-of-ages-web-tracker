@@ -9,6 +9,13 @@ class AgesGameLogic {
      */
     constructor() {
 
+        this.hiddenLocation = { array: [ { hidden: true }] };
+        this.linked_heros_cave_pos_default = {
+            x: 427,
+            y: 162
+        }
+        this.linked_heros_cave_pos = Object.assign({}, this.linked_heros_cave_pos_default);
+
         // Show progression items by default.
         this.showItemsWithClassification = "progression";
 
@@ -39,35 +46,57 @@ class AgesGameLogic {
             "Jabu-Jabu's Belly": () => locations[
                 "Zora Village (Present): Zora's Reward"
             ].reachable() && this.hasItem("Fairy Powder"),
-            "Ancient Tomb": () => locations['crescent past west']() && (
-                this.hasItem("Tokay Eyeball")
-                && LogicPredicates.can_break_pot()
-                && LogicPredicates.can_dive()
-                && LogicPredicates.has_bombs()
-                && LogicPredicates.has_feather()
-                && LogicPredicates.can_kill_normal_enemy()
-                && (
-                    // Finding the road in the dark room
-                    LogicPredicates.has_cane()
-                    || (
-                        LogicPredicates.option_medium_logic()
-                        && (
-                            LogicPredicates.can_kill_normal_enemy()
-                            || LogicPredicates.can_push_enemy()
-                            || LogicPredicates.has_boomerang()
-                            || LogicPredicates.has_switch_hook()
-                            || LogicPredicates.can_use_pegasus_seeds_for_stun()
+            "Ancient Tomb": () => (
+                LogicPredicates.veran_warp() && LogicPredicates.has_switch_hook()
+            ) || (
+                locations['crescent past west']() && (
+                    this.hasItem("Tokay Eyeball")
+                    && LogicPredicates.can_break_pot()
+                    && LogicPredicates.can_dive()
+                    && LogicPredicates.has_bombs()
+                    && LogicPredicates.has_feather()
+                    && LogicPredicates.can_kill_normal_enemy()
+                    && (
+                        // Finding the road in the dark room
+                        LogicPredicates.has_cane()
+                        || (
+                            LogicPredicates.option_medium_logic()
+                            && (
+                                LogicPredicates.can_kill_normal_enemy()
+                                || LogicPredicates.can_push_enemy()
+                                || LogicPredicates.has_boomerang()
+                                || LogicPredicates.has_switch_hook()
+                                || LogicPredicates.can_use_pegasus_seeds_for_stun()
+                            )
                         )
                     )
                 )
-            )
+            ),
+            "Hero's Cave": () => locations['lynna city']() && this.hasItem("Progressive Bracelet") && this.hasItem("Seed Satchel")
         }
         this.dungeons = Object.keys(this.dungeonsReachable);
+
+        // Add 2 dummies to put Hero's Cave inside the dungeons array, which I'm guessing is dungeon 11, I mean, it works in the rando.
+        const ogLastDungeon = this.dungeons[this.dungeons.length - 1];
+        this.dungeons.splice(this.dungeons.length - 1, 1);
+        for (let i = 0; i < 2; i++) this.dungeons.push("");
+        this.dungeons.push(ogLastDungeon);
+
+        this.entrancesReachable = {
+            "Ambi's Palace": () => ([
+                ([
+                    LogicPredicates.option_hard_logic(),
+                    LogicPredicates.can_use_scent_seeds_for_smell(),
+                    LogicPredicates.can_use_pegasus_seeds()
+                ]).every(Boolean),
+                LogicPredicates.can_switch_past_and_present()
+            ]).some(Boolean),
+        }
 
         // Logic Settings and other stuff.
         this.gameSettingOptions = {
             logic_difficulty: {
-                options: ["basic", "medium", "hard"],
+                options: ["basic", "medium", "hard", "hell"],
                 default: "basic"
             },
             required_essences_for_maku_seed: {
@@ -84,14 +113,32 @@ class AgesGameLogic {
                 default: true // true by default since most people usually proitize a tracker for a randomizer. This can still be changed anytime.
             },
             goal: {
-                default: "beat_vernan",
-                options: ['beat_vernan', 'beat_ganon']
+                default: "beat_veran",
+                options: ['beat_veran', 'beat_ganon', 'retrieve_maku_seed']
             },
             animal_companion: {
                 default: "ricky",
                 options: ["ricky", "dimitri", "moosh"]
             },
+            default_seed: {
+                default: "ember seeds",
+                options: ["ember seeds", "scent seeds", "pegasus seeds", "gale seeds", "mystery seeds"]
+            },
             open_advance_shop: {
+                default: false
+            },
+            linked_heros_cave: {
+                default: false
+            },
+            secret_locations: {
+                default: false
+            },
+            rolling_ridge_old_men_as_locations: {
+                default: false
+            }
+        }
+        this.gameSettingOptions_serverOnly = {
+            map_precision: {
                 default: false
             }
         }
@@ -104,6 +151,7 @@ class AgesGameLogic {
             "d5 entrance": "enter d5",
             "d6 past entrance": "enter d6 past",
             "d6 present entrance": "enter d6 present",
+            "ambi's palace entrance": "enter ambi's palace",
             "d7 entrance": "enter d7",
             "d8 entrance": "enter d8"
         }
@@ -113,7 +161,7 @@ class AgesGameLogic {
     /**
      * Checks if the player has a specified item
      * @param {string} itemName - The name of the item.
-     * @param {number} count - The amount of item a user has.
+     * @param {number} count - The amount of item a user has (1 by default).
      * @returns {boolean} True if a user has that item. If not, then it's false.
      */
     hasItem(itemName, count = 1) {
@@ -123,7 +171,7 @@ class AgesGameLogic {
     /**
      * Checks if the player has a specified item at a specified value
      * @param {string} itemName - The name of the item.
-     * @param {number} count - The amount of item a user has.
+     * @param {number} count - The amount of item a user has (1 by default).
      * @returns {boolean} True if a user has that item. If not, then it's false.
      */
     hasItemExact(itemName, count = 1) {
@@ -194,7 +242,8 @@ class AgesGameLogic {
                         { x: 495, y: 120, array: this.findLocationInfoByRegionName("nayru's house") },
                         { x: 446, y: 281, array: [
                             ...this.findLocationInfoByRegionName("balloon guy's gift"), 
-                            ...this.findLocationInfoByRegionName("balloon guy's upgrade") 
+                            ...this.findLocationInfoByRegionName("balloon guy's upgrade"),
+                            ...this.findLocationInfoByRegionName("balloon guy's secret")
                         ] },
 
                         // Yoll: Graveyard Locations
@@ -210,12 +259,24 @@ class AgesGameLogic {
                         // Lynna City Locations
                         { x: 320, y: 210, array: this.findLocationInfoByRegionName("lynna city comedian trade") },
                         { x: 420, y: 240, array: this.findLocationInfoByRegionName("lynna shop") },
-                        { x: 308.5, y: 252, array: this.findLocationInfoByRegionName("mamamu yan trade") },
+                        { x: 308.5, y: 252, array: [
+                            ...this.findLocationInfoByRegionName("mamamu yan trade"),
+                            ...this.findLocationInfoByRegionName("mamamu yan secret")
+                        ] },
                         { x: 438, y: 177, array: this.findLocationInfoByRegionName("lynna city chest") },
                         { x: 410, y: 140, array: this.findLocationInfoByRegionName("maku tree") },
-                        { x: 410, y: 210, array: this.findLocationInfoByRegionName("vasu's gift") },
+                        { x: 410, y: 210, array: [
+                            ...this.findLocationInfoByRegionName("vasu's gift"),
+                            ...this.findLocationInfoByRegionName("vasu's secret gift")
+                        ] },
                         { x: 410, y: 240, array: this.findLocationInfoByRegionName("hidden shop") },
-                        { x: 360, y: 200, array: this.findLocationInfoByRegionName("mayor plen's house") },
+                        { x: 360, y: 200, array: [
+                            ...this.findLocationInfoByRegionName("mayor plen's house"),
+                            ...this.findLocationInfoByRegionName("mayor plen's secret")
+                        ] },
+
+                        // Black Tower Locations
+                        { x: 310, y: 288, array: this.findLocationInfoByRegionName("princess zelda rescue") },
 
                         // Fairies Woods Locations
                         { x: 223, y: 325, array: this.findLocationInfoByRegionName("fairies' woods chest") },
@@ -240,6 +301,7 @@ class AgesGameLogic {
                             ...this.findLocationInfoByRegionName("first goron dance"),
                             ...this.findLocationInfoByRegionName("trade rock brisket")
                         ] },
+                        { x: 664, y: 165, array: this.findLocationInfoByRegionName("rolling ridge present old man") },
                         { x: 393, y: 42, array: [
                             ...this.findLocationInfoByRegionName("ridge west cave"),
                             ...this.findLocationInfoByRegionName("goron's hiding place"),
@@ -282,6 +344,7 @@ class AgesGameLogic {
                         { x: 517, y: 3, dungeonEntrance: 'd5' },
                         { x: 599.2, y: 125, dungeonEntrance: 'd6 present' },
                         { x: 15, y: 406, dungeonEntrance: 'd7' },
+                        this.settings.linked_heros_cave ? { x: this.linked_heros_cave_pos.x, y: this.linked_heros_cave_pos.y, dungeonEntrance: 'd11' } : this.hiddenLocation,
 
                         /** ALL TREES **/
 
@@ -309,8 +372,8 @@ class AgesGameLogic {
                         { x: 179, y: 115, array: this.findLocationInfoByRegionName("vasu's gift") },
                         { x: 195, y: 99, array: this.findLocationInfoByRegionName("lynna city chest") },
                         
-                        // Planned Locations for the future with the tracker/randomizer (hopefully)
-                        // { x: 179, y: 99, array: this.findLocationInfoWithStartName("Hero's Cave") },
+                        // Dungeon Entrances
+                        this.settings.linked_heros_cave ? { x: 179, y: 99, dungeonEntrance: 'd11' } : this.hiddenLocation
 
                     ]
                 },
@@ -388,6 +451,7 @@ class AgesGameLogic {
                         { x: 638, y: 18, array: this.findLocationInfoByRegionName("bomb goron head") },
                         { x: 565, y: 5, array: this.findLocationInfoByRegionName("treasure hunting goron") },
                         { x: 642, y: 40, array: this.findLocationInfoByRegionName("goron shooting gallery price") },
+                        { x: 664, y: 165, array: this.findLocationInfoByRegionName("rolling ridge past old man") },
 
                         // Sea of Storms locations
                         { x: 366, y: 490, array: this.findLocationInfoByRegionName("sea of storms past") },
@@ -494,9 +558,14 @@ class AgesGameLogic {
             },
             "d0_hero": {
                 roomCondtionals: [
-                    { equal_to: 0x6C0 },
+                    { equals_to: 0x6C0 },
                     { min: 0x4C1, max: 0x4CF }
-                ]
+                ],
+                layouts: {
+                    default: [
+                        { x: 291, y: 261, array: this.findLocationInfoByRegionName("d11 statue 1 puzzle") },
+                    ]
+                }
             },
             "d1": {
                 layouts: {
@@ -595,12 +664,12 @@ class AgesGameLogic {
     }
 
     dungeonReachable(dungeon) {
-        for (let i = 0; i < 9; i++) {
-            const dungeonData = this.getDungeonDataFromEntrance(`d${i}`);
+        for (const i in this.settings.dungeon_entrances) {
+            const dungeonData = this.getDungeonDataFromEntrance(this.settings.dungeon_entrances[i].substring(6));
             if (dungeonData.randomized == dungeon) {
                 const dungeon = dungeonData.vanilla;
                 const d = dungeon.startsWith("Mermaid's Cave") ? "Mermaid's Cave" : dungeon;
-                return this.dungeonsReachable[d](d.includes("Present"))
+                return this[this.entrancesReachable[d] ? 'entrancesReachable' : 'dungeonsReachable'][d](d.includes("Present"))
             }
         }
     }
@@ -630,20 +699,48 @@ class AgesGameLogic {
     getDungeonDataFromEntrance(dungeonNumber) {
         for (const i in this.settings.dungeon_entrances) {
             if (i.startsWith(dungeonNumber)) {
-                let entranceLeadsTo = this.settings.dungeon_entrances[i].substring(7);
-                const vanilaDungeonNumber = (i.slice(0, i.includes("past") ? -14 : i.includes("present") ? -17 : -9)).substring(1);
-                const info = {
-                    vanilla: vanilaDungeonNumber != 6 ? this.dungeons[vanilaDungeonNumber] : `Mermaid's Cave (${
-                        i.includes("past") ? 'Past' : 'Present'
-                    })`,
-                    randomized: entranceLeadsTo.includes("6") ? `Mermaid's Cave (${
-                        upperCaseFirstLetterInWord(entranceLeadsTo.substring(2))
-                    })` : this.dungeons[entranceLeadsTo]
-                };
-                info.reachable = () => this.dungeonReachable(info.randomized);
-                return info;
+                if (!i.startsWith("d")) return this.getERDataFromEntrance(dungeonNumber);
+                let entranceLeadsTo = this.settings.dungeon_entrances[i].substring(6);
+                entranceLeadsTo = entranceLeadsTo.startsWith("d") ? entranceLeadsTo.substring(1) : entranceLeadsTo.split(" ").map(upperCaseFirstLetterInWord).join(" ");
+                const vanilaDungeonNumber = (i.slice(0, -(i.includes("past") ? 14 : i.includes("present") ? 17 : 9))).substring(1);
+                return this.dungeonDataInfo(vanilaDungeonNumber, entranceLeadsTo, i);
             }
         }
+    }
+
+    /**
+     * Gets ER data from the randomized entrances.
+     * @param {string} entrance - The name of an entrance in all lower caps
+     * @returns {object} The ER data from the randomized entrance.
+     */
+    getERDataFromEntrance(entrance) {
+        for (const i in this.settings.dungeon_entrances) {
+            if (i.startsWith(entrance)) {
+                if (i.startsWith("d")) return this.getDungeonDataFromEntrance(entrance);
+                let entranceLeadsTo = this.settings.dungeon_entrances[i].substring(6)
+                entranceLeadsTo = entranceLeadsTo.startsWith("d") ? entranceLeadsTo.substring(1) : entranceLeadsTo.split(" ").map(upperCaseFirstLetterInWord).join(" ");
+                let vanilaER = (i.slice(0, -(i.includes("past") ? 14 : i.includes("present") ? 17 : 9))).split(" ").map(upperCaseFirstLetterInWord).join(" ")
+                vanilaER = vanilaER.startsWith("d") ? vanilaER.substring(1) : vanilaER;
+                return this.dungeonDataInfo(vanilaER, entranceLeadsTo, i);
+            }
+        }
+    }
+
+    dungeonDataInfo(vanilaER, entranceLeadsTo, i) {
+        const info = {
+            vanilla: !isNaN(vanilaER) ? (
+                vanilaER != 6 ? this.dungeons[vanilaER] : `Mermaid's Cave (${
+                    i.includes("past") ? 'Past' : 'Present'
+                })`
+            ) : vanilaER,
+            randomized: !isNaN(vanilaER) ? (
+                entranceLeadsTo.includes("6") ? `Mermaid's Cave (${
+                    upperCaseFirstLetterInWord(entranceLeadsTo.substring(2))
+                })` : this.dungeons[entranceLeadsTo]
+            ) : entranceLeadsTo
+        };
+        info.reachable = () => this.dungeonReachable(info.randomized);
+        return info;
     }
 
     /**
@@ -664,7 +761,7 @@ class AgesGameLogic {
     }
 
     /**
-     * Checks if the player is playing in randomizer mode. For now, this is a placeholder that always returns true.
+     * Checks if the player is playing in randomizer mode.
      * @returns {boolean} True if the player is playing in randomizer mode, false otherwise.
      */
     isRandomizer() {
@@ -673,15 +770,7 @@ class AgesGameLogic {
 
     calculateItemsNeededForGameCompletion() {
         let neededItems = 0;
-        for (let i = 1; i <= this.settings.required_essences_for_maku_seed; i++) {
-            const essence = Object.keys(items).find(k => items[k].imageName == `essences/d${i}`);
-            if (essence && !this.hasItem(essence)) neededItems++
-        }
-        if (!LogicPredicates.has_bombs()) neededItems++;
-        if (!LogicPredicates.has_switch_hook()) neededItems++;
-        if (!LogicPredicates.has_mystery_seeds()) neededItems++;
-        if (this.settings.goal == "beat_ganon") {
-            if (!LogicPredicates.has_seedshooter()) neededItems++;  
+        function beatingGanon() {
             if (!LogicPredicates.option_medium_logic()) {
                 if (!LogicPredicates.has_noble_sword()) neededItems++
                 if (!LogicPredicates.has_ember_seeds(false)) neededItems++;
@@ -693,10 +782,42 @@ class AgesGameLogic {
                     || LogicPredicates.has_gale_seeds()
                 )) neededItems++
             }
-        } else if (
-            !LogicPredicates.has_sword() 
-            && !LogicPredicates.can_punch()
-        ) neededItems++;
+        }
+        if (LogicPredicates.option_hell_logic() && this.settings.goal != "retrieve_maku_seed") { // Expects a user to know veran warp.
+            if (!LogicPredicates.has_seedshooter()) {
+                neededItems++
+                if (LogicPredicates.has_satchel()) {
+                    if (!LogicPredicates.has_pegasus_seeds()) neededItems++;
+                } else neededItems++
+            }
+            if (!LogicPredicates.has_mystery_seeds()) neededItems++;
+            for (let i = 1; i <= 3; i++) if (!this.hasItem("Progressive Harp", i)) neededItems++;
+            if (!LogicPredicates.has_sword()) neededItems++
+            if (!LogicPredicates.has_bombs() || !this.hasItem("Red Ring") || (() => {
+                for (let i = 1; i <= 3; i++) {
+                    if (this.hasItem(`Power Ring L-${i}`)) return true;
+                }
+                return false
+            })() || !LogicPredicates.has_noble_sword()) neededItems++;
+            if (this.settings.goal == "beat_ganon") beatingGanon();
+        } else { // The vanila way of playing the game
+            for (let i = 1; i <= this.settings.required_essences_for_maku_seed; i++) {
+                const essence = Object.keys(items).find(k => items[k].imageName == `essences/d${i}`);
+                if (essence && !this.hasItem(essence)) neededItems++
+            }
+            if (this.settings.goal != "retrieve_maku_seed") {
+                if (!LogicPredicates.has_bombs()) neededItems++;
+                if (!LogicPredicates.has_switch_hook()) neededItems++;
+                if (!LogicPredicates.has_mystery_seeds()) neededItems++;
+                if (this.settings.goal == "beat_ganon") {
+                    if (!LogicPredicates.has_seedshooter()) neededItems++;  
+                    beatingGanon();
+                } else if (
+                    !LogicPredicates.has_sword() 
+                    && !LogicPredicates.can_punch()
+                ) neededItems++;
+            }
+        }
         return neededItems;
     }
 

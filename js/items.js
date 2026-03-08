@@ -125,7 +125,9 @@ const items = {
     "Seed Shooter": {
         'classification': "progression",
         'imageName': 'shooter',
-        'id': 0x0f,
+        'afterItemTrigger': ($this, triggerITem, resetItem) => {
+            triggerITem(items[gameLogic.settings.default_seed.split(" ").map(upperCaseFirstLetterInWord).join(" ")]);
+        }
     },
     "Shovel": {
         'classification': "progression",
@@ -149,7 +151,10 @@ const items = {
         'id': 0x19,
         'imageName': 'satchel',
         'limit': 2,
-        'defaultCount': 0
+        'defaultCount': 0,
+        'afterItemTrigger': ($this, triggerITem, resetItem) => {
+            if ($this.count < 2) triggerITem(items[gameLogic.settings.default_seed.split(" ").map(upperCaseFirstLetterInWord).join(" ")]);
+        }
     },
     "Ember Seeds": {
         'classification': "progression",

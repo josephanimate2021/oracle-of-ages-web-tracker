@@ -116,11 +116,15 @@ class LogicPredicates {
 
     static option_medium_logic() {
         return gameLogic.settings.logic_difficulty === "medium" ||
-               gameLogic.settings.logic_difficulty === "hard";
+               gameLogic.settings.logic_difficulty === "hard" || gameLogic.settings.logic_difficulty === "hell";
     }
 
     static option_hard_logic() {
-        return gameLogic.settings.logic_difficulty === "hard";
+        return gameLogic.settings.logic_difficulty === "hard" || gameLogic.settings.logic_difficulty === "hell";
+    }
+
+    static option_hell_logic() {
+        return gameLogic.settings.logic_difficulty === "hell";
     }
 
     static is_companion_ricky() {
@@ -822,6 +826,40 @@ class LogicPredicates {
             LogicPredicates.has_bracelet() &&
             gameLogic.hasItem("Toss Ring")
         );
+    }
+
+    // ------------------------------------
+    // Warping predicates (hell logic only)
+    // ------------------------------------
+
+    // you can find how these warps are done at https://www.youtube.com/watch?v=eaCbXa5lM7Q (most of them are useless, but 3 of them are actually useful for hell logic).
+
+    static veran_warp() {
+        return LogicPredicates.option_hell_logic() && locations['ridge base present']() && (LogicPredicates.has_seedshooter() || (
+            LogicPredicates.has_satchel() && LogicPredicates.can_use_pegasus_seeds()
+        )) && LogicPredicates.can_use_mystery_seeds() && LogicPredicates.can_switch_past_and_present()
+    }
+
+    static toilet_warp() {
+        return LogicPredicates.option_hell_logic() && locations['lynna village']() && (
+            LogicPredicates.has_bracelet() || (
+                LogicPredicates.has_satchel() && (
+                    LogicPredicates.can_use_ember_seeds(false) // Not sure if mystery seeds will work as well.
+                    || (LogicPredicates.can_use_pegasus_seeds() && LogicPredicates.has_feather()) // Possible, but way too hard. see how this warp is done here: https://www.youtube.com/watch?v=dItQ8R3NtLY
+                )
+            )
+        )
+    }
+
+    /**
+     * That one warp in the cave you are led to after destroying moblin keep where you use mystery seeds to toggle the
+     * hint owl and then you would go into the loading zone a few frames before the textbox appears.
+     * You are recommended to have bombs for escaping though.
+     */
+    static goron_text_warp() {
+        LogicPredicates.option_hell_logic() && locations[
+            'Rolling Ridge (Present): Defeat Great Moblin'
+        ].reachable() && LogicPredicates.has_satchel() && LogicPredicates.can_use_mystery_seeds() && LogicPredicates.has_bombs()
     }
 }
 

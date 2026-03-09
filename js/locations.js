@@ -7,7 +7,7 @@ const locations = {
         "vanilla_item": "Progressive Sword",
         "flag_byte": 0xc739,
         "room": 0x0039,
-        "reachable": () => locations['forest of time'](),
+        "reachable": () => true,
         "symbolic_name": "impaGift",
     },
     "Forest of Time: Nayru's House": {
@@ -16,7 +16,7 @@ const locations = {
         "flag_byte": 0xc8ae,
         "room": 0x03ae,
         "map_tile": 0x3a,
-        "reachable": () => locations['forest of time']() && (
+        "reachable": () => (
             gameLogic.isRandomizer() || gameLogic.hasItem("Eternal Spirit")
         ),
         "symbolic_name": "nayruHouse",
@@ -736,7 +736,7 @@ const locations = {
         "flag_byte": 0xc6d3,
         "bit_mask": 0x10,
         "room": 0x0050,
-        "reachable": () => locations['talus peaks']() && LogicPredicates.has_bombs(),
+        "reachable": () => locations['restoration wall']() && LogicPredicates.has_bombs(),
         "symbolic_name": "bombFairy",
     },
     "Talus Peaks (Present): Southeastern Chest": {
@@ -744,7 +744,7 @@ const locations = {
         "vanilla_item": "Gasha Seed",
         "flag_byte": 0xc763,
         "room": 0x0063,
-        "reachable": () => locations['restoration wall'](),
+        "reachable": () => locations['restoration wall']() && LogicPredicates.can_go_back_to_present(),
     },
     "Talus Peaks (Present): Heart Piece": {
         "alias": "Symmetry City Heart Piece",
@@ -935,13 +935,14 @@ const locations = {
         "room": 0x05d8,
         "map_tile": 0x1d,
         "reachable": () => ([
-            LogicPredicates.has_seedshooter(),
+            // minigame gives a seed shooter, possible later asm to remove unless you own shooter
+            /*LogicPredicates.has_seedshooter(),
             ([
                 LogicPredicates.has_ember_seeds(),
                 LogicPredicates.has_mystery_seeds(),
                 LogicPredicates.has_pegasus_seeds(),
                 LogicPredicates.has_scent_seeds(),
-            ]).some(Boolean),
+            ]).some(Boolean),*/
             locations['target carts']()
         ]).every(Boolean),
         "symbolic_name": "targetCart1",
@@ -1038,11 +1039,12 @@ const locations = {
         "flag_byte": 0xc7f7,
         "room": 0x02f7,
         "reachable": () => ([
-            LogicPredicates.has_bombs(),
+            LogicPredicates.has_bombs(2),
             LogicPredicates.has_ember_seeds(),
+            LogicPredicates.has_satchel(),
             LogicPredicates.can_open_portal(),
             LogicPredicates.has_bracelet(),
-            locations['ridge upper present']
+            locations['ridge upper present']()
         ]).every(Boolean),
     },
     "Rolling Ridge (Past): Baseball": {
@@ -2502,7 +2504,12 @@ const locations = {
         "local": true,
         "flag_byte": 0xc808,
         "room": 0x0108,
-        "reachable": () => LogicPredicates.can_harvest_tree(false) && locations['ridge west past'](),
+        "reachable": () => LogicPredicates.can_harvest_tree(false) && (
+            locations['ridge west past']()
+        ) || (
+            LogicPredicates.can_switch_past_and_present()
+            && locations['ridge west present']()
+        ),
         "symbolic_name": "ridgeWestTree",
     },
     "Rolling Ridge East: Seed Tree": {
@@ -2530,10 +2537,9 @@ const locations = {
     // LOCATIONS LEADING TO NO ITEMS!
 
     // Starting Area
-    "forest of time": () => true,
-    "lynna city": () => locations['forest of time']() && LogicPredicates.can_break_bush(),
+    "lynna city": () => LogicPredicates.can_break_bush(),
     "lynna village": () => locations['lynna city']() || (
-        locations['forest of time']() && LogicPredicates.can_open_portal()
+        LogicPredicates.can_open_portal()
     ),
 
     // South Shore
@@ -2542,12 +2548,15 @@ const locations = {
         && gameLogic.hasItem("Island Chart")
     ),
     "shore present": () => (
-        locations['forest of time']() && gameLogic.hasItem("Ricky's Gloves")
+        gameLogic.hasItem("Ricky's Gloves")
     ) || (
             locations['lynna city']() && ([
                 LogicPredicates.can_swim_deepwater(true),
                 LogicPredicates.has_bracelet(),
-                LogicPredicates.can_go_back_to_present(),
+                ([
+                    LogicPredicates.can_go_back_to_present(),
+                    LogicPredicates.can_jump_1_wide_pit(true)
+                ]).every(Boolean),
                 ([
                     LogicPredicates.can_break_bush(true),
                     LogicPredicates.can_jump_1_wide_pit(true)
@@ -2556,7 +2565,7 @@ const locations = {
         ),
 
     // Yoll Graveyard
-    "yoll graveyard": () => locations['forest of time']() && LogicPredicates.can_use_ember_seeds(false),
+    "yoll graveyard": () => LogicPredicates.can_use_ember_seeds(false),
     "cheval's grave": () => locations['yoll graveyard']() && ([
         LogicPredicates.can_kill_normal_enemy(true),
         LogicPredicates.can_jump_3_wide_pit(true)
@@ -2710,7 +2719,9 @@ const locations = {
     ) || locations['Rolling Ridge Base (Past): Goron Elder'].reachable(),
     "ridge west present": (noLoop = false) => (
         LogicPredicates.can_go_back_to_present() && (noLoop || locations['ridge west past'](true))
-    ) || locations['ridge upper present'](),
+    ) || locations['ridge upper present']() || (
+        LogicPredicates.can_switch_past_and_present() && locations['ridge west past base']()
+    ),
     "ridge upper present": (noLoop = false) => (
         LogicPredicates.can_jump_2_wide_pit(false) && locations['Rolling Ridge (Present): Defeat Great Moblin'].reachable()
     ) || (
@@ -2767,7 +2778,7 @@ const locations = {
             gameLogic.hasItem("Brother Emblem"),
             LogicPredicates.can_jump_2_wide_pit(false),
         ]).every(Boolean) && locations['ridge base past east']()
-    ),
+    ) || locations['Rolling Ridge Base (Past): Chest Beyond Diamonds'].reachable(),
     "target carts": () => (
         LogicPredicates.has_switch_hook() && locations['ridge mid present']()
     ) || (

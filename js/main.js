@@ -414,8 +414,11 @@ function archipelagoConnector(obj) {
                                     } default: {
                                         gameLogic.settings[i] = (() => {
                                             if (typeof info2.slot_data[i] == "string") return info2.slot_data[i].toLowerCase()
-                                            if (gameLogic.gameSettingOptions[i]?.options) return gameLogic.gameSettingOptions[i].options[info2.slot_data[i]]
-                                            return typeof info2.slot_data[i] != "object" ? info2.slot_data[i] > 0 : info2.slot_data[i];
+                                            if (gameLogic.gameSettingOptions[i]) {
+                                                if (gameLogic.gameSettingOptions[i].options) return gameLogic.gameSettingOptions[i].options[info2.slot_data[i]]
+                                                if (typeof gameLogic.gameSettingOptions[i].default == "boolean") return info2.slot_data[i] > 0;
+                                            }
+                                            return info2.slot_data[i];
                                         })();
                                     }
                                 }
@@ -530,7 +533,7 @@ function upperCaseFirstLetterInWord(word) {
 }
 
 function changeSpecialAreasShowing() {
-    const requiredOptions = [gameLogic.settings.linked_heros_cave, gameLogic.settings.secret_locations, gameLogic.settings.goal == "beat_ganon"];
+    const requiredOptions = [gameLogic.getValueFromSettingOption("linked_heros_cave"), gameLogic.settings.secret_locations, gameLogic.settings.goal == "beat_ganon"];
     const specialAreasShow = requiredOptions.some(Boolean);
     let specialAreasDefaultMapInited = false;
     function initMapImage(specialAreaMap) {
@@ -551,7 +554,7 @@ function changeSpecialAreasShowing() {
             for (const btn of btns) {
                 switch (btn.getAttribute("data-mapImage")) {
                     case "d0_hero": {
-                        btn.style.display = gameLogic.settings.linked_heros_cave ? initMapImage("d0_hero") : "none";
+                        btn.style.display = gameLogic.getValueFromSettingOption("linked_heros_cave") ? initMapImage("d0_hero") : "none";
                         break;
                     } case "d9_zeldaRescue": {
                         btn.style.display = gameLogic.settings.secret_locations ? initMapImage("d9_zeldaRescue") : "none";
@@ -569,7 +572,7 @@ function changeSpecialAreasShowing() {
 /**
  * Sets up the tracker each time the website is loaded.
  */
-function initTracker() {
+function initTracker(resetThings = true) {
     localStorage.OoAWebTrackerSettings ||= (() => {
         const settings = {
             dungeon_entrances: gameLogic.vanilaDungeonEntrances
@@ -578,9 +581,16 @@ function initTracker() {
         return JSON.stringify(settings);
     })();
     gameLogic.settings ||= parseEverything(localStorage.OoAWebTrackerSettings);
-    if (gameLogic.settings.linked_heros_cave) {
+    if (gameLogic.getValueFromSettingOption("linked_heros_cave")) {
         gameLogic.settings.dungeon_entrances["d11 entrance"] ||= "enter d11";
-    } else if (gameLogic.settings.dungeon_entrances["d11 entrance"]) delete gameLogic.settings.dungeon_entrances["d11 entrance"]
+    } else if (gameLogic.settings.dungeon_entrances["d11 entrance"]) delete gameLogic.settings.dungeon_entrances["d11 entrance"];
+    if (gameLogic.settings.track_randomized_entrances) {
+        gameLogic.vanilaEntrances = Object.assign([], entrances);
+        if (gameLogic.settings.secret_locations) for (const data of linkedEntrances)  gameLogic.vanilaEntrances.unshift(data);
+        for (const data of gameLogic.vanilaEntrances) {
+            gameLogic.settings.dungeon_entrances[`${data.connectingRegion || data.region_id} entrance`] = `enter ${data.connectingRegion || data.entrance}`;
+        }
+    }
     changeSpecialAreasShowing();
     document.getElementById("trackerSettings").innerHTML = Object.keys(gameLogic.gameSettingOptions).map(i => {
         const setting = gameLogic.gameSettingOptions[i];
@@ -617,12 +627,14 @@ function initTracker() {
             }>${gameLogic.settings.dungeon_entrances[i]}</option>`).join('')
         }</select>`;
         return html;
-    }).join('<br>')
-    resetAllItems();
-    resetAllLocations();
+    }).join('<br>');
+    if (resetThings) {
+        resetAllItems();
+        resetAllLocations();
+    }
     drawItems();
     goToMap();
-    mapSwitchButtonsHandler();
+    if (resetThings) mapSwitchButtonsHandler();
 }
 
 /**
@@ -685,17 +697,7 @@ function trackerSettingsChange(obj) {
  */
 function saveModifiedSettings() {
     localStorage.OoAWebTrackerSettings = JSON.stringify(gameLogic.settings);
-    for (const i of entrances) {
-        if (gameLogic.settings.randomize_entrances) gameLogic.settings.dungeon_entrances[
-            `${i.connectingRegion || i.region_id} entrance`
-        ] ||= `enter ${i.connectingRegion || i.entrance}`
-        else if (gameLogic.settings.dungeon_entrances[`${i.connectingRegion || i.region_id} entrance`]) delete gameLogic.settings.dungeon_entrances[
-            `${i.connectingRegion || i.region_id} entrance`
-        ]
-    }
-    changeSpecialAreasShowing();
-    drawItems();
-    goToMap();
+    initTracker(false);
 }
 
 /**

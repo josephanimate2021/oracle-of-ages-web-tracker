@@ -1,4 +1,4 @@
-var entrances = [
+const entrances = [
     {
         region_id: "outer impa",
         entrance: "inner impa",
@@ -15,8 +15,7 @@ var entrances = [
     },
     {
         region_id: "outer mask house",
-        entrance: "inner mask house",
-        connectingRegion: "happy mask salesman trade"
+        entrance: "inner mask house"
     },
     {
         region_id: "outer past - crescent - L coconut separated cave",
@@ -45,8 +44,7 @@ var entrances = [
     },
     {
         region_id: "outer past - lynna - postman house",
-        entrance: "inner past - lynna - postman house",
-        connectingRegion: "postman trade"
+        entrance: "inner past - lynna - postman house"
     },
     {
         region_id: "outer past - lynna - sword game",
@@ -81,13 +79,11 @@ var entrances = [
     },
     {
         region_id: "outer present - ring shop",
-        entrance: "inner present - ring shop",
-        connectingRegion: "vasu's gift"
+        entrance: "inner present - ring shop"
     },
     {
         region_id: "outer raft guy L",
-        entrance: "inner raft guy L",
-        connectingRegion: "rafton trade"
+        entrance: "inner raft guy L"
     },
     {
         region_id: "outer tingle stairs",
@@ -162,8 +158,7 @@ var entrances = [
     },
     {        
         region_id: "outer past - dance cave",
-        entrance: "inner past - dance cave",
-        connectingRegion: "first goron dance"
+        entrance: "inner past - dance cave"
     },
     {        
         region_id: "outer past - lower goron - leftmost cave",
@@ -175,23 +170,19 @@ var entrances = [
     },
     {        
         region_id: "outer past - moblin keep cave",
-        entrance: "inner past - moblin keep cave",
-        connectingRegion: "defeat great moblin"
+        entrance: "inner past - moblin keep cave"
     },
     {
         region_id: "outer past - symmetry - NE house",
-        entrance: "inner past - symmetry - NE house",
-        connectingRegion: "symmetry city brother"
+        entrance: "inner past - symmetry - NE house"
     },
     {        
         region_id: "outer past - symmetry - NW house",
-        entrance: "inner past - symmetry - NW house",
-        connectingRegion: "symmetry city brother"
+        entrance: "inner past - symmetry - NW house"
     },
     {
         region_id: "outer past - symmetry - S house",
-        entrance: "inner past - symmetry - S house",
-        connectingRegion: "symmetry middle man trade"
+        entrance: "inner past - symmetry - S house"
     },
     {        
         region_id: "outer past - symmetry - SE house",
@@ -219,8 +210,7 @@ var entrances = [
     },
     {
         region_id: "outer past underwater - pirate cave",
-        entrance: "inner past underwater - pirate cave",
-        connectingRegion: "sea of storms past"
+        entrance: "inner past underwater - pirate cave"
     },
     {
         region_id: "outer past - maku tree cave",
@@ -284,8 +274,7 @@ var entrances = [
     },
     {
         region_id: "outer present - lower goron - dance cave",
-        entrance: "inner present - lower goron - dance cave",
-        connectingRegion: "first goron dance"
+        entrance: "inner present - lower goron - dance cave"
     },
     {
         region_id: "outer present - lower goron cave - leftmost",
@@ -341,8 +330,7 @@ var entrances = [
     },
     {
         region_id: "outer past - SW goron - old zora",
-        entrance: "inner past - SW goron - old zora",
-        connectingRegion: "old zora trade"
+        entrance: "inner past - SW goron - old zora"
     },
     {
         region_id: "outer past - cave below tuni guy",
@@ -362,8 +350,7 @@ var entrances = [
     },
     {
         region_id: "outer past - upper goron - bomb cave",
-        entrance: "inner past - upper goron - bomb cave",
-        connectingRegion: "bomb goron head"
+        entrance: "inner past - upper goron - bomb cave"
     },
     {
         region_id: "outer present - upper goron - R rock-separated caves",
@@ -375,8 +362,7 @@ var entrances = [
     },
     {
         region_id: "outer tuni nut game",
-        entrance: "inner tuni nut game",
-        connectingRegion: ["patch tuni nut ceremony", "patch broken sword ceremony"]
+        entrance: "inner tuni nut game"
     },
     {
         region_id: "outer past - NE of mystery tree",
@@ -433,7 +419,7 @@ var entrances = [
     {
         region_id: "outer present underwater - crescent island",
         entrance: "inner present underwater - crescent island",
-        connectingRegion: "under crescent island"
+        connectingRegion: "crescent island cave underwater"
     },
     {
         region_id: "outer present underwater - zora E house",
@@ -449,8 +435,7 @@ var entrances = [
     },
     {
         region_id: "outer present underwater - zora palace",
-        entrance: "inner present underwater - zora palace",
-        connectingRegion: "zora king gift"
+        entrance: "inner present underwater - zora palace"
     },
     {
         region_id: "outer under cheval grave",
@@ -459,7 +444,7 @@ var entrances = [
     {
         region_id: "outer past - mid goron - sword game",
         entrance: "inner past - mid goron - sword game",
-        connectingRegion: "goron shooting gallery price"
+        connectingRegion: "goron shooting gallery"
     },
     {
         region_id: "outer present - mid goron - L of carts",
@@ -506,6 +491,18 @@ var entrances = [
         region_id: "outer past underwater - cave S of d8",
         entrance: "inner past underwater - cave S of d8"
     }
+]
+
+const linkedEntrances = [
+    {
+        region_id: "outer present underwater - pirate cave",
+        entrance: "inner present underwater - pirate cave",
+        connectingRegion: "sea of storms present"
+    },
+    {
+        region_id: "outer black tower - present",
+        entrance: "inner black tower - present"
+    },
 ]
 
 /* Randomized entrances that allowed me to convert them into most vanilla entrances. Save this infomation onto a .txt file to do any testing you need to:

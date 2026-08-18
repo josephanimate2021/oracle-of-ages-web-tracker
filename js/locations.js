@@ -684,7 +684,7 @@ const locations = {
         "flag_byte": [0xc7ec, 0xcab8, 0xc7f4],
         "room": [0x02ec, 0x05b8, 0x02f4],
         "map_tile": 0x37,
-        "reachable": () => locations['nuun highlands cave'][
+        "reachable": () => locations['nuun']() && locations['nuun highlands cave'][
             gameLogic.settings.animal_companion
         ](),
     },
@@ -2581,13 +2581,24 @@ const locations = {
     ]).every(Boolean),
 
     // Forest
-    "fairies' woods": () => locations['lynna city']() && ([
+    "fairies' woods": (noLoop = false) => locations['lynna city']() && ([
         LogicPredicates.can_swim(true),
         LogicPredicates.has_bracelet(),
         LogicPredicates.can_switch_past_and_present(),
         ([ // it's possible to switch hook the octorok through the boulder to enter fairies' woods. 
             LogicPredicates.option_hard_logic(),
             LogicPredicates.has_switch_hook()
+        ]).every(Boolean),
+        (noLoop || locations['nuun'](true)) && ([
+            ([
+                locations['nuun highlands cave'].ricky(),
+                LogicPredicates.can_break_bush()
+            ]).every(Boolean),
+            ([
+                locations['nuun highlands cave'].moosh(),
+                gameLogic.hasItem("Feather")
+            ]).every(Boolean),
+            locations['nuun highlands cave'].dimitri()
         ]).every(Boolean)
     ]).some(Boolean),
     "deku forest": () => locations['lynna village']() && ([
@@ -2624,10 +2635,10 @@ const locations = {
     ),
 
     // Nuun Highlands
-    "nuun": () => (
+    "nuun": (noLoop = false) => (
         locations['lynna village']() && LogicPredicates.can_go_back_to_present()
     ) || (
-            locations["fairies' woods"]() && ([
+            (noLoop || locations["fairies' woods"](true)) && ([
                 LogicPredicates.can_use_ember_seeds(false),
                 LogicPredicates.has_seedshooter(),
             ]).every(Boolean)

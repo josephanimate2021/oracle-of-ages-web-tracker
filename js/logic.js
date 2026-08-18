@@ -128,17 +128,16 @@ class AgesGameLogic {
                 default: false
             },
             linked_heros_cave: {
-                default: false
+                options: ['disabled', 'maku_tree_entrance_right_side', 'd2_present', 'zoras_domain', 'seawater_cure_room_present', 'under_fishers_house_present', 'graveyard'],
+                default: 'disabled'
             },
             secret_locations: {
                 default: false
             },
             rolling_ridge_old_men_as_locations: {
                 default: false
-            }
-        }
-        this.gameSettingOptions_serverOnly = {
-            map_precision: {
+            },
+            track_randomized_entrances: {
                 default: false
             }
         }
@@ -166,6 +165,21 @@ class AgesGameLogic {
      */
     hasItem(itemName, count = 1) {
         return items[itemName].count >= count;
+    }
+
+    /**
+     * Gets a value from a user's setting choice.
+     * @param {string} settingName - The name of a setting
+     * @returns {number} The value of a user's setting choice.
+     */
+    getValueFromSettingOption(settingName) {
+        const option = this.gameSettingOptions[settingName];
+        const setting = this.settings[settingName];
+        switch (typeof setting) {
+            case "boolean": return setting ? 1 : 0;
+            case "number": return setting;
+            case "string": return option.options.findIndex(i => i == setting) || 0;
+        }
     }
 
     /**
